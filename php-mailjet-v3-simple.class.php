@@ -16,7 +16,7 @@ class Mailjet
     # Connect with https protocol
     var $secure = true;
 
-   	# Mode debug ? 0 : none; 1 : errors only; 2 : all
+    # Mode debug ? 0 : none; 1 : errors only; 2 : all
     var $debug = 0;
 
     # Edit with your Mailjet API keys (you can find them here : https://app.mailjet.com/account/api_keys)
