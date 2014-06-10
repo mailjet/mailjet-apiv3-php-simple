@@ -121,7 +121,6 @@ class Mailjet
         }
 
         if ($request == 'PUT') {
-            error_log(json_encode($params));
             curl_setopt($curl_handle, CURLOPT_CUSTOMREQUEST, "PUT");
         }
 
