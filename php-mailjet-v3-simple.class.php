@@ -100,15 +100,16 @@ class Mailjet
 
         if (($request == 'POST') || ($request == 'PUT')):
             curl_setopt($curl_handle, CURLOPT_POST, count($params));
-            curl_setopt($curl_handle, CURLOPT_POSTFIELDS, http_build_query($params));
             if ($resource == "sendEmail")
             {
+                curl_setopt($curl_handle, CURLOPT_POSTFIELDS, http_build_query($params));
                 curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
                     'Content-Type: application/x-www-form-urlencoded'
                 ));
             }
             else
             {
+                curl_setopt($curl_handle, CURLOPT_POSTFIELDS, json_encode($params));
                 curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
                     'Content-Type: application/json'
                 ));
