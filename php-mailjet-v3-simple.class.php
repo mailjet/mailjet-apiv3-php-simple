@@ -3,20 +3,18 @@
 /**
  * Mailjet Public API
  *
- * @package		API v0.3
- * @author		Mailjet
- * @link		http://api.mailjet.com/
+ * @package     API v0.3
+ * @author      Mailjet
+ * @link        http://api.mailjet.com/
  *
  */
 
 class Mailjet
 {
-    var $version = 'v3';
-
     # Connect with https protocol
     var $secure = true;
 
-   	# Mode debug ? 0 : none; 1 : errors only; 2 : all
+    # Mode debug ? 0 : none; 1 : errors only; 2 : all
     var $debug = 0;
 
     # Edit with your Mailjet API keys (you can find them here : https://app.mailjet.com/account/api_keys)
@@ -33,7 +31,7 @@ class Mailjet
         $this->apiUrl = (($this->secure) ? 'https' : 'http') . '://api.mailjet.com/v3/REST';
     }
     
-    public function __call($method, $args)
+    public function __call($resource, $args)
     {
         # Parameters array
         $params  = (sizeof($args) > 0) ? $args[0] : array();
@@ -51,39 +49,45 @@ class Mailjet
             unset($params["ID"]);
 
         # Make request
-        $result = $this->sendRequest($method, $params, $request, $id);
+        $result = $this->sendRequest($resource, $params, $request, $id);
 
         # Return result
         $return = ($result === true) ? $this->_response : false;
         if ($this->debug == 2 || ($this->debug == 1 && $return == false)) {
             $this->debug();
         }
+
         return $return;
     }
 
-    public function requestUrlBuilder($method, $params = array(), $request, $id)
+    public function requestUrlBuilder($resource, $params = array(), $request, $id)
     {
         foreach ($params as $key => $value) {
             if ($request == "GET")
                 $query_string[$key] = $key . '=' . urlencode($value);
         }
-        
-        $this->call_url = $this->apiUrl . '/' . $method;
+
+        if ($resource == "sendEmail")
+            $this->call_url = "https://api.mailjet.com/v3/send/message";
+        else
+            $this->call_url = $this->apiUrl . '/' . $resource;
+
         if ($request == "VIEW" || $request == "DELETE" || $request == "PUT")
             if ($id != '')
                 $this->call_url .= '/' . $id;
+
         return $this->call_url;
     }
     
-    public function sendRequest($method = false, $params = array(), $request = "GET", $id = '')
+    public function sendRequest($resource = false, $params = array(), $request = "GET", $id = '')
     {
         # Method
-        $this->_method  = $method;
+        $this->_method  = $resource;
         $this->_request = $request;
         
         # Build request URL
-        $url = $this->requestUrlBuilder($method, $params, $request, $id);
-        
+        $url = $this->requestUrlBuilder($resource, $params, $request, $id);
+
         # Set up and execute the curl process
         $curl_handle = curl_init();
         curl_setopt($curl_handle, CURLOPT_URL, $url);
@@ -96,10 +100,19 @@ class Mailjet
 
         if (($request == 'POST') || ($request == 'PUT')):
             curl_setopt($curl_handle, CURLOPT_POST, count($params));
-            curl_setopt($curl_handle, CURLOPT_POSTFIELDS, json_encode($params));
-            curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
-                'Content-Type: application/json'
-            ));
+            curl_setopt($curl_handle, CURLOPT_POSTFIELDS, http_build_query($params));
+            if ($resource == "sendEmail")
+            {
+                curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
+                    'Content-Type: application/x-www-form-urlencoded'
+                ));
+            }
+            else
+            {
+                curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
+                    'Content-Type: application/json'
+                ));
+            }
             $this->_request_post = $params;
         endif;
 
@@ -114,23 +127,23 @@ class Mailjet
 
         $buffer = curl_exec($curl_handle);
         
-        if ($this->debug > 2)
+        if ($this->debug == 2)
             var_dump($buffer);
-        
+
         # Response code
         $this->_response_code = curl_getinfo($curl_handle, CURLINFO_HTTP_CODE);
-        
+
         # Close curl process
         curl_close($curl_handle);
-        
+
         # Return response
         $this->_response = json_decode($buffer);
+
         if ($request == 'POST')
             return ($this->_response_code == 201) ? true : false;
         if ($request == 'DELETE')
             return ($this->_response_code == 204) ? true : false;
         return ($this->_response_code == 200) ? true : false;
-        
     }
     
     public function debug()
@@ -138,16 +151,16 @@ class Mailjet
         echo '<style type="text/css">';
         echo '
 
-		#debugger {width: 100%; font-family: arial;}
-		#debugger table {padding: 0; margin: 0 0 20px; width: 100%; font-size: 11px; text-align: left;border-collapse: collapse;}
-		#debugger th, #debugger td {padding: 2px 4px;}
-		#debugger tr.h {background: #999; color: #fff;}
-		#debugger tr.Success {background:#90c306; color: #fff;}
-		#debugger tr.Error {background:#c30029 ; color: #fff;}
-		#debugger tr.Not-modified {background:orange ; color: #fff;}
-		#debugger th {width: 20%; vertical-align:top; padding-bottom: 8px;}
+        #debugger {width: 100%; font-family: arial;}
+        #debugger table {padding: 0; margin: 0 0 20px; width: 100%; font-size: 11px; text-align: left;border-collapse: collapse;}
+        #debugger th, #debugger td {padding: 2px 4px;}
+        #debugger tr.h {background: #999; color: #fff;}
+        #debugger tr.Success {background:#90c306; color: #fff;}
+        #debugger tr.Error {background:#c30029 ; color: #fff;}
+        #debugger tr.Not-modified {background:orange ; color: #fff;}
+        #debugger th {width: 20%; vertical-align:top; padding-bottom: 8px;}
 
-		';
+        ';
         echo '</style>';
         
         echo '<div id="debugger">';
@@ -195,7 +208,7 @@ class Mailjet
         
         echo '<table>';
         echo '<tr class="h"><th>Call infos</th><td></td></tr>';
-        echo '<tr><th>Method</th><td>' . $this->_method . '</td></tr>';
+        echo '<tr><th>Resource</th><td>' . $this->_method . '</td></tr>';
         echo '<tr><th>Request type</th><td>' . $this->_request . '</td></tr>';
         echo '<tr><th>Get Arguments</th><td>';
 

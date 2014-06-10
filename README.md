@@ -57,6 +57,24 @@ $mj->contact($params);
 ## Examples
 Here are some function examples :
 
+- A function to send an email :
+```php
+function sendEmail() {
+    $mj = new Mailjet();
+    $params = array(
+        "method" => "POST",
+        "from" => "ms.mailjet@example.com",
+        "to" => "mr.mailjet@example.com",
+        "subject" => "Hello World!",
+        "text" => "Greetings from Mailjet."
+    );
+
+    echo "success - email sent";
+
+    return $mj->sendEmail($params);
+}
+```
+
 - A function to print the list of your contacts :
 ```php
 function listContacts()
