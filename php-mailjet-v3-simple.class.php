@@ -11,6 +11,9 @@
 
 class Mailjet
 {
+    # Mailjet API version
+    var $version = 'v3';
+
     # Connect with https protocol
     var $secure = true;
 
@@ -62,20 +65,29 @@ class Mailjet
 
     public function requestUrlBuilder($resource, $params = array(), $request, $id)
     {
-        foreach ($params as $key => $value) {
-            if ($request == "GET")
-                $query_string[$key] = $key . '=' . urlencode($value);
-        }
-
         if ($resource == "sendEmail")
             $this->call_url = "https://api.mailjet.com/v3/send/message";
         else
             $this->call_url = $this->apiUrl . '/' . $resource;
 
+        if ($request == "GET" && count($params) > 0)
+            $this->call_url .= '?';
+
+        foreach ($params as $key => $value) {
+            if ($request == "GET")
+            {
+                $query_string[$key] = $key . '=' . $value;
+                $this->call_url .= $query_string[$key] . '&';
+            }
+        }
+
+        if ($request == "GET" && count($params) > 0)
+            $this->call_url = substr($this->call_url, 0, -1);
+
         if ($request == "VIEW" || $request == "DELETE" || $request == "PUT")
             if ($id != '')
                 $this->call_url .= '/' . $id;
-
+        
         return $this->call_url;
     }
     
