@@ -15,8 +15,7 @@
         $mj = new Mailjet("API_KEY", "API_SECRET_KEY");
         
         $params = array(
-          "method" => "POST",
-          "Email" => "test@gmail.com"
+          "method" => "POST"
         );
         $return = $mj->contact($params);
         
