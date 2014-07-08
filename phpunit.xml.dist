@@ -3,7 +3,7 @@
 <phpunit bootstrap="test/bootstrap.php" colors="true">
     <testsuites>
         <testsuite name="Mailjet APIv3 PHP wrapper test suite">
-            <directory>./Tests</directory>
+            <directory>./test/Mailjet</directory>
         </testsuite>
     </testsuites>
 </phpunit>
