@@ -3,9 +3,24 @@
   {
     public function testListContacts()
     {
-        $mj = new Mailjet("API_KEY", "API_SECRET_KEY");
-        print_r($mj->contact());
-        $this->assertEquals(http_response_code(), 200);
+        $mj = new Mailjet($_ENV['API_KEY'], $_ENV['API_SECRET_KEY']);
+        
+        $mj->contact();
+        
+        $this->assertEquals(200, $mj->_response_code);
+    }
+    
+    public function testCreateContact()
+    {
+        $mj = new Mailjet($_ENV['API_KEY'], $_ENV['API_SECRET_KEY']);
+        
+        $params = array(
+          "method" => "POST",
+          "Email" => "test@gmail.com"
+        );
+        $mj->contact($params);
+        
+        $this->assertEquals(200, $mj->_response_code);
     }
   }
 ?>
