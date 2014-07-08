@@ -4,8 +4,8 @@ php:
 script: phpunit --coverage-text
 env:
   global:
-    secure: "XdzBZLIxUJXI1J25xQ9A9YaQUGOeEpXLed6apyezJSG6hOJXOeiH1+KickYimcMA7A7mHEN+eBfblx9b07Y+ViA1rV3U0Jh9cn+3a0SLDY2Co66w5U/3YL1MqNeBuJU+wm1iAXv08FaSc6zjd2XLnlU1Y8wI7y+EZiZrQhmxdQg="
-    secure: "EubmZqrs9FStp/yhW+SwQqnjMjotGs5h8SQ3K8zqWJqIoVKrk8bx7K4bRbCpbwt5LquvkWw7bxWbKZpCl4diJi86yEAtD3kSkmljaC0eVNABO9q9B5mEAh1SbTf2sFcFe1wEkkkL6jxQlHyBKiKU0nOG3HcPshEJqzqDG+sF6uk="
-  notifications:
+  - secure: "XdzBZLIxUJXI1J25xQ9A9YaQUGOeEpXLed6apyezJSG6hOJXOeiH1+KickYimcMA7A7mHEN+eBfblx9b07Y+ViA1rV3U0Jh9cn+3a0SLDY2Co66w5U/3YL1MqNeBuJU+wm1iAXv08FaSc6zjd2XLnlU1Y8wI7y+EZiZrQhmxdQg="
+  - secure: "EubmZqrs9FStp/yhW+SwQqnjMjotGs5h8SQ3K8zqWJqIoVKrk8bx7K4bRbCpbwt5LquvkWw7bxWbKZpCl4diJi86yEAtD3kSkmljaC0eVNABO9q9B5mEAh1SbTf2sFcFe1wEkkkL6jxQlHyBKiKU0nOG3HcPshEJqzqDG+sF6uk="
+notifications:
   email:
     - ccollas@mailjet.com
