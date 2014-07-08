@@ -5,9 +5,9 @@
     {
         $mj = new Mailjet("API_KEY", "API_SECRET_KEY");
         
-        $return = $mj->contact();
+        $mj->contact();
         
-        $this->assertEquals(200, $return);
+        $this->assertEquals(200, $mj->_response_code);
     }
     
     public function testCreateContact()
@@ -18,9 +18,9 @@
           "method" => "POST",
           "Email" => "test@gmail.com"
         );
-        $return = $mj->contact($params);
+        $mj->contact($params);
         
-        $this->assertEquals(200, $return);
+        $this->assertEquals(200, $mj->_response_code);
     }
   }
 ?>
