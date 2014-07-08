@@ -5,5 +5,5 @@
     print_r($mj->contact());
 	}
 	assert_options(ASSERT_ACTIVE, 1);
-	assert(http_get_response_code(), 200);
+	assert(http_response_code(), 200);
 ?>
