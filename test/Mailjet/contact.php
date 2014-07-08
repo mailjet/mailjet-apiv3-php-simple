@@ -18,6 +18,7 @@
           "method" => "POST",
           "Email" => "test@gmail.com"
         );
+
         $mj->contact($params);
         
         $this->assertEquals(201, $mj->_response_code);
