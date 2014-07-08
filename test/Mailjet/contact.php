@@ -20,7 +20,7 @@
         );
         $mj->contact($params);
         
-        $this->assertEquals(200, $mj->_response_code);
+        $this->assertEquals(201, $mj->_response_code);
     }
   }
 ?>
