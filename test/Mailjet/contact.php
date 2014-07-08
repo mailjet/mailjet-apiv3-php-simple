@@ -7,7 +7,7 @@
         
         $return = $mj->contact();
         
-        $this->assertEquals($return, 200);
+        $this->assertEquals(200, $return);
     }
     
     public function testCreateContact()
@@ -20,7 +20,7 @@
         );
         $return = $mj->contact($params);
         
-        $this->assertEquals($return, 200);
+        $this->assertEquals(200, $return);
     }
   }
 ?>
