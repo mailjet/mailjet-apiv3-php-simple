@@ -4,8 +4,8 @@
     public function testListContacts()
     {
         $mj = new Mailjet("API_KEY", "API_SECRET_KEY");
-        print_r($mj->contact());
-        $this->assertEquals(http_response_code(), 200);
+        $return = $mj->contact();
+        $this->assertEquals(http_response_code(), $return);
     }
   }
 ?>
