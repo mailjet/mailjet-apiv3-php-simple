@@ -3,7 +3,7 @@
   {
     public function testListContacts()
     {
-        $mj = new Mailjet($API_KEY, $API_SECRET_KEY);
+        $mj = new Mailjet(getenv('API_KEY'), getenv('API_SECRET_KEY'));
         
         $mj->contact();
         
@@ -12,7 +12,7 @@
     
     public function testCreateContact()
     {
-        $mj = new Mailjet($API_KEY, $API_SECRET_KEY);
+        $mj = new Mailjet(getenv('API_KEY'), getenv('API_SECRET_KEY'));
         
         $params = array(
           "method" => "POST",
