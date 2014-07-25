@@ -23,7 +23,7 @@ class Mailjet
     # Edit with your Mailjet API keys (you can find them here : https://app.mailjet.com/account/api_keys)
     var $apiKey = '';
     var $secretKey = '';
-    
+
     # Constructor function
     public function __construct($apiKey = false, $secretKey = false)
     {
@@ -33,7 +33,69 @@ class Mailjet
             $this->secretKey = $secretKey;
         $this->apiUrl = (($this->secure) ? 'https' : 'http') . '://api.mailjet.com/v3/REST';
     }
-    
+
+    public function curl_setopt_custom_postfields($curl_handle, $postfields, $headers = null) {
+        $algos = hash_algos();
+        $hashAlgo = null;
+        foreach (array('sha1', 'md5') as $preferred) {
+            if (in_array($preferred, $algos)) {
+                $hashAlgo = $preferred;
+                break;
+            }
+        }
+        if ($hashAlgo === null)
+            list($hashAlgo) = $algos;
+        $boundary =
+            '----------------------------' .
+            substr(hash($hashAlgo, 'cURL-php-multiple-value-same-key-support' . microtime()), 0, 12);
+
+        $body = array();
+        $crlf = "\r\n";
+        $fields = array();
+        foreach ($postfields as $key => $value) {
+            if (is_array($value)) {
+                foreach ($value as $v) {
+                    $fields[] = array($key, $v);
+                }
+            }
+            else {
+                $fields[] = array($key, $value);
+            }
+        }
+        foreach ($fields as $field) {
+            list($key, $value) = $field;
+            if (strpos($value, '@') === 0) {
+                preg_match('/^@(.*?)$/', $value, $matches);
+                list($dummy, $filename) = $matches;
+                $body[] = '--' . $boundary;
+                $body[] = 'Content-Disposition: form-data; name="' . $key . '"; filename="' . basename($filename) . '"';
+                $body[] = 'Content-Type: application/octet-stream';
+                $body[] = '';
+                $body[] = file_get_contents($filename);
+            }
+            else {
+                $body[] = '--' . $boundary;
+                $body[] = 'Content-Disposition: form-data; name="' . $key . '"';
+                $body[] = '';
+                $body[] = $value;
+            }
+        }
+        $body[] = '--' . $boundary . '--';
+        $body[] = '';
+        $contentType = 'multipart/form-data; boundary=' . $boundary;
+        $content = join($crlf, $body);
+        $contentLength = strlen($content);
+
+        curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
+            'Content-Length: ' . $contentLength,
+            'Expect: 100-continue',
+            'Content-Type: ' . $contentType,
+        ));
+
+        curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $content);
+
+    }
+
     public function __call($resource, $args)
     {
         # Parameters array
@@ -87,16 +149,16 @@ class Mailjet
         if ($request == "VIEW" || $request == "DELETE" || $request == "PUT")
             if ($id != '')
                 $this->call_url .= '/' . $id;
-        
+
         return $this->call_url;
     }
-    
+
     public function sendRequest($resource = false, $params = array(), $request = "GET", $id = '')
     {
         # Method
         $this->_method  = $resource;
         $this->_request = $request;
-        
+
         # Build request URL
         $url = $this->requestUrlBuilder($resource, $params, $request, $id);
 
@@ -107,18 +169,13 @@ class Mailjet
         curl_setopt($curl_handle, CURLOPT_SSL_VERIFYPEER, FALSE);
         curl_setopt($curl_handle, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($curl_handle, CURLOPT_USERPWD, $this->apiKey . ':' . $this->secretKey);
-        
+
         $this->_request_post = false;
 
         if (($request == 'POST') || ($request == 'PUT')):
-            curl_setopt($curl_handle, CURLOPT_POST, count($params));
+            curl_setopt($curl_handle, CURLOPT_POST, 1);
             if ($resource == "sendEmail")
-            {
-                curl_setopt($curl_handle, CURLOPT_POSTFIELDS, http_build_query($params));
-                curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
-                    'Content-Type: application/x-www-form-urlencoded'
-                ));
-            }
+                $this->curl_setopt_custom_postfields($curl_handle, $params);
             else
             {
                 curl_setopt($curl_handle, CURLOPT_POSTFIELDS, json_encode($params));
@@ -138,7 +195,7 @@ class Mailjet
         }
 
         $buffer = curl_exec($curl_handle);
-        
+
         if ($this->debug == 2)
             var_dump($buffer);
 
@@ -157,7 +214,7 @@ class Mailjet
             return ($this->_response_code == 204) ? true : false;
         return ($this->_response_code == 200) ? true : false;
     }
-    
+
     public function debug()
     {
         echo '<style type="text/css">';
@@ -174,19 +231,19 @@ class Mailjet
 
         ';
         echo '</style>';
-        
+
         echo '<div id="debugger">';
-        
+
         if (isset($this->_response_code)):
             if (($this->_response_code == 200) || ($this->_response_code == 201) || ($this->_response_code == 204)):
                 echo '<table>';
                 echo '<tr class="Success"><th>Success</th><td></td></tr>';
                 echo '<tr><th>Status code</th><td>' . $this->_response_code . '</td></tr>';
-                
+
                 if (isset($this->_response)):
                     echo '<tr><th>Response</th><td><pre>' . utf8_decode(print_r($this->_response, 1)) . '</pre></td></tr>';
                 endif;
-                
+
                 echo '</table>';
             elseif ($this->_response_code == 304):
                 echo '<table>';
@@ -208,16 +265,16 @@ class Mailjet
                 echo '</table>';
             endif;
         endif;
-        
+
         $call_url = parse_url($this->call_url);
-        
+
         echo '<table>';
         echo '<tr class="h"><th>API config</th><td></td></tr>';
         echo '<tr><th>Protocole</th><td>' . $call_url['scheme'] . '</td></tr>';
         echo '<tr><th>Host</th><td>' . $call_url['host'] . '</td></tr>';
         echo '<tr><th>Version</th><td>' . $this->version . '</td></tr>';
         echo '</table>';
-        
+
         echo '<table>';
         echo '<tr class="h"><th>Call infos</th><td></td></tr>';
         echo '<tr><th>Resource</th><td>' . $this->_method . '</td></tr>';
@@ -236,17 +293,17 @@ class Mailjet
 
         if ($this->_request_post) {
             echo '<tr><th>Post Arguments</th><td>';
-            
+
             foreach ($this->_request_post as $k => $v) {
                 echo $k . ' = <span style="color:#ff6e56;">' . $v . '</span><br/>';
             }
-            
+
             echo '</td></tr>';
         }
-        
+
         echo '<tr><th>Call url</th><td>' . $this->call_url . '</td></tr>';
         echo '</table>';
-        
+
         echo '</div>';
     }
 }
