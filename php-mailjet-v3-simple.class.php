@@ -37,12 +37,14 @@ class Mailjet
     public function curl_setopt_custom_postfields($curl_handle, $postfields, $headers = null) {
         $algos = hash_algos();
         $hashAlgo = null;
+        
         foreach (array('sha1', 'md5') as $preferred) {
             if (in_array($preferred, $algos)) {
                 $hashAlgo = $preferred;
                 break;
             }
         }
+        
         if ($hashAlgo === null)
             list($hashAlgo) = $algos;
         $boundary =
@@ -52,6 +54,7 @@ class Mailjet
         $body = array();
         $crlf = "\r\n";
         $fields = array();
+        
         foreach ($postfields as $key => $value) {
             if (is_array($value)) {
                 foreach ($value as $v) {
@@ -62,6 +65,7 @@ class Mailjet
                 $fields[] = array($key, $value);
             }
         }
+        
         foreach ($fields as $field) {
             list($key, $value) = $field;
             if (strpos($value, '@') === 0) {
@@ -80,6 +84,7 @@ class Mailjet
                 $body[] = $value;
             }
         }
+        
         $body[] = '--' . $boundary . '--';
         $body[] = '';
         $contentType = 'multipart/form-data; boundary=' . $boundary;
@@ -93,7 +98,6 @@ class Mailjet
         ));
 
         curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $content);
-
     }
 
     public function __call($resource, $args)
