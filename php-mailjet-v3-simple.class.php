@@ -61,9 +61,8 @@ class Mailjet
                     $fields[] = array($key, $v);
                 }
             }
-            else {
+            else
                 $fields[] = array($key, $value);
-            }
         }
         
         foreach ($fields as $field) {
