@@ -47,6 +47,7 @@ class Mailjet
         
         if ($hashAlgo === null)
             list($hashAlgo) = $algos;
+            
         $boundary =
             '----------------------------' .
             substr(hash($hashAlgo, 'cURL-php-multiple-value-same-key-support' . microtime()), 0, 12);
