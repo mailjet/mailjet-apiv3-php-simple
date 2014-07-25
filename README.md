@@ -77,7 +77,7 @@ function sendEmail() {
 
 - A function to send an email with some attachments (absolute paths on your computer) :
 ```php
-function sendEmail() {
+function sendEmailWithAttachments() {
     $mj = new Mailjet();
     $params = array(
         "method" => "POST",
@@ -86,6 +86,25 @@ function sendEmail() {
         "subject" => "Hello World!",
         "text" => "Greetings from Mailjet.",
         "attachment" => array("@/path/to/first/file.txt", "@/path/to/second/file.txt")
+    );
+
+    echo "success - email sent";
+
+    return $mj->sendEmail($params);
+}
+```
+
+- A function to send an email with some inline attachments (absolute paths on your computer) :
+```php
+function sendEmailWithInlineAttachments() {
+    $mj = new Mailjet();
+    $params = array(
+        "method" => "POST",
+        "from" => "ms.mailjet@example.com",
+        "to" => "mr.mailjet@example.com",
+        "subject" => "Hello World!",
+        "html" => "<html>Greetings from Mailjet <img src=\"cid:photo1.jpg\"><img src=\"cid:photo2.jpg\"></html>",
+	"inlineattachment" => array("@/path/to/photo1.jpg", "@/path/to/photo2.jpg")
     );
 
     echo "success - email sent";
