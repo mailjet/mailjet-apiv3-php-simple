@@ -75,6 +75,25 @@ function sendEmail() {
 }
 ```
 
+- A function to send an email with some attachments (absolute paths on your computer) :
+```php
+function sendEmail() {
+    $mj = new Mailjet();
+    $params = array(
+        "method" => "POST",
+        "from" => "ms.mailjet@example.com",
+        "to" => "mr.mailjet@example.com",
+        "subject" => "Hello World!",
+        "text" => "Greetings from Mailjet.",
+        "attachment" => array("@/path/to/first/file.txt", "@/path/to/second/file.txt")
+    );
+
+    echo "success - email sent";
+
+    return $mj->sendEmail($params);
+}
+```
+
 - A function to print the list of your contacts :
 ```php
 function listContacts()
