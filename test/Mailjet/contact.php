@@ -24,7 +24,7 @@
         $this->assertEquals(201, $mj->_response_code);
     }
 
-    public function testdeleteLastContactslist()
+    public function testDeleteLastContactslist()
     {
         $mj = new Mailjet(getenv('API_KEY'), getenv('API_SECRET_KEY'));
 
