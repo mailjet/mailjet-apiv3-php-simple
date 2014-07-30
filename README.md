@@ -137,6 +137,21 @@ function createList($Lname) {
 }
 ```
 
+- A function to get a list with ID ```$listID``` :
+```php
+function getList($listID) {
+    $mj = new Mailjet();
+    $params = array(
+    	"method" => "VIEW",
+    	"ID" => $listID
+    );
+
+    echo "success - get list ".$listID;
+
+    return $mj->contactslist($params);
+}
+```
+
 - A function to create a contact with email ```$Cemail``` :
 ```php
 function createContact($Cemail) {
