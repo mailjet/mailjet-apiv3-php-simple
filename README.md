@@ -69,9 +69,14 @@ function sendEmail() {
         "text" => "Greetings from Mailjet."
     );
 
-    echo "success - email sent";
+    $result = $mj->sendEmail($params);
+    
+    if ($mj->_response_code == 200)
+	echo "success - email sent";
+    else
+	echo "error - ".$mj->_response_code;
 
-    return $mj->sendEmail($params);
+    return $result;
 }
 ```
 
@@ -88,9 +93,14 @@ function sendEmailWithAttachments() {
         "attachment" => array("@/path/to/first/file.txt", "@/path/to/second/file.txt")
     );
 
-    echo "success - email sent";
+    $result = $mj->sendEmail($params);
+    
+    if ($mj->_response_code == 200)
+	echo "success - email sent";
+    else
+	echo "error - ".$mj->_response_code;
 
-    return $mj->sendEmail($params);
+    return $result;
 }
 ```
 
@@ -107,9 +117,14 @@ function sendEmailWithInlineAttachments() {
 	"inlineattachment" => array("@/path/to/photo1.jpg", "@/path/to/photo2.jpg")
     );
 
-    echo "success - email sent";
+    $result = $mj->sendEmail($params);
+    
+    if ($mj->_response_code == 200)
+	echo "success - email sent";
+    else
+	echo "error - ".$mj->_response_code;
 
-    return $mj->sendEmail($params);
+    return $result;
 }
 ```
 
@@ -117,8 +132,15 @@ function sendEmailWithInlineAttachments() {
 ```php
 function listContacts()
 {
-	$mj = new Mailjet();
-	print_r($mj->contact());
+    $mj = new Mailjet();
+    $result = $mj->contact();
+
+    if ($mj->_response_code == 200)
+	echo "success - listed contacts";
+    else
+	echo "error - ".$mj->_response_code;
+
+    return $result;
 }
 ```
 
@@ -131,9 +153,14 @@ function createList($Lname) {
     	"Name" => $Lname
     );
 
-    echo "success - created list ".$Lname;
+    $result = $mj->contactslist($params);
 
-    return $mj->contactslist($params);
+    if ($mj->_response_code == 201)
+	echo "success - created list ".$Lname;
+    else
+	echo "error - ".$mj->_response_code;
+
+    return $result;
 }
 ```
 
@@ -146,78 +173,108 @@ function getList($listID) {
     	"ID" => $listID
     );
 
-    echo "success - get list ".$listID;
+    $result = $mj->contactslist($params);
 
-    return $mj->contactslist($params);
+    if ($mj->_response_code == 200)
+	echo "success - got list ".$listID;
+    else
+	echo "error - ".$mj->_response_code;
+    
+    return $result;
 }
 ```
 
 - A function to create a contact with email ```$Cemail``` :
 ```php
 function createContact($Cemail) {
-  	$mj = new Mailjet();
+    $mj = new Mailjet();
     $params = array(
     	"method" => "POST",
     	"Email" => $Cemail
     );
 
-    echo "success - created contact ".$Cemail;
+    $result = $mj->contact($params);
 
-    return $mj->contact($params);
+    if ($mj->_response_code == 201)
+	echo "success - created contact ".$Cname;
+    else
+	echo "error - ".$mj->_response_code;
+	
+    return $result;
 }
 ```
 
 - A function to add the contact which ID is ```$contactID``` to the list which ID is ```$listID``` :
 ```php
-function addContactToList($listID, $contactID) {
-	$mj = new Mailjet();
+function addContactToList($contactID, $listID) {
+    $mj = new Mailjet();
     $params = array(
     	"method" => "POST",
     	"ContactID" => $contactID,
     	"ListID" => $listID
     );
 
-    echo "success - contact ".$contactID." added to the list ".$listID;
+    $result = $mj->listrecipient($params);
+    
+    if ($mj->_response_code == 201)
+	echo "success - contact ".$contactID." added to the list ".$listID;
+    else
+	echo "error - ".$mj->_response_code;
 
-    return $mj->listrecipient($params);
+    return $result;
 }
 ```
 
-- A function to print your profile information :
+- A function to get your profile information :
 ```php
 function viewProfileInfo() {
-  	$mj = new Mailjet();
-	print_r($mj->myprofile());
+    $mj = new Mailjet();
+    $result = $mj->myprofile();
+    
+    if ($mj->_response_code == 200)
+	echo "success - got profile information";
+    else
+	echo "error - ".$mj->_response_code;
 }
 ```
 
 - A function to update the field ```AddressCity``` of your profile :
 ```php
 function updateProfileInfo() {
-	$mj = new Mailjet();
+    $mj = new Mailjet();
     $params = array(
     	"method" => "PUT",
     	"AddressCity" => "New York"
     );
 
-    echo "success - field AddressCity changed";
+    $result = $mj->myprofile($params);
+    
+    if ($mj->_response_code == 200)
+	echo "success - field AddressCity changed";
+    else
+	echo "error - ".$mj->_response_code;
 
-    return $mj->myprofile($params);
+    return $result;
 }
 ```
 
 - A function to delete the list which ID is ```$listID``` :
 ```php
 function deleteList($listID) {
-	$mj = new Mailjet();
+    $mj = new Mailjet();
     $params = array(
     	"method" => "DELETE",
     	"ID" => $listID
     );
 
-    echo "success - deleted list ".$listID;
+    $result = $mj->contactslist($params);
+    
+    if ($mj->_response_code == 204)
+	echo "success - deleted list";
+    else
+	echo "error - ".$mj->_response_code;
 
-    return $mj->contactslist($params);
+    return $result;
 }
 ```
 
