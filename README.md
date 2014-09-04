@@ -70,11 +70,11 @@ function sendEmail() {
     );
 
     $result = $mj->sendEmail($params);
-    
+
     if ($mj->_response_code == 200)
-	echo "success - email sent";
+	   echo "success - email sent";
     else
-	echo "error - ".$mj->_response_code;
+	   echo "error - ".$mj->_response_code;
 
     return $result;
 }
@@ -94,11 +94,11 @@ function sendEmailWithAttachments() {
     );
 
     $result = $mj->sendEmail($params);
-    
+
     if ($mj->_response_code == 200)
-	echo "success - email sent";
+	   echo "success - email sent";
     else
-	echo "error - ".$mj->_response_code;
+	   echo "error - ".$mj->_response_code;
 
     return $result;
 }
@@ -118,11 +118,11 @@ function sendEmailWithInlineAttachments() {
     );
 
     $result = $mj->sendEmail($params);
-    
+
     if ($mj->_response_code == 200)
-	echo "success - email sent";
+	   echo "success - email sent";
     else
-	echo "error - ".$mj->_response_code;
+	   echo "error - ".$mj->_response_code;
 
     return $result;
 }
@@ -136,9 +136,9 @@ function listContacts()
     $result = $mj->contact();
 
     if ($mj->_response_code == 200)
-	echo "success - listed contacts";
+	   echo "success - listed contacts";
     else
-	echo "error - ".$mj->_response_code;
+	   echo "error - ".$mj->_response_code;
 
     return $result;
 }
@@ -156,9 +156,9 @@ function createList($Lname) {
     $result = $mj->contactslist($params);
 
     if ($mj->_response_code == 201)
-	echo "success - created list ".$Lname;
+	   echo "success - created list ".$Lname;
     else
-	echo "error - ".$mj->_response_code;
+	   echo "error - ".$mj->_response_code;
 
     return $result;
 }
@@ -176,10 +176,10 @@ function getList($listID) {
     $result = $mj->contactslist($params);
 
     if ($mj->_response_code == 200)
-	echo "success - got list ".$listID;
+	   echo "success - got list ".$listID;
     else
-	echo "error - ".$mj->_response_code;
-    
+	   echo "error - ".$mj->_response_code;
+
     return $result;
 }
 ```
@@ -196,10 +196,10 @@ function createContact($Cemail) {
     $result = $mj->contact($params);
 
     if ($mj->_response_code == 201)
-	echo "success - created contact ".$Cname;
+	   echo "success - created contact ".$Cname;
     else
-	echo "error - ".$mj->_response_code;
-	
+	   echo "error - ".$mj->_response_code;
+
     return $result;
 }
 ```
@@ -215,11 +215,11 @@ function addContactToList($contactID, $listID) {
     );
 
     $result = $mj->listrecipient($params);
-    
+
     if ($mj->_response_code == 201)
-	echo "success - contact ".$contactID." added to the list ".$listID;
+	   echo "success - contact ".$contactID." added to the list ".$listID;
     else
-	echo "error - ".$mj->_response_code;
+	   echo "error - ".$mj->_response_code;
 
     return $result;
 }
@@ -230,11 +230,11 @@ function addContactToList($contactID, $listID) {
 function viewProfileInfo() {
     $mj = new Mailjet();
     $result = $mj->myprofile();
-    
+
     if ($mj->_response_code == 200)
-	echo "success - got profile information";
+	   echo "success - got profile information";
     else
-	echo "error - ".$mj->_response_code;
+	   echo "error - ".$mj->_response_code;
 }
 ```
 
@@ -248,11 +248,11 @@ function updateProfileInfo() {
     );
 
     $result = $mj->myprofile($params);
-    
+
     if ($mj->_response_code == 200)
-	echo "success - field AddressCity changed";
+	   echo "success - field AddressCity changed";
     else
-	echo "error - ".$mj->_response_code;
+	   echo "error - ".$mj->_response_code;
 
     return $result;
 }
@@ -268,11 +268,11 @@ function deleteList($listID) {
     );
 
     $result = $mj->contactslist($params);
-    
+
     if ($mj->_response_code == 204)
-	echo "success - deleted list";
+	   echo "success - deleted list";
     else
-	echo "error - ".$mj->_response_code;
+	   echo "error - ".$mj->_response_code;
 
     return $result;
 }
