@@ -144,7 +144,7 @@ function listContacts()
 }
 ```
 
-- A function to update your contactData resource, using arrays :
+- A function to update your contactData resource with ID ```$id```, using arrays :
 ```php
 function updateContactData($id) {
 	$mj = new Mailjet();
