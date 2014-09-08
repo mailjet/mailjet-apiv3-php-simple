@@ -144,6 +144,28 @@ function listContacts()
 }
 ```
 
+- A function to update your contactData resource, using arrays :
+```php
+function updateContactData($id) {
+	$mj = new Mailjet();
+	$data = array(array('Name' => 'lastname', 'Value' => 'Jet'), array('Name' => 'firstname', 'Value' => 'Mail'));
+	$params = array(
+		'ID' => $id,
+		'Data' => $data,
+		'method' => 'PUT'
+	);
+
+	$result = $mj->contactdata($params);
+
+	if ($mj->_response_code == 200)
+       echo "success - data changed";
+    else
+       echo "error - ".$mj->_response_code;
+
+	return $result;
+}
+```
+
 - A function to create a list with name ```$Lname``` :
 ```php
 function createList($Lname) {
