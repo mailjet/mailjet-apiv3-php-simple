@@ -37,17 +37,17 @@ class Mailjet
     public function curl_setopt_custom_postfields($curl_handle, $postfields, $headers = null) {
         $algos = hash_algos();
         $hashAlgo = null;
-        
+
         foreach (array('sha1', 'md5') as $preferred) {
             if (in_array($preferred, $algos)) {
                 $hashAlgo = $preferred;
                 break;
             }
         }
-        
+
         if ($hashAlgo === null)
             list($hashAlgo) = $algos;
-            
+
         $boundary =
             '----------------------------' .
             substr(hash($hashAlgo, 'cURL-php-multiple-value-same-key-support' . microtime()), 0, 12);
@@ -55,7 +55,7 @@ class Mailjet
         $body = array();
         $crlf = "\r\n";
         $fields = array();
-        
+
         foreach ($postfields as $key => $value) {
             if (is_array($value)) {
                 foreach ($value as $v) {
@@ -65,7 +65,7 @@ class Mailjet
             else
                 $fields[] = array($key, $value);
         }
-        
+
         foreach ($fields as $field) {
             list($key, $value) = $field;
             if (strpos($value, '@') === 0) {
@@ -84,7 +84,7 @@ class Mailjet
                 $body[] = $value;
             }
         }
-        
+
         $body[] = '--' . $boundary . '--';
         $body[] = '';
         $contentType = 'multipart/form-data; boundary=' . $boundary;
@@ -111,14 +111,18 @@ class Mailjet
         # Request ID, empty by default
         $id      = isset($params["ID"]) ? $params["ID"] : '';
 
-        # Unset useless params
-        if (isset($params["method"]))
-            unset($params["method"]);
-        if (isset($params["ID"]))
-            unset($params["ID"]);
-
-        # Make request
-        $result = $this->sendRequest($resource, $params, $request, $id);
+        if ($id == '')
+        {
+            # Request Unique field, empty by default
+            $unique  = isset($params["unique"]) ? $params["unique"] : '';
+            # Make request
+            $result = $this->sendRequest($resource, $params, $request, $unique);
+        }
+        else
+        {
+            # Make request
+            $result = $this->sendRequest($resource, $params, $request, $id);
+        }
 
         # Return result
         $return = ($result === true) ? $this->_response : false;

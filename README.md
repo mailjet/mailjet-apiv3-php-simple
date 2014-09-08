@@ -205,6 +205,8 @@ function getList($listID) {
     return $result;
 }
 ```
+Note : You can use unique fields of resources instead of IDs, like
+```"unique" => "test@gmail.com"``` in your ```params``` array for this example
 
 - A function to create a contact with email ```$Cemail``` :
 ```php
