@@ -55,7 +55,8 @@ $mj->contact($params);
 **Info :** If you don't specify the method of the request in the array ```$params``` (see examples below), it will be a GET.
 
 ## Examples
-Here are some function examples :
+
+### SendAPI
 
 - A function to send an email :
 ```php
@@ -127,6 +128,43 @@ function sendEmailWithInlineAttachments() {
     return $result;
 }
 ```
+
+### Account Settings
+
+- A function to get your profile information :
+```php
+function viewProfileInfo() {
+    $mj = new Mailjet();
+    $result = $mj->myprofile();
+
+    if ($mj->_response_code == 200)
+       echo "success - got profile information";
+    else
+       echo "error - ".$mj->_response_code;
+}
+```
+
+- A function to update the field ```AddressCity``` of your profile :
+```php
+function updateProfileInfo() {
+    $mj = new Mailjet();
+    $params = array(
+        "method" => "PUT",
+        "AddressCity" => "New York"
+    );
+
+    $result = $mj->myprofile($params);
+
+    if ($mj->_response_code == 200)
+       echo "success - field AddressCity changed";
+    else
+       echo "error - ".$mj->_response_code;
+
+    return $result;
+}
+```
+
+### Contact Lists
 
 - A function to print the list of your contacts :
 ```php
@@ -242,39 +280,6 @@ function addContactToList($contactID, $listID) {
 
     if ($mj->_response_code == 201)
 	   echo "success - contact ".$contactID." added to the list ".$listID;
-    else
-	   echo "error - ".$mj->_response_code;
-
-    return $result;
-}
-```
-
-- A function to get your profile information :
-```php
-function viewProfileInfo() {
-    $mj = new Mailjet();
-    $result = $mj->myprofile();
-
-    if ($mj->_response_code == 200)
-	   echo "success - got profile information";
-    else
-	   echo "error - ".$mj->_response_code;
-}
-```
-
-- A function to update the field ```AddressCity``` of your profile :
-```php
-function updateProfileInfo() {
-    $mj = new Mailjet();
-    $params = array(
-    	"method" => "PUT",
-    	"AddressCity" => "New York"
-    );
-
-    $result = $mj->myprofile($params);
-
-    if ($mj->_response_code == 200)
-	   echo "success - field AddressCity changed";
     else
 	   echo "error - ".$mj->_response_code;
 
