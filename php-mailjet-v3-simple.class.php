@@ -186,7 +186,10 @@ class Mailjet
 
         if (($request == 'POST') || ($request == 'PUT')):
             curl_setopt($curl_handle, CURLOPT_POST, 1);
-            var_dump($params);
+            
+            if ($this->debug == 2)
+                var_dump($params);
+                
             if ($resource == "sendEmail")
                 $this->curl_setopt_custom_postfields($curl_handle, $params);
             else
