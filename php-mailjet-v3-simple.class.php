@@ -106,13 +106,12 @@ class Mailjet
         $params  = (sizeof($args) > 0) ? $args[0] : array();
 
         # Request method, GET by default
-        if(isset($params["method"])) {
+        if (isset($params["method"])) {
         	$request = strtoupper($params["method"]);
         	unset($params['method']);
         }
-        else {
+        else
         	$request = 'GET';
-        }
 
         # Request ID, empty by default
         $id      = isset($params["ID"]) ? $params["ID"] : '';
@@ -133,7 +132,7 @@ class Mailjet
             # Make request
             $result = $this->sendRequest($resource, $params, $request, $id);
         }
-        
+
         # Return result
         $return = ($result === true) ? $this->_response : false;
         if ($this->debug == 2 || ($this->debug == 1 && $return == false)) {
@@ -192,10 +191,10 @@ class Mailjet
 
         if (($request == 'POST') || ($request == 'PUT')):
             curl_setopt($curl_handle, CURLOPT_POST, 1);
-            
+
             if ($this->debug == 2)
                 var_dump($params);
-                
+
             if ($resource == "sendEmail")
                 $this->curl_setopt_custom_postfields($curl_handle, $params);
             else
