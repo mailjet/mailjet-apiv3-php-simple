@@ -106,7 +106,13 @@ class Mailjet
         $params  = (sizeof($args) > 0) ? $args[0] : array();
 
         # Request method, GET by default
-        $request = isset($params["method"]) ? strtoupper($params["method"]) : 'GET';
+        if(isset($params["method"])) {
+        	$request = strtoupper($params["method"]);
+        	unset($params['method']);
+        }
+        else {
+        	$request = 'GET';
+        }
 
         # Request ID, empty by default
         $id      = isset($params["ID"]) ? $params["ID"] : '';
