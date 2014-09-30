@@ -116,7 +116,11 @@ class Mailjet
         # Request ID, empty by default
         $id      = isset($params["ID"]) ? $params["ID"] : '';
 
-        # Using SendAPI without the to parameter but with cc AND/OR bcc
+        /*
+            Using SendAPI without the "to" parameter but with "cc" AND/OR "bcc"
+            Our API needs the "to" parameter filled to send email
+            We give it a default value with an email @example.org. See http://en.wikipedia.org/wiki/Example.com
+        */
         if ($resource == "sendEmail" && (empty($params["to"]) && (!empty($params["cc"]) || !empty($params["bcc"]))))
             $params["to"] = "mailjet@example.org";
 
