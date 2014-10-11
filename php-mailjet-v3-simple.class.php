@@ -110,11 +110,11 @@ class Mailjet
 
         # Request method, GET by default
         if (isset($params["method"])) {
-        	$request = strtoupper($params["method"]);
-        	unset($params['method']);
+            $request = strtoupper($params["method"]);
+            unset($params['method']);
         }
         else
-        	$request = 'GET';
+            $request = 'GET';
 
         # Request ID, empty by default
         $id      = isset($params["ID"]) ? $params["ID"] : '';
@@ -159,12 +159,12 @@ class Mailjet
             $this->call_url = $this->apiUrl . '/' . $resource;
         }
 
-        if ($request == "GET" && count($params) > 0) {
+        if (($request == "GET" || $request == "VIEW") && count($params) > 0) {
             $this->call_url .= '?';
         }
 
         foreach ($params as $key => $value) {
-            if ($request == "GET")
+            if ($request == "GET" || $request == "VIEW")
             {
                 $query_string[$key] = $key . '=' . $value;
                 $this->call_url .= $query_string[$key] . '&';
