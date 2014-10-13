@@ -132,6 +132,7 @@ class Mailjet
         {
             # Request Unique field, empty by default
             $unique  = isset($params["unique"]) ? $params["unique"] : '';
+            unset($params["unique"]);
             # Make request
             $result = $this->sendRequest($resource, $params, $request, $unique);
         }
