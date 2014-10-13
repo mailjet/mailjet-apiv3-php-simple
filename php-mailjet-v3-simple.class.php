@@ -156,10 +156,14 @@ class Mailjet
         if ($resource == "sendEmail") {
             $this->call_url = "https://api.mailjet.com/v3/send/message";
         }
+        else if ($resource == "addHTMLbody") {
+            $newsletter_id = $params['newsletter_id'];
+            $this->call_url = "https://api.mailjet.com/v3/DATA/NewsLetter/". $newsletter_id ."/HTML/text/html/LAST";
+        }
         else {
             $this->call_url = $this->apiUrl . '/' . $resource;
         }
-
+        
         if (($request == "GET" || $request == "VIEW") && count($params) > 0) {
             $this->call_url .= '?';
         }
@@ -213,6 +217,13 @@ class Mailjet
 
             if ($resource == "sendEmail") {
                 $this->curl_setopt_custom_postfields($curl_handle, $params);
+            }
+            else if ($resource == "addHTMLbody")
+            {
+                curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $params['html_content']);
+                curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
+                    'Content-Type: text/html'
+                ));
             }
             else
             {
