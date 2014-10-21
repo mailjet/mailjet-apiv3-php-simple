@@ -164,12 +164,12 @@ class Mailjet
             $this->call_url = $this->apiUrl . '/' . $resource;
         }
         
-        if (($request == "GET" || $request == "VIEW") && count($params) > 0) {
+        if (($request == "GET") && (count($params) > 0)) {
             $this->call_url .= '?';
         }
 
         foreach ($params as $key => $value) {
-            if ($request == "GET" || $request == "VIEW")
+            if ($request == "GET")
             {
                 $query_string[$key] = $key . '=' . $value;
                 $this->call_url .= $query_string[$key] . '&';
