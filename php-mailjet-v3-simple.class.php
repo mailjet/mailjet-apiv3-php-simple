@@ -27,10 +27,12 @@ class Mailjet
     # Constructor function
     public function __construct($apiKey = false, $secretKey = false)
     {
-        if ($apiKey)
+        if ($apiKey) {
             $this->apiKey = $apiKey;
-        if ($secretKey)
+        }
+        if ($secretKey) {
             $this->secretKey = $secretKey;
+        }
         $this->apiUrl = (($this->secure) ? 'https' : 'http') . '://api.mailjet.com/v3/REST';
     }
 
@@ -45,8 +47,9 @@ class Mailjet
             }
         }
 
-        if ($hashAlgo === null)
+        if ($hashAlgo === null) {
             list($hashAlgo) = $algos;
+        }
 
         $boundary =
             '----------------------------' .
@@ -107,23 +110,29 @@ class Mailjet
 
         # Request method, GET by default
         if (isset($params["method"])) {
-        	$request = strtoupper($params["method"]);
-        	unset($params['method']);
+            $request = strtoupper($params["method"]);
+            unset($params['method']);
         }
         else
-        	$request = 'GET';
+            $request = 'GET';
 
         # Request ID, empty by default
-        $id      = isset($params["ID"]) ? $params["ID"] : '';
+        $id = isset($params["ID"]) ? $params["ID"] : '';
 
-        # Using SendAPI without the to parameter but with cc AND/OR bcc
-        if ($resource == "sendEmail" && (empty($params["to"]) && (!empty($params["cc"]) || !empty($params["bcc"]))))
+        /*
+            Using SendAPI without the "to" parameter but with "cc" AND/OR "bcc"
+            Our API needs the "to" parameter filled to send email
+            We give it a default value with an email @example.org. See http://en.wikipedia.org/wiki/Example.com
+        */
+        if ($resource == "sendEmail" && (empty($params["to"]) && (!empty($params["cc"]) || !empty($params["bcc"])))) {
             $params["to"] = "mailjet@example.org";
+        }
 
         if ($id == '')
         {
             # Request Unique field, empty by default
             $unique  = isset($params["unique"]) ? $params["unique"] : '';
+            unset($params["unique"]);
             # Make request
             $result = $this->sendRequest($resource, $params, $request, $unique);
         }
@@ -144,28 +153,36 @@ class Mailjet
 
     public function requestUrlBuilder($resource, $params = array(), $request, $id)
     {
-        if ($resource == "sendEmail")
+        if ($resource == "sendEmail") {
             $this->call_url = "https://api.mailjet.com/v3/send/message";
-        else
+        }
+        else if ($resource == "addHTMLbody") {
+            $newsletter_id = $params['newsletter_id'];
+            $this->call_url = "https://api.mailjet.com/v3/DATA/NewsLetter/". $newsletter_id ."/HTML/text/html/LAST";
+        }
+        else {
             $this->call_url = $this->apiUrl . '/' . $resource;
-
-        if ($request == "GET" && count($params) > 0)
-            $this->call_url .= '?';
-
-        foreach ($params as $key => $value) {
-            if ($request == "GET")
+        }
+        
+        if ($request == "GET") {
+            if (count($params) > 0)
             {
-                $query_string[$key] = $key . '=' . $value;
-                $this->call_url .= $query_string[$key] . '&';
+                $this->call_url .= '?';
+
+                foreach ($params as $key => $value) {
+                    $query_string[$key] = $key . '=' . $value;
+                    $this->call_url .= $query_string[$key] . '&';
+                }
+
+                $this->call_url = substr($this->call_url, 0, -1);
             }
         }
 
-        if ($request == "GET" && count($params) > 0)
-            $this->call_url = substr($this->call_url, 0, -1);
-
-        if ($request == "VIEW" || $request == "DELETE" || $request == "PUT")
-            if ($id != '')
+        if ($request == "VIEW" || $request == "DELETE" || $request == "PUT") {
+            if ($id != '') {
                 $this->call_url .= '/' . $id;
+            }
+        }
 
         return $this->call_url;
     }
@@ -192,11 +209,20 @@ class Mailjet
         if (($request == 'POST') || ($request == 'PUT')):
             curl_setopt($curl_handle, CURLOPT_POST, 1);
 
-            if ($this->debug == 2)
+            if ($this->debug == 2) {
                 var_dump($params);
+            }
 
-            if ($resource == "sendEmail")
+            if ($resource == "sendEmail") {
                 $this->curl_setopt_custom_postfields($curl_handle, $params);
+            }
+            else if ($resource == "addHTMLbody")
+            {
+                curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $params['html_content']);
+                curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
+                    'Content-Type: text/html'
+                ));
+            }
             else
             {
                 curl_setopt($curl_handle, CURLOPT_POSTFIELDS, json_encode($params));
@@ -217,8 +243,9 @@ class Mailjet
 
         $buffer = curl_exec($curl_handle);
 
-        if ($this->debug == 2)
+        if ($this->debug == 2) {
             var_dump($buffer);
+        }
 
         # Response code
         $this->_response_code = curl_getinfo($curl_handle, CURLINFO_HTTP_CODE);
@@ -229,10 +256,12 @@ class Mailjet
         # Return response
         $this->_response = json_decode($buffer);
 
-        if ($request == 'POST')
+        if ($request == 'POST') {
             return ($this->_response_code == 201) ? true : false;
-        if ($request == 'DELETE')
+        }
+        if ($request == 'DELETE') {
             return ($this->_response_code == 204) ? true : false;
+        }
         return ($this->_response_code == 200) ? true : false;
     }
 
