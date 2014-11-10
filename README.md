@@ -328,6 +328,7 @@ function getHTMLbody($newsletter_id) {
     return $result;
 }
 ```
+Note : You need to put an underscore character before your parameters that are not filters in a GET request
 
 - A function to add an HTML body ```$html_content``` to a newsletter ```$newsletter_id``` :
 ```php
