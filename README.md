@@ -309,6 +309,26 @@ function deleteList($listID) {
 
 ### Newsletters
 
+- A function to get the HTML body of the newsletter ```$newsletter_id``` :
+```php
+function getHTMLbody($newsletter_id) {
+    $mj = new Mailjet();
+    $params = array(
+        "method" => "GET",
+        "_newsletter_id" => $newsletter_id
+    );
+
+    $result = $mj->getHTMLbody($params);
+
+    if ($mj->_response_code == 200)
+        echo "success - got body for the newsletter ". $newsletter_id;
+    else
+        echo "error - ".$mj->_response_code;
+
+    return $result;
+}
+```
+
 - A function to add an HTML body ```$html_content``` to a newsletter ```$newsletter_id``` :
 ```php
 function addHTMLbody($newsletter_id, $html_content) {
