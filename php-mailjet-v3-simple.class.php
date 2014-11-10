@@ -156,22 +156,27 @@ class Mailjet
         if ($resource == "sendEmail") {
             $this->call_url = "https://api.mailjet.com/v3/send/message";
         }
-        else if ($resource == "addHTMLbody") {
-            $newsletter_id = $params['newsletter_id'];
+        else if (($resource == "addHTMLbody") || ($resource == "getHTMLbody")) {
+            $newsletter_id = $params['_newsletter_id'];
             $this->call_url = "https://api.mailjet.com/v3/DATA/NewsLetter/". $newsletter_id ."/HTML/text/html/LAST";
         }
         else {
             $this->call_url = $this->apiUrl . '/' . $resource;
         }
-        
+
         if ($request == "GET") {
             if (count($params) > 0)
             {
                 $this->call_url .= '?';
 
                 foreach ($params as $key => $value) {
-                    $query_string[$key] = $key . '=' . $value;
-                    $this->call_url .= $query_string[$key] . '&';
+                    // In a GET request, put an underscore char in front of params to avoid it being treated as a filter
+                    $firstChar = substr($key, 0, -(strlen($key) - 1));
+                    if ($firstChar != "_")
+                    {
+                        $query_string[$key] = $key . '=' . $value;
+                        $this->call_url .= $query_string[$key] . '&';
+                    }
                 }
 
                 $this->call_url = substr($this->call_url, 0, -1);
@@ -254,7 +259,13 @@ class Mailjet
         curl_close($curl_handle);
 
         # Return response
-        $this->_response = json_decode($buffer);
+        if (($this->_response_code == 200) && ($resource == "getHTMLbody")) {
+            $this->_response = $buffer;
+        }
+        else
+        {
+            $this->_response = json_decode($buffer);
+        }
 
         if ($request == 'POST') {
             return ($this->_response_code == 201) ? true : false;
