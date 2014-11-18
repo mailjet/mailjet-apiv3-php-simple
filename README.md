@@ -336,7 +336,7 @@ function addHTMLbody($newsletter_id, $html_content) {
     $mj = new Mailjet();
     $params = array(
         "method" => "PUT",
-        "newsletter_id" => $newsletter_id,
+        "_newsletter_id" => $newsletter_id,
         "html_content" => $html_content
     );
 
