@@ -157,7 +157,13 @@ class Mailjet
             $this->call_url = "https://api.mailjet.com/v3/send/message";
         }
         else if (($resource == "addHTMLbody") || ($resource == "getHTMLbody")) {
-            $newsletter_id = $params['ID'];
+            if (!empty($params['_newsletter_id'])) {
+                $newsletter_id = $params['_newsletter_id'];
+            }
+            else if (!empty($params['ID'])) {
+                $newsletter_id = $params['ID'];
+            }
+           
             $this->call_url = "https://api.mailjet.com/v3/DATA/NewsLetter/". $newsletter_id ."/HTML/text/html/LAST";
         }
         else {
