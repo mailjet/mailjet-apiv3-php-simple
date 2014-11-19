@@ -405,6 +405,30 @@ function scheduleNewsletter($newsletter_id) {
 }
 ```
 
+To send a newsletter immediately, you have two possibilities :
+* ```POST``` a new schedule with a Timestamp which value is ```NOW```
+* use send (only ```POST``` is supported)
+For the second case, here is an example :
+
+```php
+function sendNewsletter($newsletter_id) {
+    $mj = new Mailjet('', '');
+    $params = array(
+        "method" => "POST",
+        "ID" => $newsletter_id
+    );
+
+    $result = $mj->newsletterSend($params);
+
+    if ($mj->_response_code == 201)
+        echo "success - newsletter ". $newsletter_id . " has been sent";
+    else
+        echo "error - ".$mj->_response_code;
+    
+    return $result;
+}
+```
+
 ## Reporting issues
 
 Open an issue on github.
