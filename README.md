@@ -352,7 +352,7 @@ function addHTMLbody($newsletter_id, $html_content) {
 }
 ```
 
-- You can use the ```DetailContent``` action to manage the content of a newsletter, in Text and Html.
+You can use the ```DetailContent``` action to manage the content of a newsletter, in Text and Html.
 It has two properties : ```Text-part``` and ```Html-part```.
 You can use ```GET```, ```POST```, ```PUT``` and ```DELETE```both  requests on this action :
 * ```GET``` : you get the ```Text-part``` and ```Html-part``` properties of a newsletter
@@ -373,7 +373,31 @@ function getNewsletterDetailcontent($newsletter_id) {
     $result = $mj->newsletterDetailContent($params);
 
     if ($mj->_response_code == 200)
-        echo "success - got body for the newsletter ". $newsletter_id;
+        echo "success - got content for the newsletter ". $newsletter_id;
+    else
+        echo "error - ".$mj->_response_code;
+    
+    return $result;
+}
+```
+
+Use the ```schedule``` action to send a newsletter later.
+You just need to perform a ```POST``` request to schedule a new sending and to fill the ```date``` property with a Timestamp format in ISO 8601 : http://www.iso.org/iso/home/standards/iso8601.htm
+You can also ```DELETE``` a schedule
+Here is an example :
+
+```php
+function scheduleNewsletter($newsletter_id) {
+    $mj = new Mailjet('', '');
+    $params = array(
+        "method" => "POST",
+        "ID" => $newsletter_id
+    );
+
+    $result = $mj->newsletterSchedule($params);
+
+    if ($mj->_response_code == 201)
+        echo "success - schedule done for the newsletter ". $newsletter_id;
     else
         echo "error - ".$mj->_response_code;
     
