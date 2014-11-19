@@ -169,7 +169,10 @@ class Mailjet
                  ($resource == "newsletterSend") ||
                  ($resource == "newsletterSchedule") ||
                  ($resource == "newsletterTest")) {
-            $action = substr($resource, 10);
+            $matches = array();
+            preg_match('/newsletter([a-zA-Z]+)/', $resource, $matches);
+
+            $action = $matches[1];
             $newsletter_id = $params['ID'];
             $this->call_url = "https://api.mailjet.com/v3/REST/newsletter/". $newsletter_id ."/".$action;
         }
