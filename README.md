@@ -273,7 +273,8 @@ function addContactToList($contactID, $listID) {
     $params = array(
     	"method" => "POST",
     	"ContactID" => $contactID,
-    	"ListID" => $listID
+    	"ListID" => $listID,
+    	"IsActive" => "True"
     );
 
     $result = $mj->listrecipient($params);
