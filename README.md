@@ -73,9 +73,9 @@ function sendEmail() {
     $result = $mj->sendEmail($params);
 
     if ($mj->_response_code == 200)
-	   echo "success - email sent";
+       echo "success - email sent";
     else
-	   echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->_response_code;
 
     return $result;
 }
@@ -97,9 +97,9 @@ function sendEmailWithAttachments() {
     $result = $mj->sendEmail($params);
 
     if ($mj->_response_code == 200)
-	   echo "success - email sent";
+       echo "success - email sent";
     else
-	   echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->_response_code;
 
     return $result;
 }
@@ -115,15 +115,15 @@ function sendEmailWithInlineAttachments() {
         "to" => "mr.mailjet@example.com",
         "subject" => "Hello World!",
         "html" => "<html>Greetings from Mailjet <img src=\"cid:photo1.jpg\"><img src=\"cid:photo2.jpg\"></html>",
-	"inlineattachment" => array("@/path/to/photo1.jpg", "@/path/to/photo2.jpg")
+    "inlineattachment" => array("@/path/to/photo1.jpg", "@/path/to/photo2.jpg")
     );
 
     $result = $mj->sendEmail($params);
 
     if ($mj->_response_code == 200)
-	   echo "success - email sent";
+       echo "success - email sent";
     else
-	   echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->_response_code;
 
     return $result;
 }
@@ -174,9 +174,9 @@ function listContacts()
     $result = $mj->contact();
 
     if ($mj->_response_code == 200)
-	   echo "success - listed contacts";
+       echo "success - listed contacts";
     else
-	   echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->_response_code;
 
     return $result;
 }
@@ -185,22 +185,22 @@ function listContacts()
 - A function to update your contactData resource with ID ```$id```, using arrays :
 ```php
 function updateContactData($id) {
-	$mj = new Mailjet();
-	$data = array(array('Name' => 'lastname', 'Value' => 'Jet'), array('Name' => 'firstname', 'Value' => 'Mail'));
-	$params = array(
-		'ID' => $id,
-		'Data' => $data,
-		'method' => 'PUT'
-	);
+    $mj = new Mailjet();
+    $data = array(array('Name' => 'lastname', 'Value' => 'Jet'), array('Name' => 'firstname', 'Value' => 'Mail'));
+    $params = array(
+        'ID' => $id,
+        'Data' => $data,
+        'method' => 'PUT'
+    );
 
-	$result = $mj->contactdata($params);
+    $result = $mj->contactdata($params);
 
-	if ($mj->_response_code == 200)
+    if ($mj->_response_code == 200)
        echo "success - data changed";
     else
        echo "error - ".$mj->_response_code;
 
-	return $result;
+    return $result;
 }
 ```
 
@@ -209,16 +209,16 @@ function updateContactData($id) {
 function createList($Lname) {
     $mj = new Mailjet();
     $params = array(
-    	"method" => "POST",
-    	"Name" => $Lname
+        "method" => "POST",
+        "Name" => $Lname
     );
 
     $result = $mj->contactslist($params);
 
     if ($mj->_response_code == 201)
-	   echo "success - created list ".$Lname;
+       echo "success - created list ".$Lname;
     else
-	   echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->_response_code;
 
     return $result;
 }
@@ -229,16 +229,16 @@ function createList($Lname) {
 function getList($listID) {
     $mj = new Mailjet();
     $params = array(
-    	"method" => "VIEW",
-    	"ID" => $listID
+        "method" => "VIEW",
+        "ID" => $listID
     );
 
     $result = $mj->contactslist($params);
 
     if ($mj->_response_code == 200)
-	   echo "success - got list ".$listID;
+       echo "success - got list ".$listID;
     else
-	   echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->_response_code;
 
     return $result;
 }
@@ -251,16 +251,16 @@ Note : You can use unique fields of resources instead of IDs, like
 function createContact($Cemail) {
     $mj = new Mailjet();
     $params = array(
-    	"method" => "POST",
-    	"Email" => $Cemail
+        "method" => "POST",
+        "Email" => $Cemail
     );
 
     $result = $mj->contact($params);
 
     if ($mj->_response_code == 201)
-	   echo "success - created contact ".$Cname;
+       echo "success - created contact ".$Cname;
     else
-	   echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->_response_code;
 
     return $result;
 }
@@ -271,17 +271,18 @@ function createContact($Cemail) {
 function addContactToList($contactID, $listID) {
     $mj = new Mailjet();
     $params = array(
-    	"method" => "POST",
-    	"ContactID" => $contactID,
-    	"ListID" => $listID
+        "method" => "POST",
+        "ContactID" => $contactID,
+        "ListID" => $listID,
+        "IsActive" => "True"
     );
 
     $result = $mj->listrecipient($params);
 
     if ($mj->_response_code == 201)
-	   echo "success - contact ".$contactID." added to the list ".$listID;
+       echo "success - contact ".$contactID." added to the list ".$listID;
     else
-	   echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->_response_code;
 
     return $result;
 }
@@ -292,16 +293,16 @@ function addContactToList($contactID, $listID) {
 function deleteList($listID) {
     $mj = new Mailjet();
     $params = array(
-    	"method" => "DELETE",
-    	"ID" => $listID
+        "method" => "DELETE",
+        "ID" => $listID
     );
 
     $result = $mj->contactslist($params);
 
     if ($mj->_response_code == 204)
-	   echo "success - deleted list";
+       echo "success - deleted list";
     else
-	   echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->_response_code;
 
     return $result;
 }
@@ -347,6 +348,35 @@ function addHTMLbody($newsletter_id, $html_content) {
     else
         echo "error - ".$mj->_response_code;
 
+    return $result;
+}
+```
+
+- You can use the ```DetailContent``` action to manage the content of a newsletter, in Text and Html.
+It has two properties : ```Text-part``` and ```Html-part```.
+You can use ```GET```, ```POST```, ```PUT``` and ```DELETE```both  requests on this action :
+* ```GET``` : you get the ```Text-part``` and ```Html-part``` properties of a newsletter
+* ```POST``` : update the content of ```Text-part``` and ```Html-part```. If you specify only one, the other will be emptied
+* ```PUT``` : update the content of ```Text-part``` and ```Html-part```. You can specify only one, it will not empty the other one
+* ```DELETE``` : update the content of ```Text-part``` and ```Html-part``` and put both to empty.
+
+Example with a ```GET``` on ```DetailContent``` :
+
+```php
+function getNewsletterDetailcontent($newsletter_id) {
+    $mj = new Mailjet('', '');
+    $params = array(
+        "method" => "GET",
+        "ID" => $newsletter_id
+    );
+
+    $result = $mj->newsletterDetailContent($params);
+
+    if ($mj->_response_code == 200)
+        echo "success - got body for the newsletter ". $newsletter_id;
+    else
+        echo "error - ".$mj->_response_code;
+    
     return $result;
 }
 ```
