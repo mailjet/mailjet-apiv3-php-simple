@@ -1,0 +1,23 @@
+{
+    "name": "mailjet/mailjet-apiv3-php-simple",
+    "description": "[API v3] Simple PHP wrapper for the Mailjet API",
+    "keywords": ["mailjet", "api", "v3", "php"],
+    "homepage": "https://github.com/mailjet/mailjet-apiv3-php-simple/",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Charles Collas",
+            "email": "ccollas@mailjet.com",
+            "homepage": "http://charlescollas.fr/",
+            "role": "Developer Evangelist"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Mailjet": "src/"
+        }
+    }
+}
