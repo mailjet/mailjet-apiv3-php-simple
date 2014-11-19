@@ -354,7 +354,7 @@ function addHTMLbody($newsletter_id, $html_content) {
 
 You can use the ```DetailContent``` action to manage the content of a newsletter, in Text and Html.
 It has two properties : ```Text-part``` and ```Html-part```.
-You can use ```GET```, ```POST```, ```PUT``` and ```DELETE```both  requests on this action :
+You can use ```GET```, ```POST```, ```PUT``` and ```DELETE``` both  requests on this action :
 * ```GET``` : you get the ```Text-part``` and ```Html-part``` properties of a newsletter
 * ```POST``` : update the content of ```Text-part``` and ```Html-part```. If you specify only one, the other will be emptied
 * ```PUT``` : update the content of ```Text-part``` and ```Html-part```. You can specify only one, it will not empty the other one
@@ -419,6 +419,34 @@ function sendNewsletter($newsletter_id) {
     );
 
     $result = $mj->newsletterSend($params);
+
+    if ($mj->_response_code == 201)
+        echo "success - newsletter ". $newsletter_id . " has been sent";
+    else
+        echo "error - ".$mj->_response_code;
+    
+    return $result;
+}
+```
+
+You can also test a newsletter by sending it to some specified recipients before making the real sending.
+To do so, you have to perform a ```POST``` request on a newsletter with action ```test``` like in the following example :
+
+```php
+function sendNewsletter($newsletter_id) {
+    $mj = new Mailjet('', '');
+    $params = array(
+        "method" => "POST",
+        "ID" => $newsletter_id,
+        "Recipients" => "[
+                            {
+                                "Email": "mailjet@example.org",
+                                "Name": "Mailjet"
+                            }
+                         ]"
+    );
+
+    $result = $mj->newsletterTest($params);
 
     if ($mj->_response_code == 201)
         echo "success - newsletter ". $newsletter_id . " has been sent";
