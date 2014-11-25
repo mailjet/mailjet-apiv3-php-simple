@@ -391,7 +391,8 @@ function scheduleNewsletter($newsletter_id) {
     $mj = new Mailjet('', '');
     $params = array(
         "method" => "POST",
-        "ID" => $newsletter_id
+        "ID" => $newsletter_id,
+        "date" => "2014-11-25T10:12:59Z"
     );
 
     $result = $mj->newsletterSchedule($params);
