@@ -71,6 +71,7 @@ class Mailjet
 
         foreach ($fields as $field) {
             list($key, $value) = $field;
+            // attachment
             if (strpos($value, '@') === 0) {
                 preg_match('/^@(.*?)$/', $value, $matches);
                 list($dummy, $filename) = $matches;
@@ -246,6 +247,13 @@ class Mailjet
             }
             else
             {
+                if (($resource == "newsletterDetailContent") ||
+                    ($resource == "newsletterSend") ||
+                    ($resource == "newsletterSchedule") ||
+                    ($resource == "newsletterTest")) {
+                    unset($params['ID']);
+                }
+
                 curl_setopt($curl_handle, CURLOPT_POSTFIELDS, json_encode($params));
                 curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
                     'Content-Type: application/json'
