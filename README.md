@@ -391,7 +391,8 @@ function scheduleNewsletter($newsletter_id) {
     $mj = new Mailjet('', '');
     $params = array(
         "method" => "POST",
-        "ID" => $newsletter_id
+        "ID" => $newsletter_id,
+        "date" => "2014-11-25T10:12:59Z"
     );
 
     $result = $mj->newsletterSchedule($params);
@@ -433,15 +434,15 @@ You can also test a newsletter by sending it to some specified recipients before
 To do so, you have to perform a ```POST``` request on a newsletter with action ```test``` like in the following example :
 
 ```php
-function sendNewsletter($newsletter_id) {
+function testNewsletter($newsletter_id) {
     $mj = new Mailjet('', '');
     $params = array(
         "method" => "POST",
         "ID" => $newsletter_id,
         "Recipients" => "[
                             {
-                                "Email": "mailjet@example.org",
-                                "Name": "Mailjet"
+                                'Email': 'mailjet@example.org',
+                                'Name': 'Mailjet'
                             }
                          ]"
     );
