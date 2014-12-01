@@ -436,15 +436,11 @@ To do so, you have to perform a ```POST``` request on a newsletter with action `
 ```php
 function testNewsletter($newsletter_id) {
     $mj = new Mailjet('', '');
+    $recipients = array(array('Email' => 'mailjet@example.org', 'Name' => 'Mailjet'));
     $params = array(
         "method" => "POST",
         "ID" => $newsletter_id,
-        "Recipients" => "[
-                            {
-                                'Email': 'mailjet@example.org',
-                                'Name': 'Mailjet'
-                            }
-                         ]"
+        "Recipients" => $recipients
     );
 
     $result = $mj->newsletterTest($params);
