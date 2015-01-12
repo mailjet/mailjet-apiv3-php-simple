@@ -71,6 +71,7 @@ class Mailjet
 
         foreach ($fields as $field) {
             list($key, $value) = $field;
+            // attachment
             if (strpos($value, '@') === 0) {
                 preg_match('/^@(.*?)$/', $value, $matches);
                 list($dummy, $filename) = $matches;
@@ -163,8 +164,18 @@ class Mailjet
             else if (!empty($params['ID'])) {
                 $newsletter_id = $params['ID'];
             }
-           
             $this->call_url = "https://api.mailjet.com/v3/DATA/NewsLetter/". $newsletter_id ."/HTML/text/html/LAST";
+        }
+        else if (($resource == "newsletterDetailContent") ||
+                 ($resource == "newsletterSend") ||
+                 ($resource == "newsletterSchedule") ||
+                 ($resource == "newsletterTest")) {
+            $matches = array();
+            preg_match('/newsletter([a-zA-Z]+)/', $resource, $matches);
+
+            $action = $matches[1];
+            $newsletter_id = $params['ID'];
+            $this->call_url = "https://api.mailjet.com/v3/REST/newsletter/". $newsletter_id ."/".$action;
         }
         else {
             $this->call_url = $this->apiUrl . '/' . $resource;
@@ -178,7 +189,7 @@ class Mailjet
                 foreach ($params as $key => $value) {
                     // In a GET request, put an underscore char in front of params to avoid it being treated as a filter
                     $firstChar = substr($key, 0, -(strlen($key) - 1));
-                    if ($firstChar != "_")
+                    if (($firstChar != "_") && ($key != "ID"))
                     {
                         $query_string[$key] = $key . '=' . $value;
                         $this->call_url .= $query_string[$key] . '&';
@@ -236,6 +247,13 @@ class Mailjet
             }
             else
             {
+                if (($resource == "newsletterDetailContent") ||
+                    ($resource == "newsletterSend") ||
+                    ($resource == "newsletterSchedule") ||
+                    ($resource == "newsletterTest")) {
+                    unset($params['ID']);
+                }
+
                 curl_setopt($curl_handle, CURLOPT_POSTFIELDS, json_encode($params));
                 curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
                     'Content-Type: application/json'
