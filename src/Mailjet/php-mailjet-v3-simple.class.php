@@ -169,7 +169,8 @@ class Mailjet
         else if (($resource == "newsletterDetailContent") ||
                  ($resource == "newsletterSend") ||
                  ($resource == "newsletterSchedule") ||
-                 ($resource == "newsletterTest")) {
+                 ($resource == "newsletterTest") ||
+                 ($resource == "newsletterStatus")) {
             $matches = array();
             preg_match('/newsletter([a-zA-Z]+)/', $resource, $matches);
 
@@ -250,7 +251,8 @@ class Mailjet
                 if (($resource == "newsletterDetailContent") ||
                     ($resource == "newsletterSend") ||
                     ($resource == "newsletterSchedule") ||
-                    ($resource == "newsletterTest")) {
+                    ($resource == "newsletterTest") ||
+                    ($resource == "newsletterStatus")) {
                     unset($params['ID']);
                 }
 
