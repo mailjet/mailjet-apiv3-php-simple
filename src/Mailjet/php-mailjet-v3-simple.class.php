@@ -157,6 +157,17 @@ class Mailjet
         if ($resource == "sendEmail") {
             $this->call_url = "https://api.mailjet.com/v3/send/message";
         }
+        //
+        else if ($resource == "uploadCSVContactslistData") {
+          if (!empty($params['_contactslist_id'])) {
+            $contactslist_id = $params['_contactslist_id'];
+          }
+          else if (!empty($params['ID'])) {
+            $contactslist_id = $params['ID'];
+          }
+          $this->call_url = "https://api.mailjet.com/v3/DATA/contactslist/". $contactslist_id ."/CSVData/text:plain";
+        }
+        //
         else if (($resource == "addHTMLbody") || ($resource == "getHTMLbody")) {
             if (!empty($params['_newsletter_id'])) {
                 $newsletter_id = $params['_newsletter_id'];
@@ -201,7 +212,7 @@ class Mailjet
             }
         }
 
-        if (($request == "VIEW" || $request == "DELETE" || $request == "PUT") && ($resource != "addHTMLbody")) {
+        if (($request == "VIEW" || $request == "DELETE" || $request == "PUT") && ($resource != "addHTMLbody" || resource != "uploadCSVContactslistData")) {
             if ($id != '') {
                 $this->call_url .= '/' . $id;
             }
@@ -246,6 +257,16 @@ class Mailjet
                     'Content-Type: text/html'
                 ));
             }
+            //
+            else if ($resource == "uploadCSVContactslistData")
+            {
+              curl_setopt($ch, CURLOPT_BINARYTRANSFER, TRUE);
+              curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $params['csv_content']);
+              curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
+                'Content-Type: text/plain'
+              ));
+            }
+            //
             else
             {
                 if (($resource == "newsletterDetailContent") ||
