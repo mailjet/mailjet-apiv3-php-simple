@@ -260,7 +260,7 @@ class Mailjet
             //
             else if ($resource == "uploadCSVContactslistData")
             {
-              curl_setopt($ch, CURLOPT_BINARYTRANSFER, TRUE);
+              curl_setopt($curl_handle, CURLOPT_BINARYTRANSFER, TRUE);
               curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $params['csv_content']);
               curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
                 'Content-Type: text/plain'
