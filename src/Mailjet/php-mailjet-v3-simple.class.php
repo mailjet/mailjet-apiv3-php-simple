@@ -315,7 +315,7 @@ class Mailjet
         }
 
         if ($request == 'POST') {
-            return ($this->_response_code == 201) ? true : false;
+            return ($this->_response_code == 201 || $this->_response_code == 200) ? true : false;
         }
         if ($request == 'DELETE') {
             return ($this->_response_code == 204) ? true : false;
