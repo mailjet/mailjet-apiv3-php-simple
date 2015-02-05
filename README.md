@@ -30,19 +30,16 @@ You are now ready to go !
 
 ## Usage
 
-First, you need to edit our php-mailjet-v3-simple.class.php file to assign your API keys to the variables ```$apiKey``` and ```$secretKey``` on lines 23 and 24 between simple quotes.
-You can find this keys in your Mailjet account here : https://app.mailjet.com/account/api_keys
-
-Then, in your mailjetapi.php file, you need to include our php class :
+In your mailjetapi.php file, you need to include our php class :
 
 ```php
 include("php-mailjet-v3-simple.class.php");
 ```
 **Be Careful :** Make sure that both mailjetapi.php and php-mailjet-v3-simple.class.php files are in the same folder to make this include work
 
-Now you can start working with the mailjetapi.php file by creating a new Mailjet object :
+Now you can start working with the mailjetapi.php file by creating a new Mailjet object with your api key and secret key (you can find these at https://app.mailjet.com/account/api_keys):
 ```php
-$mj = new Mailjet();
+$mj = new Mailjet( $apiKey, $secretKey );
 ```
 
 This basically starts the engine. Now what you're going to do next depends on what you want to GET, POST, PUT or DELETE from the Mailjet servers through the API.
