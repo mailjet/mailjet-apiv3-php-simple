@@ -212,7 +212,7 @@ class Mailjet
             }
         }
 
-        if (($request == "VIEW" || $request == "DELETE" || $request == "PUT") && ($resource != "addHTMLbody" || resource != "uploadCSVContactslistData")) {
+        if (($request == "VIEW" || $request == "DELETE" || $request == "PUT") && $resource != "addHTMLbody" && $resource != "uploadCSVContactslistData") {
             if ($id != '') {
                 $this->call_url .= '/' . $id;
             }
