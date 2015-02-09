@@ -307,48 +307,6 @@ function deleteList($listID) {
 
 ### Newsletters
 
-- A function to get the HTML body of the newsletter ```$newsletter_id``` :
-```php
-function getHTMLbody($newsletter_id) {
-    $mj = new Mailjet();
-    $params = array(
-        "method" => "GET",
-        "ID" => $newsletter_id
-    );
-
-    $result = $mj->getHTMLbody($params);
-
-    if ($mj->_response_code == 200)
-        echo "success - got body for the newsletter ". $newsletter_id;
-    else
-        echo "error - ".$mj->_response_code;
-
-    return $result;
-}
-```
-Note : You need to put an underscore character before your parameters that are not filters in a GET request
-
-- A function to add an HTML body ```$html_content``` to a newsletter ```$newsletter_id``` :
-```php
-function addHTMLbody($newsletter_id, $html_content) {
-    $mj = new Mailjet();
-    $params = array(
-        "method" => "PUT",
-        "ID" => $newsletter_id,
-        "html_content" => $html_content
-    );
-
-    $result = $mj->addHTMLbody($params);
-
-    if ($mj->_response_code == 200)
-        echo "success - body ".$html_content." added to the newsletter ". $newsletter_id;
-    else
-        echo "error - ".$mj->_response_code;
-
-    return $result;
-}
-```
-
 You can use the ```DetailContent``` action to manage the content of a newsletter, in Text and Html.
 It has two properties : ```Text-part``` and ```Html-part```.
 You can use ```GET```, ```POST```, ```PUT``` and ```DELETE``` both  requests on this action :
