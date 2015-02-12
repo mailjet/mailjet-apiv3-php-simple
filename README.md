@@ -305,6 +305,28 @@ function deleteList($listID) {
 }
 ```
 
+- A function to get a contact with ID ```$contactID``` :
+```php
+function getContact($contactID) {
+    $mj = new Mailjet();
+    $params = array(
+        "method" => "VIEW",
+        "ID" => $contactID
+    );
+
+    $result = $mj->contact($params);
+
+    if ($mj->_response_code == 200)
+       echo "success - got contact ".$contactID;
+    else
+       echo "error - ".$mj->_response_code;
+
+    return $result;
+}
+```
+Note : You can use unique fields of resources instead of IDs, like
+```"unique" => "test@gmail.com"``` in your ```params``` array for this example
+
 ### Newsletters
 
 You can use the ```DetailContent``` action to manage the content of a newsletter, in Text and Html.
