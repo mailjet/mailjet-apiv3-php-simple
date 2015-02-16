@@ -305,6 +305,28 @@ function deleteList($listID) {
 }
 ```
 
+- A function to get unsubscribed contact(s) from a list with ID ```$listID``` :
+```php
+function getUnsubscribedContactsFromList($listID) {
+	$mj = new Mailjet();
+	
+	$params = array(
+		"method" => "GET",
+		"ContactsList" => $listID,
+		"Unsub" => true
+	);
+	
+	$result = $mj->listrecipient($params);
+	
+    if ($mj->_response_code == 200)
+       echo "success - got unsubscribed contact(s) ";
+    else
+       echo "error - ".$mj->_response_code;
+   
+	return $result;   
+}
+```
+
 - A function to get a contact with ID ```$contactID``` :
 ```php
 function getContact($contactID) {
