@@ -311,7 +311,7 @@ class Mailjet
         }
         else
         {
-            $this->_response = PHP_INT_SIZE > 4 ? json_decode($buffer) : json_decode($buffer, false, 512, JSON_BIGINT_AS_STRING);
+            $this->_response = $this->_response = json_decode($buffer, false, 512, JSON_BIGINT_AS_STRING);
         }
 
         if ($request == 'POST') {
