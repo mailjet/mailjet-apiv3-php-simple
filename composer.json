@@ -4,6 +4,7 @@
     "keywords": ["mailjet", "api", "v3", "php"],
     "homepage": "https://github.com/mailjet/mailjet-apiv3-php-simple/",
     "license": "MIT",
+    "version": "1.0.5",
     "authors": [
         {
             "name": "Charles Collas",

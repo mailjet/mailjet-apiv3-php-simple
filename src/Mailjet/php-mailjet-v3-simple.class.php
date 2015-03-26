@@ -34,6 +34,8 @@ class Mailjet
             $this->secretKey = $secretKey;
         }
         $this->apiUrl = (($this->secure) ? 'https' : 'http') . '://api.mailjet.com/v3/REST';
+        $this->wrapperVersion = $this->readWrapperVersion();
+
     }
 
     public function curl_setopt_custom_postfields($curl_handle, $postfields, $headers = null) {
@@ -233,6 +235,7 @@ class Mailjet
         # Set up and execute the curl process
         $curl_handle = curl_init();
         curl_setopt($curl_handle, CURLOPT_URL, $url);
+        curl_setopt($curl_handle, CURLOPT_USERAGENT, 'mailjet-api-v3-php-simple/' . $this->wrapperVersion);
         curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl_handle, CURLOPT_SSL_VERIFYPEER, FALSE);
         curl_setopt($curl_handle, CURLOPT_SSL_VERIFYHOST, 2);
@@ -413,5 +416,10 @@ class Mailjet
         echo '</table>';
 
         echo '</div>';
+    }
+
+    private function readWrapperVersion() {
+        $composerMetadata = json_decode(file_get_contents(join('/', array(dirname(dirname(__DIR__)), 'composer.json'))));
+        return $composerMetadata->version;
     }
 }
