@@ -11,6 +11,9 @@
 
 class Mailjet
 {
+    # Wrapper version, changed for each release
+    const WRAPPER_VERSION = '1.0.6';
+
     # Mailjet API version
     var $version = 'v3';
 
@@ -35,7 +38,6 @@ class Mailjet
         }
         $this->apiUrl = (($this->secure) ? 'https' : 'http') . '://api.mailjet.com/v3/REST';
         $this->wrapperVersion = $this->readWrapperVersion();
-
     }
 
     public function curl_setopt_custom_postfields($curl_handle, $postfields, $headers = null) {
@@ -419,7 +421,6 @@ class Mailjet
     }
 
     private function readWrapperVersion() {
-        $composerMetadata = json_decode(file_get_contents(join('/', array(dirname(dirname(__DIR__)), 'composer.json'))));
-        return $composerMetadata->version;
+        return Mailjet::WRAPPER_VERSION;
     }
 }
