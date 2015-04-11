@@ -431,7 +431,7 @@ class Mailjet
      * @return int
      */
     public function getResponseCode() {
-    	return $this->__response_code;
+    	return $this->_response_code;
     }
 
     /**
