@@ -1,5 +1,5 @@
 <?php
 
-include('../src/Mailjet/Mailjet.php');
+include('./src/Mailjet/Mailjet.php');
 
 ?>
