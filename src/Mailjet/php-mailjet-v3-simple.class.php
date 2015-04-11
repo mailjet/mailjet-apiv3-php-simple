@@ -1,4 +1,4 @@
-<?php
+<?php namespace Mailjet;
 
 /**
  * Mailjet Public API
@@ -15,17 +15,22 @@ class Mailjet
     const WRAPPER_VERSION = '1.0.6';
 
     # Mailjet API version
-    var $version = 'v3';
+    private $version = 'v3';
 
     # Connect with https protocol
-    var $secure = true;
+    private $secure = true;
 
     # Mode debug ? 0 : none; 1 : errors only; 2 : all
-    var $debug = 0;
+    private $debug = 0;
 
     # Edit with your Mailjet API keys (you can find them here : https://app.mailjet.com/account/api_keys)
-    var $apiKey = '';
-    var $secretKey = '';
+    private $apiKey = '';
+    private $secretKey = '';
+    
+    /**
+     *  @var int
+     */
+    private $_response_code;
 
     # Constructor function
     public function __construct($apiKey = false, $secretKey = false)
@@ -419,6 +424,49 @@ class Mailjet
 
         echo '</div>';
     }
+    
+    /**
+     * Returns the response code of the last call.
+     *
+     * @return int
+     */
+    public function getResponseCode() {
+    	return $this->__response_code;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSecure()
+    {
+        return $this->secure;
+    }
+
+    /**
+     * @param boolean $secure
+     */
+    public function setSecure($secure)
+    {
+        $this->secure = $secure;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDebug()
+    {
+        return $this->debug;
+    }
+
+    /**
+     * @param int $debug
+     */
+    public function setDebug($debug)
+    {
+        $this->debug = $debug;
+    }
+
+
 
     private function readWrapperVersion() {
         return Mailjet::WRAPPER_VERSION;
