@@ -69,10 +69,10 @@ function sendEmail() {
 
     $result = $mj->sendEmail($params);
 
-    if ($mj->_response_code == 200)
+    if ($mj->getResponseCode() == 200)
        echo "success - email sent";
     else
-       echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->getResponseCode();
 
     return $result;
 }
@@ -93,10 +93,10 @@ function sendEmailWithAttachments() {
 
     $result = $mj->sendEmail($params);
 
-    if ($mj->_response_code == 200)
+    if ($mj->getResponseCode() == 200)
        echo "success - email sent";
     else
-       echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->getResponseCode();
 
     return $result;
 }
@@ -117,10 +117,10 @@ function sendEmailWithInlineAttachments() {
 
     $result = $mj->sendEmail($params);
 
-    if ($mj->_response_code == 200)
+    if ($mj->getResponseCode() == 200)
        echo "success - email sent";
     else
-       echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->getResponseCode();
 
     return $result;
 }
@@ -134,10 +134,10 @@ function viewProfileInfo() {
     $mj = new \Mailjet\Mailjet();
     $result = $mj->myprofile();
 
-    if ($mj->_response_code == 200)
+    if ($mj->getResponseCode() == 200)
        echo "success - got profile information";
     else
-       echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->getResponseCode();
 }
 ```
 
@@ -152,10 +152,10 @@ function updateProfileInfo() {
 
     $result = $mj->myprofile($params);
 
-    if ($mj->_response_code == 200)
+    if ($mj->getResponseCode() == 200)
        echo "success - field AddressCity changed";
     else
-       echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->getResponseCode();
 
     return $result;
 }
@@ -170,10 +170,10 @@ function listContacts()
     $mj = new \Mailjet\Mailjet();
     $result = $mj->contact();
 
-    if ($mj->_response_code == 200)
+    if ($mj->getResponseCode() == 200)
        echo "success - listed contacts";
     else
-       echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->getResponseCode();
 
     return $result;
 }
@@ -192,10 +192,10 @@ function updateContactData($id) {
 
     $result = $mj->contactdata($params);
 
-    if ($mj->_response_code == 200)
+    if ($mj->getResponseCode() == 200)
        echo "success - data changed";
     else
-       echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->getResponseCode();
 
     return $result;
 }
@@ -212,10 +212,10 @@ function createList($Lname) {
 
     $result = $mj->contactslist($params);
 
-    if ($mj->_response_code == 201)
+    if ($mj->getResponseCode() == 201)
        echo "success - created list ".$Lname;
     else
-       echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->getResponseCode();
 
     return $result;
 }
@@ -232,10 +232,10 @@ function getList($listID) {
 
     $result = $mj->contactslist($params);
 
-    if ($mj->_response_code == 200)
+    if ($mj->getResponseCode() == 200)
        echo "success - got list ".$listID;
     else
-       echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->getResponseCode();
 
     return $result;
 }
@@ -254,10 +254,10 @@ function createContact($Cemail) {
 
     $result = $mj->contact($params);
 
-    if ($mj->_response_code == 201)
+    if ($mj->getResponseCode() == 201)
        echo "success - created contact ".$Cname;
     else
-       echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->getResponseCode();
 
     return $result;
 }
@@ -276,10 +276,10 @@ function addContactToList($contactID, $listID) {
 
     $result = $mj->listrecipient($params);
 
-    if ($mj->_response_code == 201)
+    if ($mj->getResponseCode() == 201)
        echo "success - contact ".$contactID." added to the list ".$listID;
     else
-       echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->getResponseCode();
 
     return $result;
 }
@@ -296,10 +296,10 @@ function deleteList($listID) {
 
     $result = $mj->contactslist($params);
 
-    if ($mj->_response_code == 204)
+    if ($mj->getResponseCode() == 204)
        echo "success - deleted list";
     else
-       echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->getResponseCode();
 
     return $result;
 }
@@ -318,10 +318,10 @@ function getUnsubscribedContactsFromList($listID) {
 	
 	$result = $mj->listrecipient($params);
 	
-    if ($mj->_response_code == 200)
+    if ($mj->getResponseCode() == 200)
        echo "success - got unsubscribed contact(s) ";
     else
-       echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->getResponseCode();
    
 	return $result;   
 }
@@ -338,10 +338,10 @@ function getContact($contactID) {
 
     $result = $mj->contact($params);
 
-    if ($mj->_response_code == 200)
+    if ($mj->getResponseCode() == 200)
        echo "success - got contact ".$contactID;
     else
-       echo "error - ".$mj->_response_code;
+       echo "error - ".$mj->getResponseCode();
 
     return $result;
 }
@@ -371,10 +371,10 @@ function getNewsletterDetailcontent($newsletter_id) {
 
     $result = $mj->newsletterDetailContent($params);
 
-    if ($mj->_response_code == 200)
+    if ($mj->getResponseCode() == 200)
         echo "success - got content for the newsletter ". $newsletter_id;
     else
-        echo "error - ".$mj->_response_code;
+        echo "error - ".$mj->getResponseCode();
     
     return $result;
 }
@@ -396,10 +396,10 @@ function scheduleNewsletter($newsletter_id) {
 
     $result = $mj->newsletterSchedule($params);
 
-    if ($mj->_response_code == 201)
+    if ($mj->getResponseCode() == 201)
         echo "success - schedule done for the newsletter ". $newsletter_id;
     else
-        echo "error - ".$mj->_response_code;
+        echo "error - ".$mj->getResponseCode();
     
     return $result;
 }
@@ -420,10 +420,10 @@ function sendNewsletter($newsletter_id) {
 
     $result = $mj->newsletterSend($params);
 
-    if ($mj->_response_code == 201)
+    if ($mj->getResponseCode() == 201)
         echo "success - newsletter ". $newsletter_id . " has been sent";
     else
-        echo "error - ".$mj->_response_code;
+        echo "error - ".$mj->getResponseCode();
     
     return $result;
 }
@@ -444,10 +444,10 @@ function testNewsletter($newsletter_id) {
 
     $result = $mj->newsletterTest($params);
 
-    if ($mj->_response_code == 201)
+    if ($mj->getResponseCode() == 201)
         echo "success - newsletter ". $newsletter_id . " has been sent";
     else
-        echo "error - ".$mj->_response_code;
+        echo "error - ".$mj->getResponseCode();
     
     return $result;
 }
