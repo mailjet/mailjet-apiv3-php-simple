@@ -12,7 +12,7 @@
 class Mailjet
 {
     # Wrapper version, changed for each release
-    const WRAPPER_VERSION = '1.0.6';
+    const WRAPPER_VERSION = '1.0.7';
 
     # Mailjet API version
     private $version = 'v3';
