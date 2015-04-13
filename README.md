@@ -255,7 +255,7 @@ function createContact($Cemail) {
     $result = $mj->contact($params);
 
     if ($mj->_response_code == 201)
-       echo "success - created contact ".$Cname;
+       echo "success - created contact ".$Cemail;
     else
        echo "error - ".$mj->_response_code;
 
