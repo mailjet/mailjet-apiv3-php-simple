@@ -1,4 +1,5 @@
-# [API v3] Mailjet PHP Wrapper v2.0.0-dev
+# [API v3] Mailjet PHP Wrapper 
+**_v2.0.0-dev_**
 
 ## Introduction
 
@@ -13,16 +14,16 @@ Make sure to have the following details:
 * PHP
 * This PHP class
 
-## Installation
+## Installation without Composer
 
 First clone the repository
 ```
 git clone https://github.com/mailjet/mailjet-apiv3-php-simple.git
 ```
 
-Go into the mailjet-apiv3-php-simple folder and create an empty file named ```mailjetapi.php```
-```
-cd mailjet-apiv3-php-simple
+Go into the `src/Mailjet/API/` folder and create an empty file named `mailjetapi.php` (for example)
+```bash
+cd src/Mailjet/API/
 touch mailjetapi.php
 ```
 
@@ -33,13 +34,13 @@ You are now ready to go !
 In your mailjetapi.php file, you need to include our php class :
 
 ```php
-include("php-mailjet-v3-simple.class.php");
+include("Client.php");
 ```
-**Be Careful :** Make sure that both mailjetapi.php and php-mailjet-v3-simple.class.php files are in the same folder to make this include work
+**Be Careful :** Make sure that both mailjetapi.php and Client.php files are in the same folder to make this include work
 
-Now you can start working with the mailjetapi.php file by creating a new \Mailjet\Mailjet object with your api key and secret key (you can find these at https://app.mailjet.com/account/api_keys):
+Now you can start working with the mailjetapi.php file by creating a new \Mailjet\API\Client object with your api key and secret key (you can find these at https://app.mailjet.com/account/api_keys):
 ```php
-$mj = new \Mailjet\Mailjet( $apiKey, $secretKey );
+$mj = new \Mailjet\API\Client( $apiKey, $secretKey );
 ```
 
 This basically starts the engine. Now what you're going to do next depends on what you want to GET, POST, PUT or DELETE from the Mailjet servers through the API.
@@ -58,7 +59,7 @@ $mj->contact($params);
 - A function to send an email :
 ```php
 function sendEmail() {
-    $mj = new \Mailjet\Mailjet();
+    $mj = new \Mailjet\API\Client();
     $params = array(
         "method" => "POST",
         "from" => "ms.mailjet@example.com",
@@ -81,7 +82,7 @@ function sendEmail() {
 - A function to send an email with some attachments (absolute paths on your computer) :
 ```php
 function sendEmailWithAttachments() {
-    $mj = new \Mailjet\Mailjet();
+    $mj = new \Mailjet\API\Client();
     $params = array(
         "method" => "POST",
         "from" => "ms.mailjet@example.com",
@@ -105,7 +106,7 @@ function sendEmailWithAttachments() {
 - A function to send an email with some inline attachments (absolute paths on your computer) :
 ```php
 function sendEmailWithInlineAttachments() {
-    $mj = new \Mailjet\Mailjet();
+    $mj = new \Mailjet\API\Client();
     $params = array(
         "method" => "POST",
         "from" => "ms.mailjet@example.com",
@@ -131,7 +132,7 @@ function sendEmailWithInlineAttachments() {
 - A function to get your profile information :
 ```php
 function viewProfileInfo() {
-    $mj = new \Mailjet\Mailjet();
+    $mj = new \Mailjet\API\Client();
     $result = $mj->myprofile();
 
     if ($mj->getResponseCode() == 200)
@@ -144,7 +145,7 @@ function viewProfileInfo() {
 - A function to update the field ```AddressCity``` of your profile :
 ```php
 function updateProfileInfo() {
-    $mj = new \Mailjet\Mailjet();
+    $mj = new \Mailjet\API\Client();
     $params = array(
         "method" => "PUT",
         "AddressCity" => "New York"
@@ -167,7 +168,7 @@ function updateProfileInfo() {
 ```php
 function listContacts()
 {
-    $mj = new \Mailjet\Mailjet();
+    $mj = new \Mailjet\API\Client();
     $result = $mj->contact();
 
     if ($mj->getResponseCode() == 200)
@@ -182,7 +183,7 @@ function listContacts()
 - A function to update your contactData resource with ID ```$id```, using arrays :
 ```php
 function updateContactData($id) {
-    $mj = new \Mailjet\Mailjet();
+    $mj = new \Mailjet\API\Client();
     $data = array(array('Name' => 'lastname', 'Value' => 'Jet'), array('Name' => 'firstname', 'Value' => 'Mail'));
     $params = array(
         'ID' => $id,
@@ -204,7 +205,7 @@ function updateContactData($id) {
 - A function to create a list with name ```$Lname``` :
 ```php
 function createList($Lname) {
-    $mj = new \Mailjet\Mailjet();
+    $mj = new \Mailjet\API\Client();
     $params = array(
         "method" => "POST",
         "Name" => $Lname
@@ -224,7 +225,7 @@ function createList($Lname) {
 - A function to get a list with ID ```$listID``` :
 ```php
 function getList($listID) {
-    $mj = new \Mailjet\Mailjet();
+    $mj = new \Mailjet\API\Client();
     $params = array(
         "method" => "VIEW",
         "ID" => $listID
@@ -246,7 +247,7 @@ Note : You can use unique fields of resources instead of IDs, like
 - A function to create a contact with email ```$Cemail``` :
 ```php
 function createContact($Cemail) {
-    $mj = new \Mailjet\Mailjet();
+    $mj = new \Mailjet\API\Client();
     $params = array(
         "method" => "POST",
         "Email" => $Cemail
@@ -271,7 +272,7 @@ function createContact($Cemail) {
 - A function to add the contact which ID is ```$contactID``` to the list which ID is ```$listID``` :
 ```php
 function addContactToList($contactID, $listID) {
-    $mj = new \Mailjet\Mailjet();
+    $mj = new \Mailjet\API\Client();
     $params = array(
         "method" => "POST",
         "ContactID" => $contactID,
@@ -293,7 +294,7 @@ function addContactToList($contactID, $listID) {
 - A function to delete the list which ID is ```$listID``` :
 ```php
 function deleteList($listID) {
-    $mj = new \Mailjet\Mailjet();
+    $mj = new \Mailjet\API\Client();
     $params = array(
         "method" => "DELETE",
         "ID" => $listID
@@ -313,7 +314,7 @@ function deleteList($listID) {
 - A function to get unsubscribed contact(s) from a list with ID ```$listID``` :
 ```php
 function getUnsubscribedContactsFromList($listID) {
-	$mj = new \Mailjet\Mailjet();
+	$mj = new \Mailjet\API\Client();
 	
 	$params = array(
 		"method" => "GET",
@@ -335,7 +336,7 @@ function getUnsubscribedContactsFromList($listID) {
 - A function to get a contact with ID ```$contactID``` :
 ```php
 function getContact($contactID) {
-    $mj = new \Mailjet\Mailjet();
+    $mj = new \Mailjet\API\Client();
     $params = array(
         "method" => "VIEW",
         "ID" => $contactID
@@ -368,7 +369,7 @@ Example with a ```GET``` on ```DetailContent``` :
 
 ```php
 function getNewsletterDetailcontent($newsletter_id) {
-    $mj = new \Mailjet\Mailjet('', '');
+    $mj = new \Mailjet\API\Client('', '');
     $params = array(
         "method" => "GET",
         "ID" => $newsletter_id
@@ -392,7 +393,7 @@ Here is an example :
 
 ```php
 function scheduleNewsletter($newsletter_id) {
-    $mj = new \Mailjet\Mailjet('', '');
+    $mj = new \Mailjet\API\Client('', '');
     $params = array(
         "method" => "POST",
         "ID" => $newsletter_id,
@@ -417,7 +418,7 @@ For the second case, here is an example :
 
 ```php
 function sendNewsletter($newsletter_id) {
-    $mj = new \Mailjet\Mailjet('', '');
+    $mj = new \Mailjet\API\Client('', '');
     $params = array(
         "method" => "POST",
         "ID" => $newsletter_id
@@ -439,7 +440,7 @@ To do so, you have to perform a ```POST``` request on a newsletter with action `
 
 ```php
 function testNewsletter($newsletter_id) {
-    $mj = new \Mailjet\Mailjet('', '');
+    $mj = new \Mailjet\API\Client('', '');
     $recipients = array(array('Email' => 'mailjet@example.org', 'Name' => 'Mailjet'));
     $params = array(
         "method" => "POST",

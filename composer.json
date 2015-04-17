@@ -10,6 +10,12 @@
             "email": "ccollas@mailjet.com",
             "homepage": "http://charlescollas.fr/",
             "role": "Developer Evangelist"
+        },
+        {
+            "name": "Ramon Ackermann aka sboo",
+            "email": "ramon.ackermann@sboo.eu",
+            "homepage": "https://github.com/sboo",
+            "role": "Main v2 contributor"
         }
     ],
     "require": {
@@ -17,7 +23,7 @@
     },
     "autoload": {
         "psr-0": {
-            "Mailjet": "src/"
+            "Mailjet\\API\\": "src/"
         }
     }
 }

@@ -1,4 +1,4 @@
-<?php namespace Mailjet;
+<?php namespace Mailjet\API;
 
 /**
  * Mailjet Public API
@@ -9,7 +9,7 @@
  *
  */
 
-class Mailjet
+class Client
 {
     # Wrapper version, changed for each release
     const WRAPPER_VERSION = '1.0.7';
@@ -469,6 +469,6 @@ class Mailjet
 
 
     private function readWrapperVersion() {
-        return Mailjet::WRAPPER_VERSION;
+        return Client::WRAPPER_VERSION;
     }
 }
