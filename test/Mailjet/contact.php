@@ -1,4 +1,7 @@
 <?php
+
+use Mailjet\Mailjet;
+
   class ContactsTest extends PHPUnit_Framework_TestCase
   {
     public function testListContacts()
@@ -7,7 +10,7 @@
 
         $mj->contact();
 
-        $this->assertEquals(200, $mj->_response_code);
+        $this->assertEquals(200, $mj->getResponseCode());
     }
 
     public function testCreateContactslist()
@@ -21,7 +24,7 @@
         );
         $mj->contactslist($params);
 
-        $this->assertEquals(201, $mj->_response_code);
+        $this->assertEquals(201, $mj->getResponseCode());
     }
 
     public function testDeleteLastContactslist()
@@ -38,7 +41,6 @@
         );
         $mj->contactslist($params);
 
-        $this->assertEquals(204, $mj->_response_code);
+        $this->assertEquals(204, $mj->getResponseCode());
     }
   }
-?>
