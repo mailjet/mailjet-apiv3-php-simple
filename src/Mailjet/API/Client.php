@@ -198,10 +198,7 @@ class Client
             preg_match('/newsletter([a-zA-Z]+)/', $resource, $matches);
 
             $action = $matches[1];
-            if()
-            {
-                $newsletter_id = $params['ID'];
-            }
+            $newsletter_id = $params['ID'];
             $this->call_url = $this->_baseUrl."REST/newsletter/". $newsletter_id ."/".$action;
         }
         else if (($resource == "contactManageContactLists") ||
