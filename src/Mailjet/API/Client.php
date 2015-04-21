@@ -41,7 +41,7 @@ class Client
         if ($secretKey) {
             $this->secretKey = $secretKey;
         }
-        $this->apiUrl = (($this->secure) ? 'https' : 'http') . '://api.mailjet.com/v3/REST';
+        $this->apiUrl = (($this->secure) ? 'https' : 'http') . '://api.preprod.mailjet.com/v3/REST';
         $this->wrapperVersion = $this->readWrapperVersion();
     }
 
@@ -163,8 +163,11 @@ class Client
 
     public function requestUrlBuilder($resource, $params = array(), $request, $id)
     {
+        // $this->_baseUrl = "https://api.mailjet.com/v3/";
+        $this->_baseUrl = "https://api.preprod.mailjet.com/v3/";
+
         if ($resource == "sendEmail") {
-            $this->call_url = "https://api.mailjet.com/v3/send/message";
+            $this->call_url = $this->_baseUrl."send/message";
         }
         //
         else if ($resource == "uploadCSVContactslistData") {
@@ -174,7 +177,7 @@ class Client
           else if (!empty($params['ID'])) {
             $contactslist_id = $params['ID'];
           }
-          $this->call_url = "https://api.mailjet.com/v3/DATA/contactslist/". $contactslist_id ."/CSVData/text:plain";
+          $this->call_url = $this->_baseUrl."DATA/contactslist/". $contactslist_id ."/CSVData/text:plain";
         }
         //
         else if (($resource == "addHTMLbody") || ($resource == "getHTMLbody")) {
@@ -184,7 +187,7 @@ class Client
             else if (!empty($params['ID'])) {
                 $newsletter_id = $params['ID'];
             }
-            $this->call_url = "https://api.mailjet.com/v3/DATA/NewsLetter/". $newsletter_id ."/HTML/text/html/LAST";
+            $this->call_url = $this->_baseUrl."DATA/NewsLetter/". $newsletter_id ."/HTML/text/html/LAST";
         }
         else if (($resource == "newsletterDetailContent") ||
                  ($resource == "newsletterSend") ||
@@ -195,8 +198,35 @@ class Client
             preg_match('/newsletter([a-zA-Z]+)/', $resource, $matches);
 
             $action = $matches[1];
-            $newsletter_id = $params['ID'];
-            $this->call_url = "https://api.mailjet.com/v3/REST/newsletter/". $newsletter_id ."/".$action;
+            if()
+            {
+                $newsletter_id = $params['ID'];
+            }
+            $this->call_url = $this->_baseUrl."REST/newsletter/". $newsletter_id ."/".$action;
+        }
+        else if (($resource == "contactManageContactLists") ||
+                 ($resource == "contactGetContactList")) 
+        {
+            $matches = array();
+            preg_match('/contact([a-zA-Z]+)/', $resource, $matches);
+
+            $action = $matches[1];
+            $contact_id = $params['ID'];
+            $this->call_url = $this->_baseUrl."REST/contact/". $contact_id . "/".$action;
+        }
+        else if ($resource == "contactManageManyContacts")
+        {
+            $this->call_url = $this->_baseUrl."REST/contact/managemanycontacts";
+        }
+        else if (($resource == "contactlistManageContact") ||
+                 ($resource == "contactlistManageManyContacts"))
+        {
+            $matches = array();
+            preg_match('/contactlist([a-zA-Z]+)/', $resource, $matches);
+
+            $action = $matches[1];
+            $contactlist_id = $params['ID'];
+            $this->call_url = $this->_baseUrl."REST/contactlist/". $contactlist_id . "/".$action;
         }
         else {
             $this->call_url = $this->apiUrl . '/' . $resource;
@@ -250,7 +280,8 @@ class Client
 
         $this->_request_post = false;
 
-        if (($request == 'POST') || ($request == 'PUT')):
+        if (($request == 'POST') || ($request == 'PUT'))
+        {
             curl_setopt($curl_handle, CURLOPT_POST, 1);
 
             if ($this->debug == 2) {
@@ -283,7 +314,12 @@ class Client
                     ($resource == "newsletterSend") ||
                     ($resource == "newsletterSchedule") ||
                     ($resource == "newsletterTest") ||
-                    ($resource == "newsletterStatus")) {
+                    ($resource == "newsletterStatus") ||
+                    ($resource == "contactManageContactLists") ||
+                    ($resource == "contactManageManyContacts") ||
+                    ($resource == "contactlistManageContact") ||
+                    ($resource == "contactlistManageManyContacts"))
+                {
                     unset($params['ID']);
                 }
 
@@ -293,7 +329,7 @@ class Client
                 ));
             }
             $this->_request_post = $params;
-        endif;
+        }
 
         if ($request == 'DELETE') {
             curl_setopt($curl_handle, CURLOPT_CUSTOMREQUEST, "DELETE");
