@@ -41,7 +41,7 @@ class Client
         if ($secretKey) {
             $this->secretKey = $secretKey;
         }
-        $this->apiUrl = (($this->secure) ? 'https' : 'http') . '://api.preprod.mailjet.com/v3/REST';
+        $this->apiUrl = (($this->secure) ? 'https' : 'http') . '://api.mailjet.com/v3/REST';
         $this->wrapperVersion = $this->readWrapperVersion();
     }
 
@@ -163,8 +163,7 @@ class Client
 
     public function requestUrlBuilder($resource, $params = array(), $request, $id)
     {
-        // $this->_baseUrl = "https://api.mailjet.com/v3/";
-        $this->_baseUrl = "https://api.preprod.mailjet.com/v3/";
+        $this->_baseUrl = "https://api.mailjet.com/v3/";
 
         if ($resource == "sendEmail") {
             $this->call_url = $this->_baseUrl."send/message";
@@ -199,31 +198,31 @@ class Client
 
             $action = $matches[1];
             $newsletter_id = $params['ID'];
-            $this->call_url = $this->_baseUrl."REST/newsletter/". $newsletter_id ."/".$action;
+            $this->call_url = $this->_baseUrl."REST/newsletter/". $newsletter_id ."/".strtolower($action);
         }
         else if (($resource == "contactManageContactLists") ||
-                 ($resource == "contactGetContactList")) 
+                 ($resource == "contactGetContactLists"))
         {
             $matches = array();
             preg_match('/contact([a-zA-Z]+)/', $resource, $matches);
 
             $action = $matches[1];
             $contact_id = $params['ID'];
-            $this->call_url = $this->_baseUrl."REST/contact/". $contact_id . "/".$action;
+            $this->call_url = $this->_baseUrl."REST/contact/". $contact_id . "/".strtolower($action);
         }
         else if ($resource == "contactManageManyContacts")
         {
             $this->call_url = $this->_baseUrl."REST/contact/managemanycontacts";
         }
-        else if (($resource == "contactlistManageContact") ||
-                 ($resource == "contactlistManageManyContacts"))
+        else if (($resource == "contactslistManageContact") ||
+                 ($resource == "contactslistManageManyContacts"))
         {
             $matches = array();
-            preg_match('/contactlist([a-zA-Z]+)/', $resource, $matches);
+            preg_match('/contactslist([a-zA-Z]+)/', $resource, $matches);
 
             $action = $matches[1];
-            $contactlist_id = $params['ID'];
-            $this->call_url = $this->_baseUrl."REST/contactlist/". $contactlist_id . "/".$action;
+            $contactslist_id = $params['ID'];
+            $this->call_url = $this->_baseUrl."REST/contactslist/". $contactslist_id . "/".strtolower($action);
         }
         else {
             $this->call_url = $this->apiUrl . '/' . $resource;
@@ -249,7 +248,11 @@ class Client
         }
 
         if (($request == "VIEW" || $request == "DELETE" || $request == "PUT") && $resource != "addHTMLbody" && $resource != "uploadCSVContactslistData") {
-            if ($id != '') {
+            if ($id != '' && $resource == "contactslistManageManyContacts")
+            {
+                $this->call_url .= '/' . $params["JobID"];
+            }
+            else if ($id != '') {
                 $this->call_url .= '/' . $id;
             }
         }
@@ -314,8 +317,8 @@ class Client
                     ($resource == "newsletterStatus") ||
                     ($resource == "contactManageContactLists") ||
                     ($resource == "contactManageManyContacts") ||
-                    ($resource == "contactlistManageContact") ||
-                    ($resource == "contactlistManageManyContacts"))
+                    ($resource == "contactslistManageContact") ||
+                    ($resource == "contactslistManageManyContacts"))
                 {
                     unset($params['ID']);
                 }
