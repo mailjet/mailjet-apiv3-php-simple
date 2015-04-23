@@ -23,7 +23,7 @@ class Client
     # Mode debug ? 0 : none; 1 : errors only; 2 : all
     private $debug = 0;
 
-    # Edit with your Mailjet API keys (you can find them here : https://app.mailjet.com/account/api_keys)
+    # Those properties are assigned in the constructor.
     private $apiKey = '';
     private $secretKey = '';
     
@@ -34,35 +34,35 @@ class Client
      *  Newsletter resources
      */
     private $_newsletterResources = [
-                "newsletterDetailContent",
-                "newsletterSend",
-                "newsletterSchedule",
-                "newsletterTest",
-                "newsletterStatus"
-            ];
+        "newsletterDetailContent",
+        "newsletterSend",
+        "newsletterSchedule",
+        "newsletterTest",
+        "newsletterStatus"
+    ];
 
     /*
      * Contact resources
      *  "contactManageManyContacts" not in as it is a special case.
      */
     private $_contactResources = [
-                "contactManageContactLists",
-                "contactGetContactLists"
-            ];
+        "contactManageContactsLists",
+        "contactGetContactsLists"
+    ];
 
     /*
      *  Contactslist resources
      */
     private $_contactslistResources = [
-                "contactslistManageContact",
-                "contactslistManageManyContacts"
-            ];
+        "contactslistManageContact",
+        "contactslistManageManyContacts"
+    ];
 
 
     private $_response_code;
 
     # Constructor function
-    public function __construct($apiKey = false, $secretKey = false)
+    public function __construct($apiKey = false, $secretKey = false, $preprod = false)
     {
         if ($apiKey) {
             $this->apiKey = $apiKey;
@@ -70,8 +70,21 @@ class Client
         if ($secretKey) {
             $this->secretKey = $secretKey;
         }
-        $this->apiUrl = (($this->secure) ? 'https' : 'http') . '://api.mailjet.com/' . $this->version;
+        $this->apiUrl = $this->getApiUrl($preprod);
         $this->wrapperVersion = $this->readWrapperVersion();
+    }
+
+
+    private function getApiUrl ($preprod)
+    {
+        if ($preprod)
+        {
+            return (($this->secure) ? 'https' : 'http') . '://api.preprod.mailjet.com/' . $this->version;
+        }
+        else
+        {
+            return (($this->secure) ? 'https' : 'http') . '://api.mailjet.com/' . $this->version;
+        }
     }
 
     public function curl_setopt_custom_postfields($curl_handle, $postfields, $headers = null) {
@@ -148,12 +161,15 @@ class Client
         $params  = (sizeof($args) > 0) ? $args[0] : array();
 
         # Request method, GET by default
-        if (isset($params["method"])) {
+        if (isset($params["method"]))
+        {
             $request = strtoupper($params["method"]);
             unset($params['method']);
         }
         else
+        {
             $request = 'GET';
+        }
 
         # Request ID, empty by default
         $id = isset($params["ID"]) ? $params["ID"] : '';
@@ -167,7 +183,7 @@ class Client
             $params["to"] = "mailjet@example.org";
         }
 
-        if ($id == '')
+        if (empty($id))
         {
             # Request Unique field, empty by default
             $unique  = isset($params["unique"]) ? $params["unique"] : '';
@@ -190,16 +206,45 @@ class Client
         return $return;
     }
 
+    /**
+     *
+     *  @param string   $method         REST or DATA
+     *  @param string   $resourceBase   Base resource
+     *  @param int      $resourceID     Base resource ID
+     *  @param string   $action         Action on resource
+     *
+     *  @return string Returns the call's url.
+     */
+    private function makeUrl($method, $resourceBase, $resourceID, $action)
+    {
+        return $this->apiUrl.'/'.$method.'/'.$resourceBase.'/'.$resourceID.'/'.strtolower($action);
+    }
+
+    /**
+     *
+     *  @param string   $method         REST or DATA
+     *  @param string   $resourceBase   Base resource
+     *  @param int      $resourceID     Base resource ID
+     *  @param string   $resource       The whole resource, before parsing
+     *
+     *  @return string Returns the call's url.
+     */
+    private function makeUrlFromFilter($method, $resourceBase, $resourceID, $resource)
+    {
+        $matches = array();
+        preg_match('/'.$resourceBase.'([a-zA-Z]+)/', $resource, $matches);
+
+        $action = $matches[1];
+        return $this->makeUrl($method, $resourceBase, $resourceID, $action);
+    }
+
     public function requestUrlBuilder($resource, $params = array(), $request, $id)
     {
         // $this->_baseUrl = "https://api.mailjet.com/v3/";
 
-
-
         if ($resource == "sendEmail") {
             $this->call_url = $this->apiUrl."/REST/send/message";
         }
-        //
         else if ($resource == "uploadCSVContactslistData") {
           if (!empty($params['_contactslist_id'])) {
             $contactslist_id = $params['_contactslist_id'];
@@ -207,25 +252,15 @@ class Client
           else if (!empty($params['ID'])) {
             $contactslist_id = $params['ID'];
           }
-          $this->call_url = $this->apiUrl."/DATA/contactslist/". $contactslist_id ."/CSVData/text:plain";
+          $this->call_url = $this->makeUrl('DATA', 'Contactslist', $contactslist_id, 'CSVData/text:plain');     // Was $this->call_url = $this->apiUrl."/DATA/contactslist/". $contactslist_id ."/CSVData/text:plain";
         }
         else if (in_array($resource, $this->_newsletterResources))
         {
-            $matches = array();
-            preg_match('/newsletter([a-zA-Z]+)/', $resource, $matches);
-
-            $action = $matches[1];
-            $newsletter_id = $params['ID'];
-            $this->call_url = $this->apiUrl."/REST/newsletter/". $newsletter_id ."/".strtolower($action);
+            $this->call_url = $this->makeUrlFromFilter('REST', 'newsletter', $params['ID'], $resource);         // Was $this->call_url = $this->apiUrl."/REST/newsletter/". $newsletter_id ."/".strtolower($action);
         }
         else if (in_array($resource, $this->_contactResources))
         {
-            $matches = array();
-            preg_match('/contact([a-zA-Z]+)/', $resource, $matches);
-
-            $action = $matches[1];
-            $contact_id = $params['ID'];
-            $this->call_url = $this->apiUrl."/REST/contact/". $contact_id . "/".strtolower($action);
+            $this->call_url = $this->makeUrlFromFilter('REST', 'contact', $params['ID'], $resource);            // Was $this->call_url = $this->apiUrl."/REST/contact/". $contact_id . "/".strtolower($action);
         }
         else if ($resource == "contactManageManyContacts")
         {
@@ -233,12 +268,7 @@ class Client
         }
         else if (in_array($resource, $this->_contactslistResources))
         {
-            $matches = array();
-            preg_match('/contactslist([a-zA-Z]+)/', $resource, $matches);
-
-            $action = $matches[1];
-            $contactslist_id = $params['ID'];
-            $this->call_url = $this->apiUrl."/REST/contactslist/". $contactslist_id . "/".strtolower($action);
+            $this->call_url = $this->makeUrlFromFilter('REST', 'contactslist', $params['ID'], $resource);       // Was $this->call_url = $this->apiUrl."/REST/contactslist/". $contactslist_id . "/".strtolower($action);
         }
         else {
             $this->call_url = $this->apiUrl . '/REST/' . $resource;
@@ -263,13 +293,17 @@ class Client
             }
         }
 
-        if (($request == "VIEW" || $request == "DELETE" || $request == "PUT") && $resource != "addHTMLbody" && $resource != "uploadCSVContactslistData") {
-            if ($id != '' && $resource == "contactslistManageManyContacts")
+        if (($request == "VIEW" || $request == "DELETE" || $request == "PUT") && $resource != "uploadCSVContactslistData") {
+            if ($id != '')
             {
-                $this->call_url .= '/' . $params["JobID"];
-            }
-            else if ($id != '') {
-                $this->call_url .= '/' . $id;
+                if ($resource == "contactslistManageManyContacts")
+                {
+                    $this->call_url .= '/' . $params["JobID"];
+                }
+                else
+                {
+                    $this->call_url .= '/' . $id;
+                }
             }
         }
 
@@ -319,7 +353,7 @@ class Client
             else
             {
                 if ((in_array($resource, $this->_newsletterResources)) ||
-                    ($resource == "contactManageContactLists") ||
+                    ($resource == "contactManageContactsLists") ||
                     ($resource == "contactManageManyContacts") ||
                     (in_array($resource, $this->_contactslistResources)))
                 {
@@ -464,7 +498,7 @@ class Client
      * @return int
      */
     public function getResponseCode() {
-    	return $this->_response_code;
+        return $this->_response_code;
     }
 
     /**
