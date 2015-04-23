@@ -27,6 +27,38 @@ class Client
     private $apiKey = '';
     private $secretKey = '';
     
+
+    // Ressources arrays
+
+    /*
+     *  Newsletter resources
+     */
+    private $this->_newsletterResources = [
+                "newsletterDetailContent",
+                "newsletterSend",
+                "newsletterSchedule",
+                "newsletterTest",
+                "newsletterStatus"
+            ];
+
+    /*
+     * Contact resources
+     *  "contactManageManyContacts" not in as it is a special case.
+     */
+    private $this->_contactResources = [
+                "contactManageContactLists",
+                "contactGetContactLists"
+            ];
+
+    /*
+     *  Contactslist resources
+     */
+    private $this->_contactslistResources = [
+                "contactslistManageContact",
+                "contactslistManageManyContacts"
+            ];
+
+
     /**
      *  @var int
      */
@@ -165,6 +197,8 @@ class Client
     {
         // $this->_baseUrl = "https://api.mailjet.com/v3/";
 
+
+
         if ($resource == "sendEmail") {
             $this->call_url = $this->apiUrl."/REST/send/message";
         }
@@ -178,11 +212,8 @@ class Client
           }
           $this->call_url = $this->apiUrl."/DATA/contactslist/". $contactslist_id ."/CSVData/text:plain";
         }
-        else if (($resource == "newsletterDetailContent") ||
-                 ($resource == "newsletterSend") ||
-                 ($resource == "newsletterSchedule") ||
-                 ($resource == "newsletterTest") ||
-                 ($resource == "newsletterStatus")) {
+        else if (in_array($resource, $this->_newsletterResources))
+        {
             $matches = array();
             preg_match('/newsletter([a-zA-Z]+)/', $resource, $matches);
 
@@ -190,8 +221,7 @@ class Client
             $newsletter_id = $params['ID'];
             $this->call_url = $this->apiUrl."/REST/newsletter/". $newsletter_id ."/".strtolower($action);
         }
-        else if (($resource == "contactManageContactLists") ||
-                 ($resource == "contactGetContactLists"))
+        else if (in_array($resource, $this->_contactResources))
         {
             $matches = array();
             preg_match('/contact([a-zA-Z]+)/', $resource, $matches);
@@ -204,8 +234,7 @@ class Client
         {
             $this->call_url = $this->apiUrl."/REST/contact/managemanycontacts";
         }
-        else if (($resource == "contactslistManageContact") ||
-                 ($resource == "contactslistManageManyContacts"))
+        else if (in_array($resource, $this->_contactslistResources))
         {
             $matches = array();
             preg_match('/contactslist([a-zA-Z]+)/', $resource, $matches);
@@ -292,15 +321,10 @@ class Client
             //
             else
             {
-                if (($resource == "newsletterDetailContent") ||
-                    ($resource == "newsletterSend") ||
-                    ($resource == "newsletterSchedule") ||
-                    ($resource == "newsletterTest") ||
-                    ($resource == "newsletterStatus") ||
+                if ((in_array($resource, $this->_newsletterResources)) ||
                     ($resource == "contactManageContactLists") ||
                     ($resource == "contactManageManyContacts") ||
-                    ($resource == "contactslistManageContact") ||
-                    ($resource == "contactslistManageManyContacts"))
+                    (in_array($resource, $this->_contactslistResources)))
                 {
                     unset($params['ID']);
                 }
