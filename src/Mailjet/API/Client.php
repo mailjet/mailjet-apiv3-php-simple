@@ -178,16 +178,6 @@ class Client
           }
           $this->call_url = $this->apiUrl."/DATA/contactslist/". $contactslist_id ."/CSVData/text:plain";
         }
-        //
-        else if (($resource == "addHTMLbody") || ($resource == "getHTMLbody")) {
-            if (!empty($params['_newsletter_id'])) {
-                $newsletter_id = $params['_newsletter_id'];
-            }
-            else if (!empty($params['ID'])) {
-                $newsletter_id = $params['ID'];
-            }
-            $this->call_url = $this->apiUrl."/DATA/NewsLetter/". $newsletter_id ."/HTML/text/html/LAST";
-        }
         else if (($resource == "newsletterDetailContent") ||
                  ($resource == "newsletterSend") ||
                  ($resource == "newsletterSchedule") ||
@@ -291,14 +281,6 @@ class Client
             if ($resource == "sendEmail") {
                 $this->curl_setopt_custom_postfields($curl_handle, $params);
             }
-            else if ($resource == "addHTMLbody")
-            {
-                curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $params['html_content']);
-                curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
-                    'Content-Type: text/html'
-                ));
-            }
-            //
             else if ($resource == "uploadCSVContactslistData")
             {
               curl_setopt($curl_handle, CURLOPT_BINARYTRANSFER, TRUE);
@@ -352,13 +334,7 @@ class Client
         curl_close($curl_handle);
 
         # Return response
-        if (($this->_response_code == 200) && ($resource == "getHTMLbody")) {
-            $this->_response = $buffer;
-        }
-        else
-        {
-            $this->_response = json_decode($buffer, false, 512, JSON_BIGINT_AS_STRING);
-        }
+        $this->_response = json_decode($buffer, false, 512, JSON_BIGINT_AS_STRING);
 
         if ($request == 'POST') {
             return ($this->_response_code == 201 || $this->_response_code == 200) ? true : false;
