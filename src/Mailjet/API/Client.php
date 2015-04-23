@@ -33,7 +33,7 @@ class Client
     /*
      *  Newsletter resources
      */
-    private $this->_newsletterResources = [
+    private $_newsletterResources = [
                 "newsletterDetailContent",
                 "newsletterSend",
                 "newsletterSchedule",
@@ -45,7 +45,7 @@ class Client
      * Contact resources
      *  "contactManageManyContacts" not in as it is a special case.
      */
-    private $this->_contactResources = [
+    private $_contactResources = [
                 "contactManageContactLists",
                 "contactGetContactLists"
             ];
@@ -53,15 +53,12 @@ class Client
     /*
      *  Contactslist resources
      */
-    private $this->_contactslistResources = [
+    private $_contactslistResources = [
                 "contactslistManageContact",
                 "contactslistManageManyContacts"
             ];
 
 
-    /**
-     *  @var int
-     */
     private $_response_code;
 
     # Constructor function
@@ -73,7 +70,7 @@ class Client
         if ($secretKey) {
             $this->secretKey = $secretKey;
         }
-        $this->apiUrl = (($this->secure) ? 'https' : 'http') . '://api.mailjet.com/v3';
+        $this->apiUrl = (($this->secure) ? 'https' : 'http') . '://api.mailjet.com/' . $this->version;
         $this->wrapperVersion = $this->readWrapperVersion();
     }
 
