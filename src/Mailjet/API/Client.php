@@ -79,7 +79,7 @@ class Client
     {
         if ($preprod)
         {
-            return (($this->secure) ? 'https' : 'http') . '://api.preprod.mailjet.com/' . $this->version;
+            return (($this->secure) ? 'https' : 'http') . '://api.preprod.mailjet.com/' . $this->version . '0';
         }
         else
         {
@@ -480,7 +480,9 @@ class Client
             echo '<tr><th>Post Arguments</th><td>';
 
             foreach ($this->_request_post as $k => $v) {
-                echo $k . ' = <span style="color:#ff6e56;">' . $v . '</span><br/>';
+                if(!is_array($v)) {
+                    echo $k . ' = <span style="color:#ff6e56;">' . $v . '</span><br/>';
+                }
             }
 
             echo '</td></tr>';
