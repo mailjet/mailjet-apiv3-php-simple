@@ -85,6 +85,7 @@ $mj->contact($params);
 
 ```php
 function sendEmail() {
+
     $mj = new Mailjet();
     $params = array(
         "method" => "POST",
@@ -109,6 +110,7 @@ function sendEmail() {
 
 ```php
 function sendEmailWithAttachments() {
+
     $mj = new Mailjet();
     $params = array(
         "method" => "POST",
@@ -134,6 +136,7 @@ function sendEmailWithAttachments() {
 
 ```php
 function sendEmailWithInlineAttachments() {
+
     $mj = new Mailjet();
     $params = array(
         "method" => "POST",
@@ -161,6 +164,7 @@ function sendEmailWithInlineAttachments() {
 
 ```php
 function viewProfileInfo() {
+
     $mj = new Mailjet();
     $result = $mj->myprofile();
 
@@ -175,6 +179,7 @@ function viewProfileInfo() {
 
 ```php
 function updateProfileInfo() {
+
     $mj = new Mailjet();
     $params = array(
         "method" => "PUT",
@@ -197,8 +202,8 @@ function updateProfileInfo() {
 - A function to print the list of your contacts :
 
 ```php
-function listContacts()
-{
+function listContacts() {
+
     $mj = new Mailjet();
     $result = $mj->contact();
 
@@ -215,6 +220,7 @@ function listContacts()
 
 ```php
 function updateContactData($id) {
+
     $mj = new Mailjet();
     $data = array(
         array(
@@ -246,6 +252,7 @@ function updateContactData($id) {
 
 ```php
 function createList($Lname) {
+
     $mj = new Mailjet();
     $params = array(
         "method" => "POST",
@@ -267,6 +274,7 @@ function createList($Lname) {
 
 ```php
 function getList($listID) {
+
     $mj = new Mailjet();
     $params = array(
         "method" => "VIEW",
@@ -290,6 +298,7 @@ Note : You can use unique fields of resources instead of IDs, like
 
 ```php
 function createContact($Cemail) {
+
     $mj = new Mailjet();
     $params = array(
         "method" => "POST",
@@ -311,6 +320,7 @@ function createContact($Cemail) {
 
 ```php
 function addContactToList($contactID, $listID) {
+
     $mj = new Mailjet();
     $params = array(
         "method" => "POST",
@@ -334,8 +344,8 @@ function addContactToList($contactID, $listID) {
 (Usefull for uploading **lots** of contacts to one or more lists)
 
 ```php
-function addContactsToLists($contacts, $listsIDs)
-{
+function addContactsToLists($contacts, $listsIDs) {
+
     // WIP
 
     // return 
@@ -346,6 +356,7 @@ function addContactsToLists($contacts, $listsIDs)
 
 ```php
 function deleteList($listID) {
+
     $mj = new Mailjet();
     $params = array(
         "method" => "DELETE",
@@ -367,22 +378,22 @@ function deleteList($listID) {
 
 ```php
 function getUnsubscribedContactsFromList($listID) {
-	$mj = new Mailjet();
-	
-	$params = array(
-		"method" => "GET",
-		"ContactsList" => $listID,
-		"Unsub" => true
-	);
-	
-	$result = $mj->listrecipient($params);
-	
+
+    $mj = new Mailjet();
+    $params = array(
+        "method" => "GET",
+        "ContactsList" => $listID,
+        "Unsub" => true
+    );
+
+    $result = $mj->listrecipient($params);
+
     if ($mj->getResponseCode() == 200)
        echo "success - got unsubscribed contact(s) ";
     else
        echo "error - ".$mj->getResponseCode();
    
-	return $result;   
+    return $result;
 }
 ```
 
@@ -390,6 +401,7 @@ function getUnsubscribedContactsFromList($listID) {
 
 ```php
 function getContact($contactID) {
+
     $mj = new Mailjet();
     $params = array(
         "method" => "VIEW",
@@ -423,6 +435,7 @@ Example with a `GET` on `DetailContent` :
 
 ```php
 function getNewsletterDetailcontent($newsletter_id) {
+
     $mj = new Mailjet('', '');
     $params = array(
         "method" => "GET",
@@ -447,6 +460,7 @@ Here is an example :
 
 ```php
 function scheduleNewsletter($newsletter_id) {
+
     $mj = new Mailjet('', '');
     $params = array(
         "method" => "POST",
@@ -472,6 +486,7 @@ For the second case, here is an example :
 
 ```php
 function sendNewsletter($newsletter_id) {
+
     $mj = new Mailjet('', '');
     $params = array(
         "method" => "POST",
@@ -494,6 +509,7 @@ To do so, you have to perform a `POST` request on a newsletter with action `test
 
 ```php
 function testNewsletter($newsletter_id) {
+
     $mj = new Mailjet('', '');
     $recipients = array(array('Email' => 'mailjet@example.org', 'Name' => 'Mailjet'));
     $params = array(
@@ -515,4 +531,4 @@ function testNewsletter($newsletter_id) {
 
 ## Reporting issues
 
-Open an issue on github.
+[Open an issue on github](https://github.com/mailjet/mailjet-apiv3-php-simple/issues).
