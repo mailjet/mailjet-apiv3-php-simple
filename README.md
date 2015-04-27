@@ -339,7 +339,7 @@ function getContactsLists ($contactID) {
     $result = $mj->contactGetContactsLists($params);
 
     if ($mj->getResponseCode() == 201)
-       echo "success - contact ".$contactID." added to the list ".$listID;
+       echo "success - fetched lists for contact ".$contactID;
     else
        echo "error - ".$mj->getResponseCode();
 
@@ -347,7 +347,8 @@ function getContactsLists ($contactID) {
 }
 ```
 
-- A function to add the contact which ID is `$contactID` to the list which ID is `$listID`:
+- A function to add the contact which ID is `$contactID` to the list which ID is `$listID`:  
+_The preferred method to add a single contact to a list is described at the next bullet point._
 
 ```php
 function addContactToList($contactID, $listID) {
@@ -371,6 +372,49 @@ function addContactToList($contactID, $listID) {
 }
 ```
 
+- A function to add the contact described in `$contact` to the list which id is `$listID`:
+
+```php
+/**
+ *  @param  array   $contact    An array describing a contact.
+ *                              Example below the function.
+ *  @param  int     $listID     The ID of the list.
+ *
+ */
+function addDetailedContactToList ($contact, $listID) {
+
+    $mj = new Mailjet();
+    $params = [
+        "method" => "POST"
+    ];
+
+    $params = array_merge($params, $contact);
+
+    $result = $mj->contactslistManageContact($params);
+
+    if ($mj->getResponseCode() == 201)
+       echo "success - detailed contact ".$contactID." added to the list ".$listID;
+    else
+       echo "error - ".$mj->getResponseCode();
+
+    return $result;
+}
+
+// $contact array example
+/*  $contact = [
+ *      "Email"         =>  "foo@bar.com",   // Mandatory field!
+ *      "Name"          =>  "FooBar",
+ *      "Action"        =>  "addnoforce",
+ *      "Properties"    =>  [
+ *          "Prop1" =>  "value1",
+ *          ...
+ *      ]
+ *  ];
+ */
+```
+Note:  
+`action` can be **addforce**, **addnoforce**, **remove** or **unsub**.
+
 - A function to add, remove or unsub the contact which ID is `$contactID` to / from the list(s) contain(ed) in `$lists`:
 
 ```php
@@ -393,7 +437,7 @@ function addContactToLists ($contactID, $lists) {
     $result = $mj->contactManageContactsLists($params);
 
     if ($mj->getResponseCode() == 204)
-       echo "success - deleted list";
+       echo "success - contact ".$contactID." added to the list(s)";
     else
        echo "error - ".$mj->getResponseCode();
 
@@ -627,7 +671,7 @@ function getAsyncJobStatus ($asyncJobResponse) {
     $status = $mj->contactManageManyContacts($statusParams);
 
     if ($mj->getResponseCode() == 200)
-       echo "success - status obtain";
+       echo "success - status obtained";
     else
        echo "error while retrieving the status - ".$mj->getResponseCode();
 
