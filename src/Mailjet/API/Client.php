@@ -33,7 +33,7 @@ class Client
     /*
      *  Newsletter resources
      */
-    private $_newsletterResources = [
+    private static $_newsletterResources = [
         "newsletterDetailContent",
         "newsletterSend",
         "newsletterSchedule",
@@ -45,7 +45,7 @@ class Client
      * Contact resources
      *  "contactManageManyContacts" not in as it is a special case.
      */
-    private $_contactResources = [
+    private static $_contactResources = [
         "contactManageContactsLists",
         "contactGetContactsLists"
     ];
@@ -53,7 +53,7 @@ class Client
     /*
      *  Contactslist resources
      */
-    private $_contactslistResources = [
+    private static $_contactslistResources = [
         "contactslistManageContact",
         "contactslistManageManyContacts"
     ];
@@ -254,11 +254,11 @@ class Client
           }
           $this->call_url = $this->makeUrl('DATA', 'Contactslist', $contactslist_id, 'CSVData/text:plain');     // Was $this->call_url = $this->apiUrl."/DATA/contactslist/". $contactslist_id ."/CSVData/text:plain";
         }
-        else if (in_array($resource, $this->_newsletterResources))
+        else if (in_array($resource, self::$_newsletterResources))
         {
             $this->call_url = $this->makeUrlFromFilter('REST', 'newsletter', $params['ID'], $resource);         // Was $this->call_url = $this->apiUrl."/REST/newsletter/". $newsletter_id ."/".strtolower($action);
         }
-        else if (in_array($resource, $this->_contactResources))
+        else if (in_array($resource, self::$_contactResources))
         {
             $this->call_url = $this->makeUrlFromFilter('REST', 'contact', $params['ID'], $resource);            // Was $this->call_url = $this->apiUrl."/REST/contact/". $contact_id . "/".strtolower($action);
         }
@@ -266,7 +266,7 @@ class Client
         {
             $this->call_url = $this->apiUrl."/REST/contact/managemanycontacts";
         }
-        else if (in_array($resource, $this->_contactslistResources))
+        else if (in_array($resource, self::$_contactslistResources))
         {
             $this->call_url = $this->makeUrlFromFilter('REST', 'contactslist', $params['ID'], $resource);       // Was $this->call_url = $this->apiUrl."/REST/contactslist/". $contactslist_id . "/".strtolower($action);
         }
@@ -352,10 +352,10 @@ class Client
             //
             else
             {
-                if ((in_array($resource, $this->_newsletterResources)) ||
+                if ((in_array($resource, self::$_newsletterResources)) ||
                     ($resource == "contactManageContactsLists") ||
                     ($resource == "contactManageManyContacts") ||
-                    (in_array($resource, $this->_contactslistResources)))
+                    (in_array($resource, self::$_contactslistResources)))
                 {
                     unset($params['ID']);
                 }
