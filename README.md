@@ -46,7 +46,7 @@ At the top of the `myProjectEmailer.php` file (or whatever you named it) copy pa
 ```php
 include("Client.php");  // This includes this wrapper inside your own file.
 ```
-**Be Careful :** Make sure that both `myProjectEmailer.php` and `Client.php` files are in the same folder to make this include work!
+**Be Careful:** Make sure that both `myProjectEmailer.php` and `Client.php` files are in the same folder to make this include work!
 
 You are now ready to go !
 
@@ -60,28 +60,33 @@ use Mailjet\API\Client as Mailjet;
 
 If, for some reason, you don't, you will need to write `\Mailjet\API\Client(...)` instead of `Mailjet(...)`. It's up to you, really :smile:
 
-Now you can start working with the wrapper inside your project by creating a new `Mailjet` object with your api key and secret key:
+Now you can start working with the wrapper inside your project by creating a new `Mailjet` object with your API key and secret key:
 
 ```php
 $mj = new Mailjet( $apiKey, $secretKey );
 ```
 
 This basically starts the engine.  
-Now what you're going to do next depends on what you want to `GET`, `POST`, `PUT` or `DELETE` from the Mailjet servers through the API.  
-Take a tour on the [Reference documentation](http://dev.mailjet.com/email-api/v3/apikey/) to see all the resources available.
+What you do next depends on what you want to `GET`, `POST`, `PUT` or `DELETE` from the Mailjet servers through the API.  
+Take a tour on the [Reference documentation](http://dev.mailjet.com/email-api/v3/apikey/) to see all the available resources.
 
-Next you will specify which resource to call this way (resource Contact in this example) with an array of parameters `$params` :
-
+Once you know which resource you need to call and which way you want to call it (again: `GET`, `POST`, `PUT` or `DELETE`), you will need (for most of the resources at least) to build the parameters array which specifies certain properties of the resource you want to access.  
+In our example below, the goal is to access a specific `Contact` resource and `GET` it _via_ its **email**. This "sub-method" of `GET` is called `VIEW`.
 ```php
+$params = [
+    "method" => "VIEW",     // Lowercase 'method' is mandatory.
+    "Email" =>  "foo@bar.com"
+];
+
 $mj->contact($params);
 ```
-**Info :** If you don't specify the method of the request in the array `$params` (see examples below), it will be a GET.
+**Info:** If you don't specify the method of the request in the array `$params` (see examples below), it will be a GET.
 
 ## Examples
 
 ### SendAPI
 
-- A function to send an email :
+- A function to send an email:
 
 ```php
 function sendEmail() {
@@ -106,7 +111,7 @@ function sendEmail() {
 }
 ```
 
-- A function to send an email with some attachments (absolute paths on your computer) :
+- A function to send an email with some attachments (absolute paths on your computer):
 
 ```php
 function sendEmailWithAttachments() {
@@ -132,7 +137,7 @@ function sendEmailWithAttachments() {
 }
 ```
 
-- A function to send an email with some inline attachments (absolute paths on your computer) :
+- A function to send an email with some in-line attachments (absolute paths on your computer):
 
 ```php
 function sendEmailWithInlineAttachments() {
@@ -160,7 +165,7 @@ function sendEmailWithInlineAttachments() {
 
 ### Account Settings
 
-- A function to get your profile information :
+- A function to get your profile information:
 
 ```php
 function viewProfileInfo() {
@@ -175,7 +180,7 @@ function viewProfileInfo() {
 }
 ```
 
-- A function to update the field `AddressCity` of your profile :
+- A function to update the field `AddressCity` of your profile:
 
 ```php
 function updateProfileInfo() {
@@ -199,7 +204,9 @@ function updateProfileInfo() {
 
 ### Contact & Contact Lists
 
-- A function to print the list of your contacts :
+[Reference page](http://dev.mailjet.com/email-api/v3/contact/).
+
+- A function to print the list of your contacts:
 
 ```php
 function listContacts() {
@@ -216,7 +223,7 @@ function listContacts() {
 }
 ```
 
-- A function to update your contactData resource _via_  ID `$id`, using arrays :
+- A function to update your contactData resource _via_  ID `$id`, using arrays:
 
 ```php
 function updateContactData($id) {
@@ -248,7 +255,7 @@ function updateContactData($id) {
 }
 ```
 
-- A function to create a list with name `$Lname` :
+- A function to create a list with name `$Lname`:
 
 ```php
 function createList($Lname) {
@@ -270,7 +277,7 @@ function createList($Lname) {
 }
 ```
 
-- A function to get a list with ID `$listID` :
+- A function to get a list with ID `$listID`:
 
 ```php
 function getList($listID) {
@@ -291,10 +298,10 @@ function getList($listID) {
     return $result;
 }
 ```
-Note : You can use unique fields of resources instead of IDs, like
+Note: You can use unique fields of resources instead of IDs, like
 `"unique" => "test@gmail.com"` in your `params` array for this example
 
-- A function to create a contact with email `$Cemail` :
+- A function to create a contact with email `$Cemail`:
 
 ```php
 function createContact($Cemail) {
@@ -316,7 +323,31 @@ function createContact($Cemail) {
 }
 ```
 
-- A function to add the contact which ID is `$contactID` to the list which ID is `$listID` :
+- A function to get the lists for a single contact which ID is `$contactID`:
+
+```php
+/**
+ *  @param int      $contactID  The ID of the contact
+ */
+function getContactsLists ($contactID) {
+
+    $mj = new Mailjet();
+    $params = [
+        "ID"    =>  $contactID
+    ];
+
+    $result = $mj->contactGetContactsLists($params);
+
+    if ($mj->getResponseCode() == 201)
+       echo "success - contact ".$contactID." added to the list ".$listID;
+    else
+       echo "error - ".$mj->getResponseCode();
+
+    return $result;
+}
+```
+
+- A function to add the contact which ID is `$contactID` to the list which ID is `$listID`:
 
 ```php
 function addContactToList($contactID, $listID) {
@@ -340,19 +371,53 @@ function addContactToList($contactID, $listID) {
 }
 ```
 
-- A function to asynchronously add new contact(s) to a list(s) and get the status of the job:  
-(Usefull for uploading **lots** of contacts to one or more lists)
+- A function to add, remove or unsub the contact which ID is `$contactID` to / from the list(s) contain(ed) in `$lists`:
 
 ```php
-function addContactsToLists($contacts, $listsIDs) {
+/**
+ *  @param int      $contactID  The ID of the contact
+ *  @param array    $lists      An array of arrays,
+ *                              each one describing a list.
+ *                              Example below the function.
+ */
+function addContactToLists ($contactID, $lists) {
 
-    // WIP
+    $mj = Mailjet('', '');
 
-    // return 
+    $params = [
+        "method"        =>  "POST",
+        "ID"            =>  $contactID,
+        "ContactLists"  =>  $lists
+    ];
+
+    $result = $mj->contactManageContactsLists($params);
+
+    if ($mj->getResponseCode() == 204)
+       echo "success - deleted list";
+    else
+       echo "error - ".$mj->getResponseCode();
+
+    return $result;
 }
-```
 
-- A function to delete the list which ID is `$listID` :
+// $lists array example
+/*  $lists = [
+ *      [
+ *          "ListID"    =>  1,
+ *          "Action"    =>  "remove"
+ *      ],
+ *      [
+ *          "ListID"    =>  4,
+ *          "Action"    =>  "addnoforce"
+ *      ]
+ *      // ...
+ *  ];
+ */
+```
+Note:  
+`action` can be **addforce**, **addnoforce**, **remove** or **unsub**.
+
+- A function to delete the list which ID is `$listID`:
 
 ```php
 function deleteList($listID) {
@@ -374,7 +439,7 @@ function deleteList($listID) {
 }
 ```
 
-- A function to get unsubscribed contact(s) from a list with ID `$listID` :
+- A function to get unsubscribed contact(s) from a list with ID `$listID`:
 
 ```php
 function getUnsubscribedContactsFromList($listID) {
@@ -397,7 +462,7 @@ function getUnsubscribedContactsFromList($listID) {
 }
 ```
 
-- A function to get a contact with ID `$contactID` :
+- A function to get a contact with ID `$contactID`:
 
 ```php
 function getContact($contactID) {
@@ -418,20 +483,170 @@ function getContact($contactID) {
     return $result;
 }
 ```
-Note : You can use unique fields of resources instead of IDs, like
-`"unique" => "test@gmail.com"` in your `params` array for this example
+Note: You can use unique fields of resources instead of IDs, like
+`"unique" => "foo@bar.com"` in your `params` array for this example
+
+#### Asynchronous jobs
+
+An _asynchronous job_ (in short, **async job**) is a way to add or update massive amount of data (contacts, for example) in an all-in-one call which will return a job id used to check on the progress of the job _via_ another call.
+
+- **Contact resource** _Async job execution_  
+A function to asynchronously add, remove or unsub contact(s) to/from one or more list(s) and returns the status array for the job:  
+(Useful for uploading **lots** of contacts to one or more list(s) at once.)  
+
+  This example shows how to remove the given contacts from one list and add them to another (if they are not in it). In **_one_** call.
+
+```php
+/**
+ *  @param  array   $contacts   Should be an array of arrays,
+ *                              each one describing a contact.
+ *                              Example below the function.
+ *
+ *  @param  array   $lists      Should be an array of arrays,
+ *                              each one describing a list.
+ *                              Example below the function.
+ */
+function asyncTransferContactsToLists ($contacts, $lists) {
+
+    $mj = new Mailjet('', '');
+
+    $params = [
+        "method"        =>  "POST",
+        "ContactsLists" =>  $lists,
+        "Contacts"      =>  $contacts
+    ];
+
+    $asyncJobResponse = $mj->contactManageManyContacts($params);
+
+    if ($mj->getResponseCode() == 200)
+        echo "success - proper request";
+    else
+        echo "error while accessing the resource - ".$mj->getResponseCode();
+
+    return $asyncJobResponse;
+}
+
+// $contacts array example
+/*  $contacts = [
+ *      [
+ *          "Email" =>  "foo@bar.org",
+ *          ...
+ *      ],
+ *      [
+ *          "Email" =>  "foo2@bar.com",
+ *          ...
+ *      ]
+ *  ];
+ */
+
+// $lists array example
+/*  $lists = [
+ *      [
+ *          "ListID"    =>  1,
+ *          "Action"    =>  "remove"
+ *      ],
+ *      [
+ *          "ListID"    =>  4,
+ *          "Action"    =>  "addnoforce"
+ *      ]
+ *  ];
+ */
+```
+Note:  
+`action` can be **addforce**, **addnoforce**, **remove** or **unsub**.
+
+- **Contactslist resource** _Async job execution_  
+A function to asynchronously add, remove or unsub contact(s) to/from a list and return the status array for the job:
+
+  This example shows how to unsub contacts from a contacts list.
+
+```php
+/**
+ *  @param  array   $contacts   Should be an array of arrays,
+ *                              each one describing a contact.
+ *                              Example below the function.
+ *
+ *  @param  int     $listID     The list ID.
+ *
+ */
+function asyncManageContactsToList ($contacts, $listID) {
+
+    $mj = new Mailjet('', '');
+
+    $params = [
+        "method"        =>  "POST",
+        "Action"        =>  "unsub",
+        "Contacts"      =>  $contacts
+    ];
+
+    $asyncJobResponse = $mj->contactslistManageManyContacts($params);
+
+    if ($mj->getResponseCode() == 200)
+        echo "success - proper request";
+    else
+        echo "error while accessing the resource - ".$mj->getResponseCode();
+
+    return $asyncJobResponse;
+}
+
+// $contacts array example
+/*  $contacts = [
+ *      [
+ *          "Email" =>  "foo@bar.org",
+ *          ...
+ *      ],
+ *      [
+ *          "Email" =>  "foo2@bar.com",
+ *          ...
+ *      ]
+ *  ];
+ */
+```
+Note:  
+`action` can be **addforce**, **addnoforce**, **remove** or **unsub**.
+
+- **Contact resource**  _Async job monitoring_  
+A function to get the status of a previously launched asynchronous job:
+
+```php
+/**
+ *  @param array $asyncJobResponse The result object returned by the async job. (See function above)
+ *
+ */
+function getAsyncJobStatus ($asyncJobResponse) {
+
+    $mj = new Mailjet('', '');
+
+    $jobID = get_object_vars(get_object_vars($asyncJobResponse)["Data"][0])["JobID"];
+
+    $statusParams = [
+        "method"    =>  "VIEW",
+        "ID"        =>  $jobID
+    ];
+
+    $status = $mj->contactManageManyContacts($statusParams);
+
+    if ($mj->getResponseCode() == 200)
+       echo "success - status obtain";
+    else
+       echo "error while retrieving the status - ".$mj->getResponseCode();
+
+    return status;
+}
+```
+
 
 ### Newsletters
 
 You can use the `DetailContent` action to manage the content of a newsletter, in Text and Html.
-It has two properties : `Text-part` and `Html-part`.
-You can use `GET`, `POST`, `PUT` and `DELETE` both  requests on this action :
-* `GET` : you get the `Text-part` and `Html-part` properties of a newsletter
-* `POST` : update the content of `Text-part` and `Html-part`. If you specify only one, the other will be emptied
-* `PUT` : update the content of `Text-part` and `Html-part`. You can specify only one, it will not empty the other one
-* `DELETE` : update the content of `Text-part` and `Html-part` and put both to empty.
+It has two properties: `Text-part` and `Html-part`.
+You can use `GET`, `POST`, `PUT` and `DELETE` both  requests on this action:
+* `GET`: you get the `Text-part` and `Html-part` properties of a newsletter
+* `POST`: update the content of `Text-part` and `Html-part`. If you specify only one, the other will be emptied
+* `PUT`: update the content of `Text-part` and `Html-part`. You can specify only one, it will not empty the other one
+* `DELETE`: update the content of `Text-part` and `Html-part` and put both to empty.
 
-Example with a `GET` on `DetailContent` :
+Example with a `GET` on `DetailContent`:
 
 ```php
 function getNewsletterDetailcontent($newsletter_id) {
@@ -454,9 +669,9 @@ function getNewsletterDetailcontent($newsletter_id) {
 ```
 
 Use the `schedule` action to send a newsletter later.
-You just need to perform a `POST` request to schedule a new sending and to fill the `date` property with a Timestamp format in ISO 8601 : http://www.iso.org/iso/home/standards/iso8601.htm
+You just need to perform a `POST` request to schedule a new sending and to fill the `date` property with a Timestamp format in ISO 8601: http://www.iso.org/iso/home/standards/iso8601.htm
 You can also `DELETE` a schedule
-Here is an example :
+Here is an example:
 
 ```php
 function scheduleNewsletter($newsletter_id) {
@@ -479,10 +694,10 @@ function scheduleNewsletter($newsletter_id) {
 }
 ```
 
-To send a newsletter immediately, you have two possibilities :
+To send a newsletter immediately, you have two possibilities:
 * `POST` a new schedule with a Timestamp which value is `NOW`
 * use send (only `POST` is supported)
-For the second case, here is an example :
+For the second case, here is an example:
 
 ```php
 function sendNewsletter($newsletter_id) {
@@ -505,7 +720,7 @@ function sendNewsletter($newsletter_id) {
 ```
 
 You can also test a newsletter by sending it to some specified recipients before making the real sending.
-To do so, you have to perform a `POST` request on a newsletter with action `test` like in the following example :
+To do so, you have to perform a `POST` request on a newsletter with action `test` like in the following example:
 
 ```php
 function testNewsletter($newsletter_id) {
