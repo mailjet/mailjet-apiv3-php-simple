@@ -679,7 +679,6 @@ function getAsyncJobStatus ($asyncJobResponse) {
 }
 ```
 
-
 ### Newsletters
 
 You can use the `DetailContent` action to manage the content of a newsletter, in Text and Html.
