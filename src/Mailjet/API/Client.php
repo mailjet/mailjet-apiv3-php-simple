@@ -243,7 +243,7 @@ class Client
         // $this->_baseUrl = "https://api.mailjet.com/v3/";
 
         if ($resource == "sendEmail") {
-            $this->call_url = $this->apiUrl."/REST/send/message";
+            $this->call_url = $this->apiUrl."/send/message";
         }
         else if ($resource == "uploadCSVContactslistData") {
           if (!empty($params['_contactslist_id'])) {
