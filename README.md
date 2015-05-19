@@ -75,12 +75,12 @@ In our example below, the goal is to access a specific `Contact` resource and `G
 ```php
 $params = [
     "method" => "VIEW",     // Lowercase 'method' is mandatory.
-    "Email" =>  "foo@bar.com"
+    "unique" =>  "foo@bar.com"
 ];
 
 $mj->contact($params);
 ```
-**Info:** If you don't specify the method of the request in the array `$params` (see examples below), it will be a GET.
+**Info:** If you don't specify the method of the request in the array `$params` (see examples below), `GET` will be used as default.
 
 ## Examples
 
