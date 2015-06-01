@@ -197,7 +197,7 @@ class Mailjet
             $this->call_url = $this->apiUrl . '/' . $resource;
         }
 
-        if ($request == "GET") {
+        if ($request == "GET" || $request == "POST") {
             if (count($params) > 0)
             {
                 $this->call_url .= '?';
@@ -205,10 +205,20 @@ class Mailjet
                 foreach ($params as $key => $value) {
                     // In a GET request, put an underscore char in front of params to avoid it being treated as a filter
                     $firstChar = substr($key, 0, -(strlen($key) - 1));
-                    if (($firstChar != "_") && ($key != "ID"))
+
+                    if ($request == "GET") {
+                        $okFirstChar = ($firstChar != "_");
+                        $queryStringKey = $key;
+                    }
+                    else {
+                        $okFirstChar = ($firstChar == "_");
+                        $queryStringKey = substr($key, 1);
+                    }
+
+                    if ($okFirstChar && ($key != "ID"))
                     {
-                        $query_string[$key] = $key . '=' . $value;
-                        $this->call_url .= $query_string[$key] . '&';
+                        $query_string[$queryStringKey] = $queryStringKey . '=' . $value;
+                        $this->call_url .= $query_string[$queryStringKey] . '&';
                     }
                 }
 
@@ -247,6 +257,12 @@ class Mailjet
 
         if (($request == 'POST') || ($request == 'PUT')):
             curl_setopt($curl_handle, CURLOPT_POST, 1);
+
+            // Exclude filters from payload. See http://stackoverflow.com/questions/4260086/php-how-to-use-array-filter-to-filter-array-keys 
+            $paramsFiltered = array_filter(array_keys($params), function($k) {
+                return substr($k, 0, 1) != '_';
+            });
+            $params = array_intersect_key($params, array_flip($paramsFiltered));
 
             if ($this->debug == 2) {
                 var_dump($params);
