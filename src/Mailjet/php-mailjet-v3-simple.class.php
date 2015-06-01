@@ -61,29 +61,26 @@ class Mailjet
 
         $body = array();
         $crlf = "\r\n";
-        $fields = array();
 
         foreach ($postfields as $key => $value) {
-            if (is_array($value)) {
-                foreach ($value as $v) {
-                    $fields[] = array($key, $v);
-                }
-            }
-            else
-                $fields[] = array($key, $value);
-        }
-
-        foreach ($fields as $field) {
-            list($key, $value) = $field;
             // attachment
-            if (strpos($value, '@') === 0) {
-                preg_match('/^@(.*?)$/', $value, $matches);
-                list($dummy, $filename) = $matches;
-                $body[] = '--' . $boundary;
-                $body[] = 'Content-Disposition: form-data; name="' . $key . '"; filename="' . basename($filename) . '"';
-                $body[] = 'Content-Type: application/octet-stream';
-                $body[] = '';
-                $body[] = file_get_contents($filename);
+            if (is_array($value)) {
+                foreach ($value as $filename => $path) {
+                    if (strpos($path, '@') === 0) {
+                        preg_match('/^@(.*?)$/', $path, $matches);
+                        list($dummy, $path) = $matches;
+
+                        if (is_int($filename)) {
+                            $filename = basename($path);
+                        }
+
+                        $body[] = '--' . $boundary;
+                        $body[] = 'Content-Disposition: form-data; name="' . $key . '"; filename="' . $filename . '"';
+                        $body[] = 'Content-Type: application/octet-stream';
+                        $body[] = '';
+                        $body[] = file_get_contents($path);
+                    }
+                }
             }
             else {
                 $body[] = '--' . $boundary;
