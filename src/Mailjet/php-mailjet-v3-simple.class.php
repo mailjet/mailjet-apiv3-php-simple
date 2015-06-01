@@ -7,12 +7,14 @@
  * @author      Mailjet
  * @link        http://api.mailjet.com/
  *
+ * For PHP v >= 5.3
+ *
  */
 
 class Mailjet
 {
     # Wrapper version, changed for each release
-    const WRAPPER_VERSION = '1.0.7';
+    const WRAPPER_VERSION = '1.0.8';
 
     # Mailjet API version
     var $version = 'v3';
@@ -27,8 +29,38 @@ class Mailjet
     var $apiKey = '';
     var $secretKey = '';
 
+    // Ressources arrays
+
+    /*
+     *  Newsletter resources
+     */
+    private static $_newsletterResources = array(
+        "newsletterDetailContent",
+        "newsletterSend",
+        "newsletterSchedule",
+        "newsletterTest",
+        "newsletterStatus"
+    );
+
+    /*
+     * Contact resources
+     *  "contactManageManyContacts" not in as it is a special case.
+     */
+    private static $_contactResources = array(
+        "contactManageContactsLists",
+        "contactGetContactsLists"
+    );
+
+    /*
+     *  Contactslist resources
+     */
+    private static $_contactslistResources = array (
+        "contactslistManageContact",
+        "contactslistManageManyContacts"
+    );
+
     # Constructor function
-    public function __construct($apiKey = false, $secretKey = false)
+    public function __construct($apiKey = false, $secretKey = false, $preprod = false)
     {
         if ($apiKey) {
             $this->apiKey = $apiKey;
@@ -36,8 +68,20 @@ class Mailjet
         if ($secretKey) {
             $this->secretKey = $secretKey;
         }
-        $this->apiUrl = (($this->secure) ? 'https' : 'http') . '://api.mailjet.com/v3/REST';
+        $this->apiUrl = $this->getApiUrl($preprod);
         $this->wrapperVersion = $this->readWrapperVersion();
+    }
+
+    private function getApiUrl ($preprod)
+    {
+        if ($preprod)
+        {
+            return (($this->secure) ? 'https' : 'http') . '://api.preprod.mailjet.com/' . $this->version . '0';
+        }
+        else
+        {
+            return (($this->secure) ? 'https' : 'http') . '://api.mailjet.com/' . $this->version;
+        }
     }
 
     public function curl_setopt_custom_postfields($curl_handle, $postfields, $headers = null) {
@@ -114,12 +158,15 @@ class Mailjet
         $params  = (sizeof($args) > 0) ? $args[0] : array();
 
         # Request method, GET by default
-        if (isset($params["method"])) {
+        if (isset($params["method"]))
+        {
             $request = strtoupper($params["method"]);
             unset($params['method']);
         }
         else
+        {
             $request = 'GET';
+        }
 
         # Request ID, empty by default
         $id = isset($params["ID"]) ? $params["ID"] : '';
@@ -156,12 +203,43 @@ class Mailjet
         return $return;
     }
 
+    /**
+     *
+     *  @param string   $method         REST or DATA
+     *  @param string   $resourceBase   Base resource
+     *  @param int      $resourceID     Base resource ID
+     *  @param string   $action         Action on resource
+     *
+     *  @return string Returns the call's url.
+     */
+    private function makeUrl($method, $resourceBase, $resourceID, $action)
+    {
+        return $this->apiUrl.'/'.$method.'/'.$resourceBase.'/'.$resourceID.'/'.strtolower($action);
+    }
+
+    /**
+     *
+     *  @param string   $method         REST or DATA
+     *  @param string   $resourceBase   Base resource
+     *  @param int      $resourceID     Base resource ID
+     *  @param string   $resource       The whole resource, before parsing
+     *
+     *  @return string Returns the call's url.
+     */
+    private function makeUrlFromFilter($method, $resourceBase, $resourceID, $resource)
+    {
+        $matches = array();
+        preg_match('/'.$resourceBase.'([a-zA-Z]+)/', $resource, $matches);
+
+        $action = $matches[1];
+        return $this->makeUrl($method, $resourceBase, $resourceID, $action);
+    }
+
     public function requestUrlBuilder($resource, $params = array(), $request, $id)
     {
         if ($resource == "sendEmail") {
-            $this->call_url = "https://api.mailjet.com/v3/send/message";
+            $this->call_url = $this->apiUrl."/send/message";
         }
-        //
         else if ($resource == "uploadCSVContactslistData") {
           if (!empty($params['_contactslist_id'])) {
             $contactslist_id = $params['_contactslist_id'];
@@ -169,9 +247,8 @@ class Mailjet
           else if (!empty($params['ID'])) {
             $contactslist_id = $params['ID'];
           }
-          $this->call_url = "https://api.mailjet.com/v3/DATA/contactslist/". $contactslist_id ."/CSVData/text:plain";
+          $this->call_url = $this->makeUrl('DATA', 'Contactslist', $contactslist_id, 'CSVData/text:plain');     // Was $this->call_url = $this->apiUrl."/DATA/contactslist/". $contactslist_id ."/CSVData/text:plain";
         }
-        //
         else if (($resource == "addHTMLbody") || ($resource == "getHTMLbody")) {
             if (!empty($params['_newsletter_id'])) {
                 $newsletter_id = $params['_newsletter_id'];
@@ -179,22 +256,26 @@ class Mailjet
             else if (!empty($params['ID'])) {
                 $newsletter_id = $params['ID'];
             }
-            $this->call_url = "https://api.mailjet.com/v3/DATA/NewsLetter/". $newsletter_id ."/HTML/text/html/LAST";
+            $this->call_url = $this->makeUrl('DATA', 'NewsLetter', $newsletter_id, 'HTML/text/html/LAST');
         }
-        else if (($resource == "newsletterDetailContent") ||
-                 ($resource == "newsletterSend") ||
-                 ($resource == "newsletterSchedule") ||
-                 ($resource == "newsletterTest") ||
-                 ($resource == "newsletterStatus")) {
-            $matches = array();
-            preg_match('/newsletter([a-zA-Z]+)/', $resource, $matches);
-
-            $action = $matches[1];
-            $newsletter_id = $params['ID'];
-            $this->call_url = "https://api.mailjet.com/v3/REST/newsletter/". $newsletter_id ."/".$action;
+        else if (in_array($resource, self::$_newsletterResources))
+        {
+            $this->call_url = $this->makeUrlFromFilter('REST', 'newsletter', $params['ID'], $resource);         // Was $this->call_url = $this->apiUrl."/REST/newsletter/". $newsletter_id ."/".strtolower($action);
+        }
+        else if (in_array($resource, self::$_contactResources))
+        {
+            $this->call_url = $this->makeUrlFromFilter('REST', 'contact', $params['ID'], $resource);            // Was $this->call_url = $this->apiUrl."/REST/contact/". $contact_id . "/".strtolower($action);
+        }
+        else if ($resource == "contactManageManyContacts")
+        {
+            $this->call_url = $this->apiUrl."/REST/contact/managemanycontacts";
+        }
+        else if (in_array($resource, self::$_contactslistResources))
+        {
+            $this->call_url = $this->makeUrlFromFilter('REST', 'contactslist', $params['ID'], $resource);       // Was $this->call_url = $this->apiUrl."/REST/contactslist/". $contactslist_id . "/".strtolower($action);
         }
         else {
-            $this->call_url = $this->apiUrl . '/' . $resource;
+            $this->call_url = $this->apiUrl . '/REST/' . $resource;
         }
 
         if ($request == "GET") {
@@ -216,9 +297,18 @@ class Mailjet
             }
         }
 
-        if (($request == "VIEW" || $request == "DELETE" || $request == "PUT") && $resource != "addHTMLbody" && $resource != "uploadCSVContactslistData") {
-            if ($id != '') {
-                $this->call_url .= '/' . $id;
+        if (($request == "VIEW" || $request == "DELETE" || $request == "PUT") && $resource != "addHTMLbody" && $resource != "uploadCSVContactslistData")
+        {
+            if ($id != '')
+            {
+                if ($resource == "contactslistManageManyContacts")
+                {
+                    $this->call_url .= '/' . $params["JobID"];
+                }
+                else
+                {
+                    $this->call_url .= '/' . $id;
+                }
             }
         }
 
@@ -274,11 +364,11 @@ class Mailjet
             //
             else
             {
-                if (($resource == "newsletterDetailContent") ||
-                    ($resource == "newsletterSend") ||
-                    ($resource == "newsletterSchedule") ||
-                    ($resource == "newsletterTest") ||
-                    ($resource == "newsletterStatus")) {
+                if ((in_array($resource, self::$_newsletterResources)) ||
+                    ($resource == "contactManageContactsLists") ||
+                    ($resource == "contactManageManyContacts") ||
+                    (in_array($resource, self::$_contactslistResources)))
+                {
                     unset($params['ID']);
                 }
 
@@ -418,7 +508,9 @@ class Mailjet
             echo '<tr><th>Post Arguments</th><td>';
 
             foreach ($this->_request_post as $k => $v) {
-                echo $k . ' = <span style="color:#ff6e56;">' . $v . '</span><br/>';
+                if(!is_array($v)) {
+                    echo $k . ' = <span style="color:#ff6e56;">' . $v . '</span><br/>';
+                }
             }
 
             echo '</td></tr>';
