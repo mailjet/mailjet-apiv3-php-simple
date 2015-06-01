@@ -453,6 +453,29 @@ function testNewsletter($newsletter_id) {
 }
 ```
 
+To duplicate an existing Newsletter, use the `DuplicateFrom` filter, with the Newsletter ID to duplicate. `EditMode` is `html` if the Newsletter was built using the API or advanced mode. If you used our WYSIWYG tool, set it to `tool` :
+
+```php
+function duplicateNewsletter($newsletter_id) {
+    $mj = new Mailjet('', '');
+    $params = array(
+        "method" => "POST",
+        "EditMode" => "html",
+        "Status" => 0,
+        "_DuplicateFrom" => $newsletter_id
+    );
+
+    $result = $mj->newsletter($params);
+
+    if ($mj->_response_code == 200)
+        echo "success - duplicated Newsletter ". $newsletter_id;
+    else
+        echo "error - ".$mj->_response_code;
+
+    return $result;
+}
+```
+
 ## Reporting issues
 
-Open an issue on github.
+Open an issue [here](https://github.com/mailjet/mailjet-apiv3-php-simple/issues).
