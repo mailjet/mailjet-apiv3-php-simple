@@ -316,7 +316,17 @@ class Mailjet
         }
         else
         {
-            $this->_response = json_decode($buffer, false, 512, JSON_BIGINT_AS_STRING);
+            /*
+             *  This prevents the rounding error on 32 bits systems with PHP version >= 5.4
+             */
+            if (defined('JSON_BIGINT_AS_STRING'))
+            {
+                $this->_response = json_decode($buffer, false, 512, JSON_BIGINT_AS_STRING);
+            }
+            else
+            {   // PHP v <= 5.3.* doens't support the fourth parameter of json_decode
+                $this->_response = json_decode($buffer, false, 512);
+            }
         }
 
         if ($request == 'POST') {
