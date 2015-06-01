@@ -11,7 +11,7 @@ The goal of this wrapper is to simplify the usage of the MailJet API for PHP dev
 Make sure to have the following details:
 * A Mailjet account (If you don't have one, [see here](https://app.mailjet.com/signup))
 * Mailjet API Key **&** Secret Key ([See here](https://app.mailjet.com/account/api_keys))
-* PHP ([See here](http://php.net/))
+* PHP version >= 5.4 ([See here](http://php.net/))
 
 ## Installation
 

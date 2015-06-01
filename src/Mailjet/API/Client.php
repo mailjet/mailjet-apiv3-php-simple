@@ -7,6 +7,8 @@
  * @author      Mailjet
  * @link        http://api.mailjet.com/
  *
+ * For PHP v >= 5.4
+ *
  */
 
 class Client
