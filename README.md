@@ -1,4 +1,4 @@
-# [API v3] Mailjet PHP Wrapper
+# [API v3] Mailjet PHP Wrapper v1.0.7
 
 ## Introduction
 
@@ -10,7 +10,7 @@ The goal of this component is to simplify the usage of the MailJet API for PHP d
 Make sure to have the following details:
 * Mailjet API Key
 * Mailjet API Secret Key
-* PHP
+* PHP (v. >= 5.3, preferably v. >= 5.4)
 * This PHP class
 
 ## Installation
