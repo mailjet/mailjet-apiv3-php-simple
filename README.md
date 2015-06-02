@@ -56,74 +56,90 @@ $mj->contact($params);
 ### SendAPI
 
 - A function to send an email :
+
 ```php
-function sendEmail() {
-    $mj = new Mailjet();
-    $params = array(
-        "method" => "POST",
-        "from" => "ms.mailjet@example.com",
-        "to" => "mr.mailjet@example.com",
-        "subject" => "Hello World!",
-        "text" => "Greetings from Mailjet."
-    );
 
-    $result = $mj->sendEmail($params);
+    function sendEmail() {
+        $mj = new Mailjet();
+        $params = array(
+            "method" => "POST",
+            "from" => "ms.mailjet@example.com",
+            "to" => "mr.mailjet@example.com",
+            "subject" => "Hello World!",
+            "text" => "Greetings from Mailjet."
+        );
 
-    if ($mj->_response_code == 200)
-       echo "success - email sent";
-    else
-       echo "error - ".$mj->_response_code;
+        $result = $mj->sendEmail($params);
 
-    return $result;
-}
+        if ($mj->_response_code == 200)
+           echo "success - email sent";
+        else
+           echo "error - ".$mj->_response_code;
+
+        return $result;
+    }
 ```
 
 - A function to send an email with some attachments (absolute paths on your computer) :
+
 ```php
-function sendEmailWithAttachments() {
-    $mj = new Mailjet();
-    $params = array(
-        "method" => "POST",
-        "from" => "ms.mailjet@example.com",
-        "to" => "mr.mailjet@example.com",
-        "subject" => "Hello World!",
-        "text" => "Greetings from Mailjet.",
-        "attachment" => array("@/path/to/first/file.txt", "@/path/to/second/file.txt")
-    );
 
-    $result = $mj->sendEmail($params);
+    function sendEmailWithAttachments() {
+        $mj = new Mailjet();
+        $params = array(
+            "method" => "POST",
+            "from" => "ms.mailjet@example.com",
+            "to" => "mr.mailjet@example.com",
+            "subject" => "Hello World!",
+            "text" => "Greetings from Mailjet.",
+            "attachment" => array(
+                "MyFirstAttachment" => "@/path/to/first/file.txt",
+                "@/path/to/second/file.pdf",
+                "MyThirdAttachment" => "@/path/to/third/file.jpg"
+                )
+        );
 
-    if ($mj->_response_code == 200)
-       echo "success - email sent";
-    else
-       echo "error - ".$mj->_response_code;
+        $result = $mj->sendEmail($params);
 
-    return $result;
-}
+        if ($mj->_response_code == 200)
+           echo "success - email sent";
+        else
+           echo "error - ".$mj->_response_code;
+
+        return $result;
+    }
 ```
+  * N.B.: Regarding attachments and as shown in the code above, it is possible to declare them in two different (but combinable; PHP is cool like that) ways:
+    * Using a `"key" => "value"` combination: The `key` is the filename and the `value` the path to that filename. This allows for a customizable filename, independent from the actual file.
+    * Using a usual array field containing the path to the file you want to attach. The name displayed for that attachment will be the actual name of the file.
 
 - A function to send an email with some inline attachments (absolute paths on your computer) :
+
 ```php
-function sendEmailWithInlineAttachments() {
-    $mj = new Mailjet();
-    $params = array(
-        "method" => "POST",
-        "from" => "ms.mailjet@example.com",
-        "to" => "mr.mailjet@example.com",
-        "subject" => "Hello World!",
-        "html" => "<html>Greetings from Mailjet <img src=\"cid:photo1.jpg\"><img src=\"cid:photo2.jpg\"></html>",
-    "inlineattachment" => array("@/path/to/photo1.jpg", "@/path/to/photo2.jpg")
-    );
 
-    $result = $mj->sendEmail($params);
+    function sendEmailWithInlineAttachments() {
+        $mj = new Mailjet();
+        $params = array(
+            "method" => "POST",
+            "from" => "ms.mailjet@example.com",
+            "to" => "mr.mailjet@example.com",
+            "subject" => "Hello World!",
+            "html" => "<html>Greetings from Mailjet <img src=\"cid:MaPhoto\"><img src=\"cid:photo2.png\"></html>",
+            "inlineattachment" => array(
+                "MaPhoto" => "@/path/to/photo1.jpg",
+                "@/path/to/photo2.png"
+                )
+        );
 
-    if ($mj->_response_code == 200)
-       echo "success - email sent";
-    else
-       echo "error - ".$mj->_response_code;
+        $result = $mj->sendEmail($params);
 
-    return $result;
-}
+        if ($mj->_response_code == 200)
+           echo "success - email sent";
+        else
+           echo "error - ".$mj->_response_code;
+
+        return $result;
+    }
 ```
 
 ### Account Settings
@@ -453,27 +469,66 @@ function testNewsletter($newsletter_id) {
 }
 ```
 
-To duplicate an existing Newsletter, use the `DuplicateFrom` filter, with the Newsletter ID to duplicate. `EditMode` is `html` if the Newsletter was built using the API or advanced mode. If you used our WYSIWYG tool, set it to `tool` :
+To duplicate an existing Newsletter, use the `DuplicateFrom` filter, with the Newsletter ID to duplicate. `EditMode` is `html` if the Newsletter was built using the API or advanced mode. If you used our WYSIWYG tool, set it to `tool`:
 
 ```php
-function duplicateNewsletter($newsletter_id) {
-    $mj = new Mailjet('', '');
-    $params = array(
-        "method" => "POST",
-        "EditMode" => "html",
-        "Status" => 0,
-        "_DuplicateFrom" => $newsletter_id
+
+    function duplicateNewsletter($newsletter_id) {
+        $mj = new Mailjet('', '');
+        $params = array(
+            "method" => "POST",
+            "EditMode" => "html",
+            "Status" => 0,
+            "_DuplicateFrom" => $newsletter_id
+        );
+
+        $result = $mj->newsletter($params);
+
+        if ($mj->_response_code == 201)
+            echo "success - duplicated Newsletter ". $newsletter_id;
+        else
+            echo "error - ".$mj->_response_code;
+
+        return $result;
+    }
+```
+
+## Filtering
+
+The API allows for filtering of resources on `GET` and `POST` requests.  
+However, there is a difference in how you need to specify the filters you want to use in your payload hod, depending on the method you want to use:
+
+* For `GET` requests:  
+This is easy. Simply append the filter to your parameters array, like you would for an extra parameter.
+
+Need to show more than the first 10 `contacts` in a `contactslist` the API response contains? Use the `limit` filter:
+
+```php
+
+    $params = array (
+        "COntactsList"  =>  $contactslistID,
+        "Limit" =>  "100"
     );
 
+    $res = $mj->contacts($params);
+```
+
+* For `POST` requests:  
+For filters using that method, the wrapper needs to be able to differentiate between a parameter and a filter.  
+How? Simply append a "_" (underscore character) at the beginning of the filter's name.
+
+Want to duplicate a newsletter? Do:  
+
+```php
+
+    $params = array(
+            "method" => "POST",
+            "EditMode" => "html",
+            "Status" => 0,
+            "_DuplicateFrom" => $newsletter_id
+        );
+
     $result = $mj->newsletter($params);
-
-    if ($mj->_response_code == 200)
-        echo "success - duplicated Newsletter ". $newsletter_id;
-    else
-        echo "error - ".$mj->_response_code;
-
-    return $result;
-}
 ```
 
 ## Reporting issues
