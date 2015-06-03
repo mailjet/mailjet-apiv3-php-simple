@@ -365,6 +365,96 @@ function getContact($contactID) {
 Note : You can use unique fields of resources instead of IDs, like
 ```"unique" => "test@gmail.com"``` in your ```params``` array for this example
 
+#### Managing contacts with regard to a contactslist from a CSV file
+"Managing" here means **adding**, **removing** or **unsubscribing**.
+
+In some cases you might need to manage large quantities of `contacts` stored into a CSV record in relation to a `contactslist`. Here is how to proceed using the PHP Wrapper.  
+
+Please note that these steps represent a single process. Don't execute each step independently but, rather, as a whole.
+##### Step zero: CSV file structure.
+The structure for the CSV file should be as follows:
+
+```csv
+
+    email,age
+    foo@example.org,42
+    bar@example.com,13
+    sam@ple.co.uk, 37
+```
+
+##### First step: upload the data
+The first step is to upload the csv data to the server.  
+You need to specify the wanted `contactslist` ID and, of course, the *csv_content*.
+
+```php
+
+    $CSVContent = file_get_contents('test.csv');
+
+    $uploadParams = array(
+        "method" => "POST",
+        "ID" => $listID,
+        "csv_content" => $CSVContent
+    );
+
+    $csvUpload = $mj->uploadCSVContactslistData($uploadParams);
+
+    if ($mj->_response_code == 200)
+       echo "success - uploaded CSV file ";
+    else
+       echo "error - ".$mj->_response_code;
+```
+
+##### Second step: integrate the data
+Now, you need to tell the API that this uploaded data has to be assign to the given `contactslist` resource.
+
+Please note that *method* and *Method* are not the same field.  
+*Method* describes how the contacts import will behave. Possible values are **addforce**, **addnoforce**, **remove** and **unsub**.
+
+```php
+
+    $assignParams = array(
+        "method" => "POST",
+        "ContactsListID" => $listID,
+        "DataID" => $csvUpload->ID,
+        "Method" => "addnoforce"
+    );
+
+    $csvAssign = $mj->csvimport($assignParams);
+
+    if ($mj->_response_code == 201)
+       echo "success - CSV data ".$csvUpload->ID." assigned to contactslist ".$listID;
+    else
+       echo "error - ".$mj->_response_code;
+```
+
+##### Third step:
+What is left to do is to make sure the task completed successfully, which might require multiple check as a huge amount of data may take some time to be processed.
+
+This loop will query the API every second for the processing's status until it is *Completed*.
+```php
+
+    do
+    {
+        sleep(1);
+
+        $monitorParmas = array (
+            "method" => "VIEW",
+            "ID" => $csvAssign->Data[0]->ID
+        );
+
+        $res = $mj->batchjob($monitorParmas);
+
+        if ($mj->_response_code == 200)
+           echo "job ".$res->Data[0]->Status."\n";
+        else
+        {
+            echo "error - ".$mj->_response_code."\n";
+            break;
+        }
+
+    }while(($res->Data[0]->Status != "Completed"));
+```
+
 ### Newsletters
 
 You can use the ```DetailContent``` action to manage the content of a newsletter, in Text and Html.
