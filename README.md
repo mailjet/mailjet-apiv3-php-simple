@@ -408,7 +408,7 @@ You need to specify the wanted `contactslist` ID and, of course, the *csv_conten
        echo "error - ".$mj->_response_code;
 ```
 
-##### Second step: integrate the data
+##### Second step: Manage the contacts subscription to the contactslist
 
 Now, you need to tell the API that this uploaded data has to be assign to the given `contactslist` resource.
 
@@ -437,7 +437,7 @@ Please note that *method* and *Method* are not the same field.
        echo "error - ".$mj->_response_code;
 ```
 
-##### Third step:
+##### Third step: Monitor the process
 
 What is left to do is to make sure the task completed successfully, which might require multiple checks as a huge amount of data may take some time to be processed (several hours are not uncommon).
 
