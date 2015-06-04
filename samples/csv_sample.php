@@ -1,6 +1,6 @@
 <?php
 /*
- *	This script will add the contacts contained in the sample.csv file
+ *  This script will add the contacts contained in the sample.csv file
  *  to the contactslist which ID is defined in $listID.
  *
  */
@@ -16,9 +16,9 @@ $CSVContent = file_get_contents('sample.csv');
 function uploadCSV ($listID, $CSVContent)
 {
 	$uploadParams = array(
-	    "method" => "POST",
-	    "ID" => $listID,
-	    "csv_content" => $CSVContent
+	"method" => "POST",
+		"ID" => $listID,
+		"csv_content" => $CSVContent
 	);
 
 	$csvUpload = $mj->uploadCSVContactslistData($uploadParams);
@@ -35,28 +35,28 @@ function uploadCSV ($listID, $CSVContent)
 function assignContactsToList ($listID, $uploadID)
 {
 	$assignParams = array(
-        "method" => "POST",
-        "ContactsListID" => $listID,
-        "DataID" => $csvUpload->ID,
-        "Method" => "addnoforce"
-    );
+		"method" => "POST",
+		"ContactsListID" => $listID,
+		"DataID" => $csvUpload->ID,
+		"Method" => "addnoforce"
+	);
 
-    $csvAssign = $mj->csvimport($assignParams);
+	$csvAssign = $mj->csvimport($assignParams);
 
-    if ($mj->_response_code == 201)
-    {
-    	echo "success - CSV data ".$csvUpload->ID." assigned to contactslist ".$listID;
-    	return $csvAssign->Data[0]->ID;
-    }
-    else
-    	exit("error - Couldn't assign contacts to list - code ".$mj->_response_code;)
+	if ($mj->_response_code == 201)
+	{
+		echo "success - CSV data ".$csvUpload->ID." assigned to contactslist ".$listID;
+		return $csvAssign->Data[0]->ID;
+	}
+	else
+		exit("error - Couldn't assign contacts to list - code ".$mj->_response_code;)
 }
 
 function monitor ($jobID)
 {
 	$monitorParmas = array (
-	    "method" => "VIEW",
-	    "ID" => $jobID
+		"method" => "VIEW",
+		"ID" => $jobID
 	);
 
 	$res = $mj->batchjob($monitorParmas);
@@ -64,10 +64,10 @@ function monitor ($jobID)
 	if ($mj->_response_code == 200)
 	{
 		echo "job ".$res->Data[0]->Status."\n";
-		return $res->Data[0]->Status;	    	
+		return $res->Data[0]->Status;
 	}
 	else
-	    exit("error - Couldn't monitor the job - code ".$mj->_response_code."\n");
+		exit("error - Couldn't monitor the job - code ".$mj->_response_code."\n");
 }
 
 
