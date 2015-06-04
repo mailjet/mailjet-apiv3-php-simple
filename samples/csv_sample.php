@@ -7,13 +7,7 @@
 
 include("php-mailjet-v3-simple.class.php");
 
-$mj = new Mailjet('MJ_APIKEY_PUBLIC', 'MJ_APIKEY_PRIVATE');
-
-
-$listID = 45;
-$CSVContent = file_get_contents('sample.csv');
-
-function uploadCSV ($listID, $CSVContent)
+function uploadCSV ($mj, $listID, $CSVContent)
 {
 	$uploadParams = array(
 	"method" => "POST",
@@ -32,12 +26,12 @@ function uploadCSV ($listID, $CSVContent)
 		exit("error - Couldn't upload the data - code ".$mj->_response_code);
 }
 
-function assignContactsToList ($listID, $uploadID)
+function assignContactsToList ($mj, $listID, $uploadID)
 {
 	$assignParams = array(
 		"method" => "POST",
 		"ContactsListID" => $listID,
-		"DataID" => $csvUpload->ID,
+		"DataID" => $uploadID,
 		"Method" => "addnoforce"
 	);
 
@@ -45,14 +39,14 @@ function assignContactsToList ($listID, $uploadID)
 
 	if ($mj->_response_code == 201)
 	{
-		echo "success - CSV data ".$csvUpload->ID." assigned to contactslist ".$listID;
+		echo "success - CSV data ".$uploadID." assigned to contactslist ".$listID;
 		return $csvAssign->Data[0]->ID;
 	}
 	else
-		exit("error - Couldn't assign contacts to list - code ".$mj->_response_code;)
+		exit("error - Couldn't assign contacts to list - code ".$mj->_response_code);
 }
 
-function monitor ($jobID)
+function monitor ($mj, $jobID)
 {
 	$monitorParmas = array (
 		"method" => "VIEW",
@@ -70,11 +64,20 @@ function monitor ($jobID)
 		exit("error - Couldn't monitor the job - code ".$mj->_response_code."\n");
 }
 
+$mj = new Mailjet('MJ_APIKEY_PUBLIC', 'MJ_APIKEY_PRIVATE');
 
-$uploadID = uploadCSV($listID, $CSVContent);
 
-$jobID = assignContactsToList($listID, $uploadID);
+/*
+ *  Don't forget to change the $listID variable to suit your particular setup.
+ *
+ */
+$listID = 45;
+$CSVContent = file_get_contents('sample.csv');
 
-$status = monitor($jobID);
+$uploadID = uploadCSV($mj, $listID, $CSVContent);
+
+$jobID = assignContactsToList($mj, $listID, $uploadID);
+
+$status = monitor($mj, $jobID);
 
 ?>
