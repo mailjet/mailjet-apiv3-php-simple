@@ -1,4 +1,4 @@
-# [API v3] Mailjet PHP Wrapper
+# [API v3] Mailjet PHP Wrapper v1.0.7
 
 ## Introduction
 
@@ -10,7 +10,7 @@ The goal of this component is to simplify the usage of the MailJet API for PHP d
 Make sure to have the following details:
 * Mailjet API Key
 * Mailjet API Secret Key
-* PHP
+* PHP (v. >= 5.3, preferably v. >= 5.4)
 * This PHP class
 
 ## Installation
@@ -56,74 +56,90 @@ $mj->contact($params);
 ### SendAPI
 
 - A function to send an email :
+
 ```php
-function sendEmail() {
-    $mj = new Mailjet();
-    $params = array(
-        "method" => "POST",
-        "from" => "ms.mailjet@example.com",
-        "to" => "mr.mailjet@example.com",
-        "subject" => "Hello World!",
-        "text" => "Greetings from Mailjet."
-    );
 
-    $result = $mj->sendEmail($params);
+    function sendEmail() {
+        $mj = new Mailjet();
+        $params = array(
+            "method" => "POST",
+            "from" => "ms.mailjet@example.com",
+            "to" => "mr.mailjet@example.com",
+            "subject" => "Hello World!",
+            "text" => "Greetings from Mailjet."
+        );
 
-    if ($mj->_response_code == 200)
-       echo "success - email sent";
-    else
-       echo "error - ".$mj->_response_code;
+        $result = $mj->sendEmail($params);
 
-    return $result;
-}
+        if ($mj->_response_code == 200)
+           echo "success - email sent";
+        else
+           echo "error - ".$mj->_response_code;
+
+        return $result;
+    }
 ```
 
 - A function to send an email with some attachments (absolute paths on your computer) :
+
 ```php
-function sendEmailWithAttachments() {
-    $mj = new Mailjet();
-    $params = array(
-        "method" => "POST",
-        "from" => "ms.mailjet@example.com",
-        "to" => "mr.mailjet@example.com",
-        "subject" => "Hello World!",
-        "text" => "Greetings from Mailjet.",
-        "attachment" => array("@/path/to/first/file.txt", "@/path/to/second/file.txt")
-    );
 
-    $result = $mj->sendEmail($params);
+    function sendEmailWithAttachments() {
+        $mj = new Mailjet();
+        $params = array(
+            "method" => "POST",
+            "from" => "ms.mailjet@example.com",
+            "to" => "mr.mailjet@example.com",
+            "subject" => "Hello World!",
+            "text" => "Greetings from Mailjet.",
+            "attachment" => array(
+                "MyFirstAttachment" => "@/path/to/first/file.txt",
+                "@/path/to/second/file.pdf",
+                "MyThirdAttachment" => "@/path/to/third/file.jpg"
+                )
+        );
 
-    if ($mj->_response_code == 200)
-       echo "success - email sent";
-    else
-       echo "error - ".$mj->_response_code;
+        $result = $mj->sendEmail($params);
 
-    return $result;
-}
+        if ($mj->_response_code == 200)
+           echo "success - email sent";
+        else
+           echo "error - ".$mj->_response_code;
+
+        return $result;
+    }
 ```
+  * N.B.: Regarding attachments and as shown in the code above, it is possible to declare them in two different (but combinable; PHP is cool like that) ways:
+    * Using a `"key" => "value"` combination: The `key` is the filename and the `value` the path to that filename. This allows for a customizable filename, independent from the actual file.
+    * Using a usual array field containing the path to the file you want to attach. The name displayed for that attachment will be the actual name of the file.
 
 - A function to send an email with some inline attachments (absolute paths on your computer) :
+
 ```php
-function sendEmailWithInlineAttachments() {
-    $mj = new Mailjet();
-    $params = array(
-        "method" => "POST",
-        "from" => "ms.mailjet@example.com",
-        "to" => "mr.mailjet@example.com",
-        "subject" => "Hello World!",
-        "html" => "<html>Greetings from Mailjet <img src=\"cid:photo1.jpg\"><img src=\"cid:photo2.jpg\"></html>",
-    "inlineattachment" => array("@/path/to/photo1.jpg", "@/path/to/photo2.jpg")
-    );
 
-    $result = $mj->sendEmail($params);
+    function sendEmailWithInlineAttachments() {
+        $mj = new Mailjet();
+        $params = array(
+            "method" => "POST",
+            "from" => "ms.mailjet@example.com",
+            "to" => "mr.mailjet@example.com",
+            "subject" => "Hello World!",
+            "html" => "<html>Greetings from Mailjet <img src=\"cid:MaPhoto\"><img src=\"cid:photo2.png\"></html>",
+            "inlineattachment" => array(
+                "MaPhoto" => "@/path/to/photo1.jpg",
+                "@/path/to/photo2.png"
+                )
+        );
 
-    if ($mj->_response_code == 200)
-       echo "success - email sent";
-    else
-       echo "error - ".$mj->_response_code;
+        $result = $mj->sendEmail($params);
 
-    return $result;
-}
+        if ($mj->_response_code == 200)
+           echo "success - email sent";
+        else
+           echo "error - ".$mj->_response_code;
+
+        return $result;
+    }
 ```
 
 ### Account Settings
@@ -349,6 +365,97 @@ function getContact($contactID) {
 Note : You can use unique fields of resources instead of IDs, like
 ```"unique" => "test@gmail.com"``` in your ```params``` array for this example
 
+#### Managing contacts in a contactslist from a CSV file
+
+"Managing" here means **adding**, **removing** or **unsubscribing**.
+
+In some cases you might need to manage large quantities of `contacts` stored into a CSV record in relation to a `contactslist`. Here is how to proceed using the PHP Wrapper.  
+
+Please note that these steps represent a single process. Don't execute each step independently but, rather, as a whole.  
+You can find a sample script [here](https://github.com/mailjet/mailjet-apiv3-php-simple/blob/master/samples/csv_sample.php).
+
+##### Step zero: CSV file structure.
+The structure for the CSV file should be as follows:
+
+```csv
+
+    "email","age"
+    "foo@example.org",42
+    "bar@example.com",13
+    "sam@ple.co.uk",37
+```
+Please note that undefined contact properties present in the CSV file will be automatically created during the second step.
+
+##### First step: upload the data
+The first step is to upload the csv data to the server.  
+You need to specify the wanted `contactslist` ID and, of course, the *csv_content*.
+
+```php
+
+    $CSVContent = file_get_contents('test.csv');
+
+    $uploadParams = array(
+        "method" => "POST",
+        "ID" => $listID,
+        "csv_content" => $CSVContent
+    );
+
+    $csvUpload = $mj->uploadCSVContactslistData($uploadParams);
+
+    if ($mj->_response_code == 200)
+       echo "success - uploaded CSV file ";
+    else
+       echo "error - ".$mj->_response_code;
+```
+
+##### Second step: Manage the contacts subscription to the contactslist
+
+Now, you need to tell the API that this uploaded data has to be assign to the given `contactslist` resource.
+
+Please note that *method* and *Method* are not the same field.  
+*Method* describes how the contacts import will behave. Possible values are **addforce**, **addnoforce**, **remove** and **unsub**.
+
+* **addforce** will add the contacts and re-subscribe them to the list if need be.
+* **addnoforce** will add the contacts but won't change their subscription status.
+* **remove** will remove the contacts from the list.
+* **unsub** will unsubscribe the contacts from the list.
+
+```php
+
+    $assignParams = array(
+        "method" => "POST",
+        "ContactsListID" => $listID,
+        "DataID" => $csvUpload->ID,
+        "Method" => "addnoforce"
+    );
+
+    $csvAssign = $mj->csvimport($assignParams);
+
+    if ($mj->_response_code == 201)
+       echo "success - CSV data ".$csvUpload->ID." assigned to contactslist ".$listID;
+    else
+       echo "error - ".$mj->_response_code;
+```
+
+##### Third step: Monitor the process
+
+What is left to do is to make sure the task completed successfully, which might require multiple checks as a huge amount of data may take some time to be processed (several hours are not uncommon).
+
+```php
+
+    $monitorParmas = array (
+        "method" => "VIEW",
+        "ID" => $csvAssign->Data[0]->ID
+    );
+
+    $res = $mj->batchjob($monitorParmas);
+
+    if ($mj->_response_code == 200)
+       echo "job ".$res->Data[0]->Status."\n";
+    else
+        echo "error - ".$mj->_response_code."\n";
+```
+
 ### Newsletters
 
 You can use the ```DetailContent``` action to manage the content of a newsletter, in Text and Html.
@@ -453,6 +560,68 @@ function testNewsletter($newsletter_id) {
 }
 ```
 
+To duplicate an existing Newsletter, use the `DuplicateFrom` filter, with the Newsletter ID to duplicate. `EditMode` is `html` if the Newsletter was built using the API or advanced mode. If you used our WYSIWYG tool, set it to `tool`:
+
+```php
+
+    function duplicateNewsletter($newsletter_id) {
+        $mj = new Mailjet('', '');
+        $params = array(
+            "method" => "POST",
+            "EditMode" => "html",
+            "Status" => 0,
+            "_DuplicateFrom" => $newsletter_id
+        );
+
+        $result = $mj->newsletter($params);
+
+        if ($mj->_response_code == 201)
+            echo "success - duplicated Newsletter ". $newsletter_id;
+        else
+            echo "error - ".$mj->_response_code;
+
+        return $result;
+    }
+```
+
+## Filtering
+
+The API allows for filtering of resources on `GET` and `POST` requests.  
+However, there is a difference in how you need to specify the filters you want to use in your payload hod, depending on the method you want to use:
+
+* For `GET` requests:  
+This is easy. Simply append the filter to your parameters array, like you would for an extra parameter.
+
+Need to show more than the first 10 `contacts` in a `contactslist` the API response contains? Use the `limit` filter:
+
+```php
+
+    $params = array (
+        "COntactsList"  =>  $contactslistID,
+        "Limit" =>  "100"
+    );
+
+    $res = $mj->contacts($params);
+```
+
+* For `POST` requests:  
+For filters using that method, the wrapper needs to be able to differentiate between a parameter and a filter.  
+How? Simply append a "_" (underscore character) at the beginning of the filter's name.
+
+Want to duplicate a newsletter? Do:  
+
+```php
+
+    $params = array(
+            "method" => "POST",
+            "EditMode" => "html",
+            "Status" => 0,
+            "_DuplicateFrom" => $newsletter_id
+        );
+
+    $result = $mj->newsletter($params);
+```
+
 ## Reporting issues
 
-Open an issue on github.
+Open an issue [here](https://github.com/mailjet/mailjet-apiv3-php-simple/issues).
