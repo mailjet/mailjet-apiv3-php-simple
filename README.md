@@ -1,4 +1,4 @@
-# [API v3] Mailjet PHP Wrapper v1.0.7
+# [API v3] Mailjet PHP Wrapper v1.0.8
 
 ## Introduction
 
@@ -20,7 +20,7 @@ First clone the repository
 git clone https://github.com/mailjet/mailjet-apiv3-php-simple.git
 ```
 
-Go into the mailjet-apiv3-php-simple folder and create an empty file named ```mailjetapi.php```
+Go into the mailjet-apiv3-php-simple folder and create an empty file named `mailjetapi.php`
 ```
 cd mailjet-apiv3-php-simple
 touch mailjetapi.php
@@ -30,12 +30,12 @@ You are now ready to go !
 
 ## Usage
 
-In your mailjetapi.php file, you need to include our php class :
+In your mailjetapi.php file, you need to include our php class:
 
 ```php
 include("php-mailjet-v3-simple.class.php");
 ```
-**Be Careful :** Make sure that both mailjetapi.php and php-mailjet-v3-simple.class.php files are in the same folder to make this include work
+**Be Careful:** Make sure that both mailjetapi.php and php-mailjet-v3-simple.class.php files are in the same folder to make this include work
 
 Now you can start working with the mailjetapi.php file by creating a new Mailjet object with your api key and secret key (you can find these at https://app.mailjet.com/account/api_keys):
 ```php
@@ -45,17 +45,17 @@ $mj = new Mailjet( $apiKey, $secretKey );
 This basically starts the engine. Now what you're going to do next depends on what you want to GET, POST, PUT or DELETE from the Mailjet servers through the API.
 Take a tour on the [Reference documentation](http://dev.mailjet.com/email-api/v3/apikey/) to see all the resources available.
 
-Next you will specify which resource to call this way (resource Contact in this example) with an array of parameters ```$params``` :
+Next you will specify which resource to call this way (resource Contact in this example) with an array of parameters `$params`:
 ```php
 $mj->contact($params);
 ```
-**Info :** If you don't specify the method of the request in the array ```$params``` (see examples below), it will be a GET.
+**Info:** If you don't specify the method of the request in the array `$params` (see examples below), it will be a GET.
 
 ## Examples
 
 ### SendAPI
 
-- A function to send an email :
+- A function to send an email:
 
 ```php
 
@@ -80,7 +80,7 @@ $mj->contact($params);
     }
 ```
 
-- A function to send an email with some attachments (absolute paths on your computer) :
+- A function to send an email with some attachments (absolute paths on your computer):
 
 ```php
 
@@ -113,7 +113,7 @@ $mj->contact($params);
     * Using a `"key" => "value"` combination: The `key` is the filename and the `value` the path to that filename. This allows for a customizable filename, independent from the actual file.
     * Using a usual array field containing the path to the file you want to attach. The name displayed for that attachment will be the actual name of the file.
 
-- A function to send an email with some inline attachments (absolute paths on your computer) :
+- A function to send an email with some inline attachments (absolute paths on your computer):
 
 ```php
 
@@ -144,7 +144,7 @@ $mj->contact($params);
 
 ### Account Settings
 
-- A function to get your profile information :
+- A function to get your profile information:
 ```php
 function viewProfileInfo() {
     $mj = new Mailjet();
@@ -157,7 +157,7 @@ function viewProfileInfo() {
 }
 ```
 
-- A function to update the field ```AddressCity``` of your profile :
+- A function to update the field `AddressCity` of your profile:
 ```php
 function updateProfileInfo() {
     $mj = new Mailjet();
@@ -179,7 +179,7 @@ function updateProfileInfo() {
 
 ### Contact Lists
 
-- A function to print the list of your contacts :
+- A function to print the list of your contacts:
 ```php
 function listContacts()
 {
@@ -195,7 +195,7 @@ function listContacts()
 }
 ```
 
-- A function to update your contactData resource with ID ```$id```, using arrays :
+- A function to update your contactData resource with ID `$id`, using arrays:
 ```php
 function updateContactData($id) {
     $mj = new Mailjet();
@@ -217,7 +217,7 @@ function updateContactData($id) {
 }
 ```
 
-- A function to create a list with name ```$Lname``` :
+- A function to create a list with name `$Lname`:
 ```php
 function createList($Lname) {
     $mj = new Mailjet();
@@ -237,7 +237,7 @@ function createList($Lname) {
 }
 ```
 
-- A function to get a list with ID ```$listID``` :
+- A function to get a list with ID `$listID`:
 ```php
 function getList($listID) {
     $mj = new Mailjet();
@@ -256,10 +256,10 @@ function getList($listID) {
     return $result;
 }
 ```
-Note : You can use unique fields of resources instead of IDs, like
-```"unique" => "test@gmail.com"``` in your ```params``` array for this example
+Note: You can use unique fields of resources instead of IDs, like
+`"unique" => "test@gmail.com"` in your `params` array for this example
 
-- A function to create a contact with email ```$Cemail``` :
+- A function to create a contact with email `$Cemail`:
 ```php
 function createContact($Cemail) {
     $mj = new Mailjet();
@@ -279,7 +279,7 @@ function createContact($Cemail) {
 }
 ```
 
-- A function to add the contact which ID is ```$contactID``` to the list which ID is ```$listID``` :
+- A function to add the contact which ID is `$contactID` to the list which ID is `$listID`:
 ```php
 function addContactToList($contactID, $listID) {
     $mj = new Mailjet();
@@ -301,7 +301,7 @@ function addContactToList($contactID, $listID) {
 }
 ```
 
-- A function to delete the list which ID is ```$listID``` :
+- A function to delete the list which ID is `$listID`:
 ```php
 function deleteList($listID) {
     $mj = new Mailjet();
@@ -321,7 +321,7 @@ function deleteList($listID) {
 }
 ```
 
-- A function to get unsubscribed contact(s) from a list with ID ```$listID``` :
+- A function to get unsubscribed contact(s) from a list with ID `$listID`:
 ```php
 function getUnsubscribedContactsFromList($listID) {
 	$mj = new Mailjet();
@@ -343,7 +343,7 @@ function getUnsubscribedContactsFromList($listID) {
 }
 ```
 
-- A function to get a contact with ID ```$contactID``` :
+- A function to get a contact with ID `$contactID`:
 ```php
 function getContact($contactID) {
     $mj = new Mailjet();
@@ -362,8 +362,8 @@ function getContact($contactID) {
     return $result;
 }
 ```
-Note : You can use unique fields of resources instead of IDs, like
-```"unique" => "test@gmail.com"``` in your ```params``` array for this example
+Note: You can use unique fields of resources instead of IDs, like
+`"unique" => "test@gmail.com"` in your `params` array for this example
 
 #### Managing contacts in a contactslist from a CSV file
 
@@ -458,15 +458,15 @@ What is left to do is to make sure the task completed successfully, which might 
 
 ### Newsletters
 
-You can use the ```DetailContent``` action to manage the content of a newsletter, in Text and Html.
-It has two properties : ```Text-part``` and ```Html-part```.
-You can use ```GET```, ```POST```, ```PUT``` and ```DELETE``` both  requests on this action :
-* ```GET``` : you get the ```Text-part``` and ```Html-part``` properties of a newsletter
-* ```POST``` : update the content of ```Text-part``` and ```Html-part```. If you specify only one, the other will be emptied
-* ```PUT``` : update the content of ```Text-part``` and ```Html-part```. You can specify only one, it will not empty the other one
-* ```DELETE``` : update the content of ```Text-part``` and ```Html-part``` and put both to empty.
+You can use the `DetailContent` action to manage the content of a newsletter, in Text and Html.
+It has two properties: `Text-part` and `Html-part`.
+You can use `GET`, `POST`, `PUT` and `DELETE` both  requests on this action:
+* `GET`: you get the `Text-part` and `Html-part` properties of a newsletter
+* `POST`: update the content of `Text-part` and `Html-part`. If you specify only one, the other will be emptied
+* `PUT`: update the content of `Text-part` and `Html-part`. You can specify only one, it will not empty the other one
+* `DELETE`: update the content of `Text-part` and `Html-part` and put both to empty.
 
-Example with a ```GET``` on ```DetailContent``` :
+Example with a `GET` on `DetailContent`:
 
 ```php
 function getNewsletterDetailcontent($newsletter_id) {
@@ -487,10 +487,10 @@ function getNewsletterDetailcontent($newsletter_id) {
 }
 ```
 
-Use the ```schedule``` action to send a newsletter later.
-You just need to perform a ```POST``` request to schedule a new sending and to fill the ```date``` property with a Timestamp format in ISO 8601 : http://www.iso.org/iso/home/standards/iso8601.htm
-You can also ```DELETE``` a schedule
-Here is an example :
+Use the `schedule` action to send a newsletter later.
+You just need to perform a `POST` request to schedule a new sending and to fill the `date` property with a Timestamp format in ISO 8601: http://www.iso.org/iso/home/standards/iso8601.htm
+You can also `DELETE` a schedule
+Here is an example:
 
 ```php
 function scheduleNewsletter($newsletter_id) {
@@ -512,10 +512,10 @@ function scheduleNewsletter($newsletter_id) {
 }
 ```
 
-To send a newsletter immediately, you have two possibilities :
-* ```POST``` a new schedule with a Timestamp which value is ```NOW```
-* use send (only ```POST``` is supported)
-For the second case, here is an example :
+To send a newsletter immediately, you have two possibilities:
+* `POST` a new schedule with a Timestamp which value is `NOW`
+* use send (only `POST` is supported)
+For the second case, here is an example:
 
 ```php
 function sendNewsletter($newsletter_id) {
@@ -537,7 +537,7 @@ function sendNewsletter($newsletter_id) {
 ```
 
 You can also test a newsletter by sending it to some specified recipients before making the real sending.
-To do so, you have to perform a ```POST``` request on a newsletter with action ```test``` like in the following example :
+To do so, you have to perform a `POST` request on a newsletter with action `test` like in the following example:
 
 ```php
 function testNewsletter($newsletter_id) {
