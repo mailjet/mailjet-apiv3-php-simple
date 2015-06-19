@@ -143,7 +143,7 @@ $mj->contact($params);
 ```
 
 - A function to send an email with a custom ID:  
-As described in the section "Sending an email with a custom ID" of this [guide](http://dev.mailjet.com/guides/send-api-guide/).
+As described [here](http://dev.mailjet.com/guides/send-api-guide/#customid).
 
 ```php
 function sendEmailWithCustomID()
@@ -171,7 +171,7 @@ function sendEmailWithCustomID()
 ```
 
 - A function to send an email with a event payload:  
-As described in the section "Sending an email with a payload" of this [guide](http://dev.mailjet.com/guides/send-api-guide/).
+As described [here](http://dev.mailjet.com/guides/send-api-guide/#payload).
 
 ```php
 function sendEmailWithEventPayload()
