@@ -1,5 +1,47 @@
 # [API v3] Mailjet PHP Wrapper v1.0.7
 
+**Table of Contents**
+
+- [Introduction](#introduction)
+    - [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Examples](#examples)
+    - [SendAPI](#sendapi)
+            - [A function to send an email:](#a-function-to-send-an-email)
+            - [A function to send an email with some attachments](#a-function-to-send-an-email-with-some-attachments-absolute-paths-on-your-computer)
+            - [A function to send an email with some inline attachments](#a-function-to-send-an-email-with-some-inline-attachments-absolute-paths-on-your-computer)
+            - [A function to send an email with a custom ID](#a-function-to-send-an-email-with-a-custom-id-as-described-here)
+            - [A function to send an email with a event payload](#a-function-to-send-an-email-with-a-event-payload-as-described-here)
+    - [Account Settings](#account-settings)
+            - [A function to get your profile information](#a-function-to-get-your-profile-information)
+            - [A function to update the field AddressCity of your profile](#a-function-to-update-the-field-addresscity-of-your-profile)
+    - [Contact Lists](#contact-lists)
+            - [A function to print the list of your contacts](#a-function-to-print-the-list-of-your-contacts)
+            - [A function to update your contactData resource with its ID, using arrays](#a-function-to-update-your-contactdata-resource-with-id-id-using-arrays)
+            - [A function to create a list with name $Lname](#a-function-to-create-a-list-with-name-lname)
+            - [A function to get a list through its ID](#a-function-to-get-a-list-with-id-listid)
+            - [A function to create a contact with its email](#a-function-to-create-a-contact-with-email-cemail)
+            - [A function to add a contact to a list through IDs](#a-function-to-add-the-contact-which-id-is-contactid-to-the-list-which-id-is-listid)
+            - [A function to delete a list with its ID](#a-function-to-delete-the-list-which-id-is-listid)
+            - [A function to get unsubscribed contact(s) from a list](#a-function-to-get-unsubscribed-contacts-from-a-list-with-id-listid)
+            - [A function to get a contact with its ID](#a-function-to-get-a-contact-with-id-contactid)
+        - [Managing contacts in a contactslist from a CSV file](#managing-contacts-in-a-contactslist-from-a-csv-file)
+            - [Step zero: CSV file structure.](#step-zero-csv-file-structure)
+            - [First step: upload the data](#first-step-upload-the-data)
+            - [Second step: Manage the contacts subscription to the contactslist](#second-step-manage-the-contacts-subscription-to-the-contactslist)
+            - [Third step: Monitor the process](#third-step-monitor-the-process)
+    - [Newsletters](#newsletters)
+            - [Managing the content of a newsletter](#managing-the-content-of-a-newsletter)
+            - [Scheduling a newsletter](#scheduling-a-newsletter)
+            - [Sending a newsletter immediately](#sending-a-newsletter-immediately)
+            - [Sending a newsletter to test recipients](#sending-a-newsletter-to-test-recipients)
+            - [Duplicating an existing newsletter](#duplicating-an-existing-newsletter)
+- [Filtering](#filtering)
+        - [For GET requests](#for-get-requests)
+        - [For POST requests](#for-post-requests)
+- [Reporting issues](#reporting-issues)
+
 ## Introduction
 
 Provides a simple PHP library for the last version of the [MailJet API](http://dev.mailjet.com).
@@ -58,56 +100,56 @@ $mj->contact($params);
 ##### A function to send an email:
 
 ```php
+function sendEmail()
+{
+    $mj = new Mailjet();
+    $params = array(
+        "method" => "POST",
+        "from" => "ms.mailjet@example.com",
+        "to" => "mr.mailjet@example.com",
+        "subject" => "Hello World!",
+        "text" => "Greetings from Mailjet."
+    );
 
-    function sendEmail() {
-        $mj = new Mailjet();
-        $params = array(
-            "method" => "POST",
-            "from" => "ms.mailjet@example.com",
-            "to" => "mr.mailjet@example.com",
-            "subject" => "Hello World!",
-            "text" => "Greetings from Mailjet."
-        );
+    $result = $mj->sendEmail($params);
 
-        $result = $mj->sendEmail($params);
+    if ($mj->_response_code == 200)
+       echo "success - email sent";
+    else
+       echo "error - ".$mj->_response_code;
 
-        if ($mj->_response_code == 200)
-           echo "success - email sent";
-        else
-           echo "error - ".$mj->_response_code;
-
-        return $result;
-    }
+    return $result;
+}
 ```
 
 ##### A function to send an email with some attachments (absolute paths on your computer):
 
 ```php
+function sendEmailWithAttachments()
+{
+    $mj = new Mailjet();
+    $params = array(
+        "method" => "POST",
+        "from" => "ms.mailjet@example.com",
+        "to" => "mr.mailjet@example.com",
+        "subject" => "Hello World!",
+        "text" => "Greetings from Mailjet.",
+        "attachment" => array(
+            "MyFirstAttachment" => "@/path/to/first/file.txt",
+            "@/path/to/second/file.pdf",
+            "MyThirdAttachment" => "@/path/to/third/file.jpg"
+            )
+    );
 
-    function sendEmailWithAttachments() {
-        $mj = new Mailjet();
-        $params = array(
-            "method" => "POST",
-            "from" => "ms.mailjet@example.com",
-            "to" => "mr.mailjet@example.com",
-            "subject" => "Hello World!",
-            "text" => "Greetings from Mailjet.",
-            "attachment" => array(
-                "MyFirstAttachment" => "@/path/to/first/file.txt",
-                "@/path/to/second/file.pdf",
-                "MyThirdAttachment" => "@/path/to/third/file.jpg"
-                )
-        );
+    $result = $mj->sendEmail($params);
 
-        $result = $mj->sendEmail($params);
+    if ($mj->_response_code == 200)
+       echo "success - email sent";
+    else
+       echo "error - ".$mj->_response_code;
 
-        if ($mj->_response_code == 200)
-           echo "success - email sent";
-        else
-           echo "error - ".$mj->_response_code;
-
-        return $result;
-    }
+    return $result;
+}
 ```
   * N.B.: Regarding attachments and as shown in the code above, it is possible to declare them in two different (but combinable; PHP is cool like that) ways:
     * Using a `"key" => "value"` combination: The `key` is the filename and the `value` the path to that filename. This allows for a customizable filename, independent from the actual file.
@@ -116,30 +158,30 @@ $mj->contact($params);
 ##### A function to send an email with some inline attachments (absolute paths on your computer):
 
 ```php
+function sendEmailWithInlineAttachments()
+{
+    $mj = new Mailjet();
+    $params = array(
+        "method" => "POST",
+        "from" => "ms.mailjet@example.com",
+        "to" => "mr.mailjet@example.com",
+        "subject" => "Hello World!",
+        "html" => "<html>Greetings from Mailjet <img src=\"cid:MaPhoto\"><img src=\"cid:photo2.png\"></html>",
+        "inlineattachment" => array(
+            "MaPhoto" => "@/path/to/photo1.jpg",
+            "@/path/to/photo2.png"
+            )
+    );
 
-    function sendEmailWithInlineAttachments() {
-        $mj = new Mailjet();
-        $params = array(
-            "method" => "POST",
-            "from" => "ms.mailjet@example.com",
-            "to" => "mr.mailjet@example.com",
-            "subject" => "Hello World!",
-            "html" => "<html>Greetings from Mailjet <img src=\"cid:MaPhoto\"><img src=\"cid:photo2.png\"></html>",
-            "inlineattachment" => array(
-                "MaPhoto" => "@/path/to/photo1.jpg",
-                "@/path/to/photo2.png"
-                )
-        );
+    $result = $mj->sendEmail($params);
 
-        $result = $mj->sendEmail($params);
+    if ($mj->_response_code == 200)
+       echo "success - email sent";
+    else
+       echo "error - ".$mj->_response_code;
 
-        if ($mj->_response_code == 200)
-           echo "success - email sent";
-        else
-           echo "error - ".$mj->_response_code;
-
-        return $result;
-    }
+    return $result;
+}
 ```
 
 ##### A function to send an email with a custom ID, as described [here](http://dev.mailjet.com/guides/send-api-guide/#customid):
@@ -201,7 +243,8 @@ function sendEmailWithEventPayload()
 ##### A function to get your profile information:
 
 ```php
-function viewProfileInfo() {
+function viewProfileInfo()
+{
     $mj = new Mailjet();
     $result = $mj->myprofile();
 
@@ -215,7 +258,8 @@ function viewProfileInfo() {
 ##### A function to update the field `AddressCity` of your profile:
 
 ```php
-function updateProfileInfo() {
+function updateProfileInfo()
+{
     $mj = new Mailjet();
     $params = array(
         "method" => "PUT",
@@ -255,7 +299,8 @@ function listContacts()
 ##### A function to update your contactData resource with ID `$id`, using arrays:
 
 ```php
-function updateContactData($id) {
+function updateContactData($id)
+{
     $mj = new Mailjet();
     $data = array(array('Name' => 'lastname', 'Value' => 'Jet'), array('Name' => 'firstname', 'Value' => 'Mail'));
     $params = array(
@@ -278,7 +323,8 @@ function updateContactData($id) {
 ##### A function to create a list with name `$Lname`:
 
 ```php
-function createList($Lname) {
+function createList($Lname)
+{
     $mj = new Mailjet();
     $params = array(
         "method" => "POST",
@@ -299,7 +345,8 @@ function createList($Lname) {
 ##### A function to get a list with ID `$listID`:
 
 ```php
-function getList($listID) {
+function getList($listID)
+{
     $mj = new Mailjet();
     $params = array(
         "method" => "VIEW",
@@ -322,7 +369,8 @@ Note: You can use unique fields of resources instead of IDs, like
 ##### A function to create a contact with email `$Cemail`:
 
 ```php
-function createContact($Cemail) {
+function createContact($Cemail)
+{
     $mj = new Mailjet();
     $params = array(
         "method" => "POST",
@@ -343,7 +391,8 @@ function createContact($Cemail) {
 ##### A function to add the contact which ID is `$contactID` to the list which ID is `$listID`:
 
 ```php
-function addContactToList($contactID, $listID) {
+function addContactToList($contactID, $listID)
+{
     $mj = new Mailjet();
     $params = array(
         "method" => "POST",
@@ -366,7 +415,8 @@ function addContactToList($contactID, $listID) {
 ##### A function to delete the list which ID is `$listID`:
 
 ```php
-function deleteList($listID) {
+function deleteList($listID)
+{
     $mj = new Mailjet();
     $params = array(
         "method" => "DELETE",
@@ -387,7 +437,8 @@ function deleteList($listID) {
 ##### A function to get unsubscribed contact(s) from a list with ID `$listID`:
 
 ```php
-function getUnsubscribedContactsFromList($listID) {
+function getUnsubscribedContactsFromList($listID)
+{
 	$mj = new Mailjet();
 	
 	$params = array(
@@ -410,7 +461,8 @@ function getUnsubscribedContactsFromList($listID) {
 ##### A function to get a contact with ID `$contactID`:
 
 ```php
-function getContact($contactID) {
+function getContact($contactID)
+{
     $mj = new Mailjet();
     $params = array(
         "method" => "VIEW",
@@ -443,11 +495,10 @@ You can find a sample script [here](https://github.com/mailjet/mailjet-apiv3-php
 The structure for the CSV file should be as follows:
 
 ```csv
-
-    "email","age"
-    "foo@example.org",42
-    "bar@example.com",13
-    "sam@ple.co.uk",37
+"email","age"
+"foo@example.org",42
+"bar@example.com",13
+"sam@ple.co.uk",37
 ```
 Please note that undefined contact properties present in the CSV file will be automatically created during the second step.
 
@@ -456,21 +507,20 @@ The first step is to upload the csv data to the server.
 You need to specify the wanted `contactslist` ID and, of course, the *csv_content*.
 
 ```php
+$CSVContent = file_get_contents('test.csv');
 
-    $CSVContent = file_get_contents('test.csv');
+$uploadParams = array(
+    "method" => "POST",
+    "ID" => $listID,
+    "csv_content" => $CSVContent
+);
 
-    $uploadParams = array(
-        "method" => "POST",
-        "ID" => $listID,
-        "csv_content" => $CSVContent
-    );
+$csvUpload = $mj->uploadCSVContactslistData($uploadParams);
 
-    $csvUpload = $mj->uploadCSVContactslistData($uploadParams);
-
-    if ($mj->_response_code == 200)
-       echo "success - uploaded CSV file ";
-    else
-       echo "error - ".$mj->_response_code;
+if ($mj->_response_code == 200)
+   echo "success - uploaded CSV file ";
+else
+   echo "error - ".$mj->_response_code;
 ```
 
 ##### Second step: Manage the contacts subscription to the contactslist
@@ -486,20 +536,19 @@ Please note that *method* and *Method* are not the same field.
 * **unsub** will unsubscribe the contacts from the list.
 
 ```php
+$assignParams = array(
+    "method" => "POST",
+    "ContactsListID" => $listID,
+    "DataID" => $csvUpload->ID,
+    "Method" => "addnoforce"
+);
 
-    $assignParams = array(
-        "method" => "POST",
-        "ContactsListID" => $listID,
-        "DataID" => $csvUpload->ID,
-        "Method" => "addnoforce"
-    );
+$csvAssign = $mj->csvimport($assignParams);
 
-    $csvAssign = $mj->csvimport($assignParams);
-
-    if ($mj->_response_code == 201)
-       echo "success - CSV data ".$csvUpload->ID." assigned to contactslist ".$listID;
-    else
-       echo "error - ".$mj->_response_code;
+if ($mj->_response_code == 201)
+   echo "success - CSV data ".$csvUpload->ID." assigned to contactslist ".$listID;
+else
+   echo "error - ".$mj->_response_code;
 ```
 
 ##### Third step: Monitor the process
@@ -507,18 +556,17 @@ Please note that *method* and *Method* are not the same field.
 What is left to do is to make sure the task completed successfully, which might require multiple checks as a huge amount of data may take some time to be processed (several hours are not uncommon).
 
 ```php
+$monitorParmas = array (
+    "method" => "VIEW",
+    "ID" => $csvAssign->Data[0]->ID
+);
 
-    $monitorParmas = array (
-        "method" => "VIEW",
-        "ID" => $csvAssign->Data[0]->ID
-    );
+$res = $mj->batchjob($monitorParmas);
 
-    $res = $mj->batchjob($monitorParmas);
-
-    if ($mj->_response_code == 200)
-       echo "job ".$res->Data[0]->Status."\n";
-    else
-        echo "error - ".$mj->_response_code."\n";
+if ($mj->_response_code == 200)
+   echo "job ".$res->Data[0]->Status."\n";
+else
+    echo "error - ".$mj->_response_code."\n";
 ```
 
 ### Newsletters
@@ -536,7 +584,8 @@ You can use `GET`, `POST`, `PUT` and `DELETE` both requests on this action:
 Example with a `GET` on `DetailContent`:
 
 ```php
-function getNewsletterDetailcontent($newsletter_id) {
+function getNewsletterDetailcontent($newsletter_id)
+{
     $mj = new Mailjet('', '');
     $params = array(
         "method" => "GET",
@@ -562,7 +611,8 @@ You can also `DELETE` a schedule
 Here is an example:
 
 ```php
-function scheduleNewsletter($newsletter_id) {
+function scheduleNewsletter($newsletter_id)
+{
     $mj = new Mailjet('', '');
     $params = array(
         "method" => "POST",
@@ -589,7 +639,8 @@ To send a newsletter immediately, you have two possibilities:
 For the second case, here is an example:
 
 ```php
-function sendNewsletter($newsletter_id) {
+function sendNewsletter($newsletter_id)
+{
     $mj = new Mailjet('', '');
     $params = array(
         "method" => "POST",
@@ -613,7 +664,8 @@ You can also test a newsletter by sending it to some specified recipients before
 To do so, you have to perform a `POST` request on a newsletter with action `test` like in the following example:
 
 ```php
-function testNewsletter($newsletter_id) {
+function testNewsletter($newsletter_id)
+{
     $mj = new Mailjet('', '');
     $recipients = array(array('Email' => 'mailjet@example.org', 'Name' => 'Mailjet'));
     $params = array(
@@ -638,25 +690,25 @@ function testNewsletter($newsletter_id) {
 To duplicate an existing Newsletter, use the `DuplicateFrom` filter, with the Newsletter ID to duplicate. `EditMode` is `html` if the Newsletter was built using the API or advanced mode. If you used our WYSIWYG tool, set it to `tool`:
 
 ```php
+function duplicateNewsletter($newsletter_id)
+{
+    $mj = new Mailjet('', '');
+    $params = array(
+        "method" => "POST",
+        "EditMode" => "html",
+        "Status" => 0,
+        "_DuplicateFrom" => $newsletter_id
+    );
 
-    function duplicateNewsletter($newsletter_id) {
-        $mj = new Mailjet('', '');
-        $params = array(
-            "method" => "POST",
-            "EditMode" => "html",
-            "Status" => 0,
-            "_DuplicateFrom" => $newsletter_id
-        );
+    $result = $mj->newsletter($params);
 
-        $result = $mj->newsletter($params);
+    if ($mj->_response_code == 201)
+        echo "success - duplicated Newsletter ". $newsletter_id;
+    else
+        echo "error - ".$mj->_response_code;
 
-        if ($mj->_response_code == 201)
-            echo "success - duplicated Newsletter ". $newsletter_id;
-        else
-            echo "error - ".$mj->_response_code;
-
-        return $result;
-    }
+    return $result;
+}
 ```
 
 ## Filtering
@@ -671,13 +723,12 @@ This is easy. Simply append the filter to your parameters array, like you would 
 Need to show more than the first 10 `contacts` in a `contactslist` the API response contains? Use the `limit` filter:
 
 ```php
+$params = array (
+    "COntactsList"  =>  $contactslistID,
+    "Limit" =>  "100"
+);
 
-    $params = array (
-        "COntactsList"  =>  $contactslistID,
-        "Limit" =>  "100"
-    );
-
-    $res = $mj->contacts($params);
+$res = $mj->contacts($params);
 ```
 
 #### For `POST` requests:
@@ -688,15 +739,14 @@ How? Simply append a "_" (underscore character) at the beginning of the filter's
 Want to duplicate a newsletter? Do:  
 
 ```php
+$params = array(
+        "method" => "POST",
+        "EditMode" => "html",
+        "Status" => 0,
+        "_DuplicateFrom" => $newsletter_id
+    );
 
-    $params = array(
-            "method" => "POST",
-            "EditMode" => "html",
-            "Status" => 0,
-            "_DuplicateFrom" => $newsletter_id
-        );
-
-    $result = $mj->newsletter($params);
+$result = $mj->newsletter($params);
 ```
 
 ## Reporting issues
