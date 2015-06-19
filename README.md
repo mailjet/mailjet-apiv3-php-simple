@@ -1,4 +1,4 @@
-# [API v3] Mailjet PHP Wrapper v1.0.8
+# [API v3] Mailjet PHP Wrapper v1.0.8-dev
 
 ## Introduction
 
@@ -20,24 +20,24 @@ First clone the repository
 git clone https://github.com/mailjet/mailjet-apiv3-php-simple.git
 ```
 
-Go into the mailjet-apiv3-php-simple folder and create an empty file named `mailjetapi.php`
+Go into the mailjet-apiv3-php-simple folder and create an empty file named (for example) `myProjectEmailer.php`
 ```
 cd mailjet-apiv3-php-simple
-touch mailjetapi.php
+touch myProjectEmailer.php
 ```
 
 You are now ready to go !
 
 ## Usage
 
-In your mailjetapi.php file, you need to include our php class:
+In your `myProjectEmailer.php` file, you need to include our php class:
 
 ```php
 include("php-mailjet-v3-simple.class.php");
 ```
-**Be Careful:** Make sure that both mailjetapi.php and php-mailjet-v3-simple.class.php files are in the same folder to make this include work
+**Be Careful:** Make sure that both `myProjectEmailer.php` and php-mailjet-v3-simple.class.php files are in the same folder to make this include work
 
-Now you can start working with the mailjetapi.php file by creating a new Mailjet object with your api key and secret key (you can find these at https://app.mailjet.com/account/api_keys):
+Now you can start working with the `myProjectEmailer.php` file by creating a new Mailjet object with your api key and secret key (you can find these at https://app.mailjet.com/account/api_keys):
 ```php
 $mj = new Mailjet( $apiKey, $secretKey );
 ```
@@ -177,9 +177,12 @@ function updateProfileInfo() {
 }
 ```
 
-### Contact Lists
+### Contact & Contact Lists
+
+[Reference page](http://dev.mailjet.com/email-api/v3/contact/).
 
 - A function to print the list of your contacts:
+
 ```php
 function listContacts()
 {
@@ -196,10 +199,22 @@ function listContacts()
 ```
 
 - A function to update your contactData resource with ID `$id`, using arrays:
+
 ```php
-function updateContactData($id) {
+function updateContactData($id)
+{
     $mj = new Mailjet();
-    $data = array(array('Name' => 'lastname', 'Value' => 'Jet'), array('Name' => 'firstname', 'Value' => 'Mail'));
+    $data = array(
+        array(
+            'Name' => 'lastname',
+            'Value' => 'Jet'
+        ),
+        array(
+            'Name' => 'firstname',
+            'Value' => 'Mail'
+        )
+    );
+
     $params = array(
         'ID' => $id,
         'Data' => $data,
@@ -218,8 +233,10 @@ function updateContactData($id) {
 ```
 
 - A function to create a list with name `$Lname`:
+
 ```php
-function createList($Lname) {
+function createList($Lname)
+{
     $mj = new Mailjet();
     $params = array(
         "method" => "POST",
@@ -238,8 +255,10 @@ function createList($Lname) {
 ```
 
 - A function to get a list with ID `$listID`:
+
 ```php
-function getList($listID) {
+function getList($listID)
+{
     $mj = new Mailjet();
     $params = array(
         "method" => "VIEW",
@@ -257,11 +276,13 @@ function getList($listID) {
 }
 ```
 Note: You can use unique fields of resources instead of IDs, like
-`"unique" => "test@gmail.com"` in your `params` array for this example
+`"unique" => "foo@bar.com"` in your `params` array for this example
 
 - A function to create a contact with email `$Cemail`:
+
 ```php
-function createContact($Cemail) {
+function createContact($Cemail)
+{
     $mj = new Mailjet();
     $params = array(
         "method" => "POST",
@@ -279,9 +300,33 @@ function createContact($Cemail) {
 }
 ```
 
-- A function to add the contact which ID is `$contactID` to the list which ID is `$listID`:
+- A function to get the lists for a single contact which ID is `$contactID`:
+
 ```php
-function addContactToList($contactID, $listID) {
+/**
+ *  @param int  $contactID  The ID of the contact
+ */
+function getContactsLists ($contactID)
+{
+    $mj = new Mailjet();
+    $params = array(
+        "ID"    =>  $contactID
+    );
+    $result = $mj->contactGetContactsLists($params);
+    if ($mj->_response_code == 201)
+       echo "success - fetched lists for contact ".$contactID;
+    else
+       echo "error - ".$mj->_response_code;
+    return $result;
+}
+```
+
+- A function to add the contact which ID is `$contactID` to the list which ID is `$listID`:  
+_The preferred method to add a single contact to a list is described at the next bullet point._
+
+```php
+function addContactToList($contactID, $listID)
+{
     $mj = new Mailjet();
     $params = array(
         "method" => "POST",
@@ -301,9 +346,89 @@ function addContactToList($contactID, $listID) {
 }
 ```
 
-- A function to delete the list which ID is `$listID`:
+- A function to add the contact described in `$contact` to the list which id is `$listID`:
+
 ```php
-function deleteList($listID) {
+/**
+ *  @param  array   $contact    An array describing a contact.
+ *                              Example below the function.
+ *  @param  int     $listID     The ID of the list.
+ *
+ */
+function addDetailedContactToList ($contact, $listID)
+{
+    $mj = new Mailjet();
+    $params = array(
+        "method" => "POST"
+    );
+    $params = array_merge($params, $contact);
+    $result = $mj->contactslistManageContact($params);
+    if ($mj->_response_code == 201)
+       echo "success - detailed contact ".$contactID." added to the list ".$listID;
+    else
+       echo "error - ".$mj->_response_code;
+    return $result;
+}
+// $contact array example
+/*  $contact = array(
+ *      "Email"         =>  "foo@bar.com",   // Mandatory field!
+ *      "Name"          =>  "FooBar",
+ *      "Action"        =>  "addnoforce",
+ *      "Properties"    =>  array(
+ *          "Prop1" =>  "value1",
+ *          ...
+ *      )
+ *  );
+ */
+```
+Note:  
+`action` can be **addforce**, **addnoforce**, **remove** or **unsub**.
+
+- A function to add, remove or unsub the contact which ID is `$contactID` to / from the list(s) contain(ed) in `$lists`:
+
+```php
+/**
+ *  @param int      $contactID  The ID of the contact
+ *  @param array    $lists      An array of arrays,
+ *                              each one describing a list.
+ *                              Example below the function.
+ */
+function addContactToLists ($contactID, $lists) {
+    $mj = Mailjet('', '');
+    $params = array(
+        "method"        =>  "POST",
+        "ID"            =>  $contactID,
+        "ContactLists"  =>  $lists
+    );
+    $result = $mj->contactManageContactsLists($params);
+    if ($mj->_response_code == 204)
+       echo "success - contact ".$contactID." added to the list(s)";
+    else
+       echo "error - ".$mj->_response_code;
+    return $result;
+}
+// $lists array example
+/*  $lists = array(
+ *      array(
+ *          "ListID"    =>  1,
+ *          "Action"    =>  "remove"
+ *      ),
+ *      array(
+ *          "ListID"    =>  4,
+ *          "Action"    =>  "addnoforce"
+ *      )
+ *      // ...
+ *  );
+ */
+```
+Note:  
+`action` can be **addforce**, **addnoforce**, **remove** or **unsub**.
+
+- A function to delete the list which ID is `$listID`:
+
+```php
+function deleteList($listID)
+{
     $mj = new Mailjet();
     $params = array(
         "method" => "DELETE",
@@ -322,24 +447,26 @@ function deleteList($listID) {
 ```
 
 - A function to get unsubscribed contact(s) from a list with ID `$listID`:
+
 ```php
-function getUnsubscribedContactsFromList($listID) {
+function getUnsubscribedContactsFromList($listID)
+{
 	$mj = new Mailjet();
-	
+
 	$params = array(
 		"method" => "GET",
 		"ContactsList" => $listID,
 		"Unsub" => true
 	);
-	
+
 	$result = $mj->listrecipient($params);
 	
     if ($mj->_response_code == 200)
        echo "success - got unsubscribed contact(s) ";
     else
        echo "error - ".$mj->_response_code;
-   
-	return $result;   
+
+	return $result;
 }
 ```
 
@@ -363,7 +490,157 @@ function getContact($contactID) {
 }
 ```
 Note: You can use unique fields of resources instead of IDs, like
-`"unique" => "test@gmail.com"` in your `params` array for this example
+`"unique" => "foo@bar.com"` in your `params` array for this example
+
+#### Asynchronous jobs
+
+An _asynchronous job_ (in short, **async job**) is a way to add or update massive amount of data (contacts, for example) in an all-in-one call which will return a job id used to check on the progress of the job _via_ another call.
+
+- **Contact resource** _Async job execution_  
+A function to asynchronously add, remove or unsub contact(s) to/from one or more list(s) and returns the status array for the job:  
+(Useful for uploading **lots** of contacts to one or more list(s) at once.)  
+
+  This example shows how to remove the given contacts from one list and add them to another (if they are not in it). In **_one_** call.
+
+```php
+/**
+ *  @param  array   $contacts   Should be an array of arrays,
+ *                              each one describing a contact.
+ *                              Example below the function.
+ *
+ *  @param  array   $lists      Should be an array of arrays,
+ *                              each one describing a list.
+ *                              Example below the function.
+ */
+function asyncTransferContactsToLists ($contacts, $lists)
+{
+
+    $mj = new Mailjet('', '');
+
+    $params = array(
+        "method"        =>  "POST",
+        "ContactsLists" =>  $lists,
+        "Contacts"      =>  $contacts
+    );
+
+    $asyncJobResponse = $mj->contactManageManyContacts($params);
+
+    if ($mj->_response_code == 200)
+        echo "success - proper request";
+    else
+        echo "error while accessing the resource - ".$mj->_response_code;
+
+    return $asyncJobResponse;
+}
+
+// $contacts array example
+/*  $contacts = array(
+ *      array(
+ *          "Email" =>  "foo@bar.org",
+ *          ...
+ *      ),
+ *      array(
+ *          "Email" =>  "foo2@bar.com",
+ *          ...
+ *      )
+ *  );
+ */
+
+// $lists array example
+/*  $lists = array(
+ *      array(
+ *          "ListID"    =>  1,
+ *          "Action"    =>  "remove"
+ *      ),
+ *      array(
+ *          "ListID"    =>  4,
+ *          "Action"    =>  "addnoforce"
+ *      )
+ *  );
+ */
+```
+Note:  
+`action` can be **addforce**, **addnoforce**, **remove** or **unsub**.
+
+- **Contactslist resource** _Async job execution_  
+A function to asynchronously add, remove or unsub contact(s) to/from a list and return the status array for the job:
+
+  This example shows how to unsub contacts from a contacts list.
+
+```php
+/**
+ *  @param  array   $contacts   Should be an array of arrays,
+ *                              each one describing a contact.
+ *                              Example below the function.
+ *
+ *  @param  int     $listID     The list ID.
+ *
+ */
+function asyncManageContactsToList ($contacts, $listID) {
+
+    $mj = new Mailjet('', '');
+
+    $params = array(
+        "method"        =>  "POST",
+        "Action"        =>  "unsub",
+        "Contacts"      =>  $contacts
+    );
+
+    $asyncJobResponse = $mj->contactslistManageManyContacts($params);
+
+    if ($mj->_response_code == 200)
+        echo "success - proper request";
+    else
+        echo "error while accessing the resource - ".$mj->_response_code;
+
+    return $asyncJobResponse;
+}
+
+// $contacts array example
+/*  $contacts = array(
+ *      array(
+ *          "Email" =>  "foo@bar.org",
+ *          ...
+ *      ),
+ *      array(
+ *          "Email" =>  "foo2@bar.com",
+ *          ...
+ *      )
+ *  );
+ */
+```
+Note:  
+`action` can be **addforce**, **addnoforce**, **remove** or **unsub**.
+
+- **Contact resource**  _Async job monitoring_  
+A function to get the status of a previously launched asynchronous job:
+
+```php
+/**
+ *  @param array $asyncJobResponse The result object returned by the async job. (See function above)
+ *
+ */
+function getAsyncJobStatus ($asyncJobResponse)
+{
+    $mj = new Mailjet('', '');
+
+    $jobID = $asyncJobResponse->Data[0]->JobID;
+
+    $statusParams = array(
+        "method"    =>  "VIEW",
+        "ID"        =>  $jobID
+    );
+
+    $status = $mj->contactManageManyContacts($statusParams);
+
+    if ($mj->_response_code == 200)
+       echo "success - status obtained";
+    else
+       echo "error while retrieving the status - ".$mj->_response_code;
+
+    return status;
+}
+```
 
 #### Managing contacts in a contactslist from a CSV file
 
