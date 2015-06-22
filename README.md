@@ -4,7 +4,6 @@
 
 - [Introduction](#introduction)
   - [Prerequisites](#prerequisites)
-- [Installation](#installation)
 - [Usage](#usage)
 - [Examples](#examples)
   - [SendAPI](#sendapi)
