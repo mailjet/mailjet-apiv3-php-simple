@@ -334,7 +334,7 @@ class Mailjet
         # Set up and execute the curl process
         $curl_handle = curl_init();
         curl_setopt($curl_handle, CURLOPT_URL, $url);
-        curl_setopt($curl_handle, CURLOPT_USERAGENT, 'mailjet-api-v3-php-simple/' . $this->wrapperVersion);
+        curl_setopt($curl_handle, CURLOPT_USERAGENT, 'mailjet-api-v3-php-simple/' . $this->wrapperVersion . '; PHP v. ' . phpversion());
         curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl_handle, CURLOPT_SSL_VERIFYPEER, FALSE);
         curl_setopt($curl_handle, CURLOPT_SSL_VERIFYHOST, 2);
