@@ -679,6 +679,93 @@ function getAsyncJobStatus ($asyncJobResponse) {
 }
 ```
 
+#### Managing contacts in a contactslist from a CSV file
+
+"Managing" here means **adding**, **removing** or **unsubscribing**.
+
+In some cases you might need to manage large quantities of `contacts` stored into a CSV record in relation to a `contactslist`. Here is how to proceed using the PHP Wrapper.  
+
+Please note that these steps represent a single process. Don't execute each step independently but, rather, as a whole.  
+You can find a sample script [here](https://github.com/mailjet/mailjet-apiv3-php-simple/blob/master/samples/csv_sample.php).
+
+##### Step zero: CSV file structure.
+The structure for the CSV file should be as follows:
+
+```csv
+"email","age"
+"foo@example.org",42
+"bar@example.com",13
+"sam@ple.co.uk",37
+```
+Please note that undefined contact properties present in the CSV file will be automatically created during the second step.
+
+##### First step: upload the data
+The first step is to upload the csv data to the server.  
+You need to specify the wanted `contactslist` ID and, of course, the *csv_content*.
+
+```php
+$CSVContent = file_get_contents('test.csv');
+
+$uploadParams = array(
+    "method" => "POST",
+    "ID" => $listID,
+    "csv_content" => $CSVContent
+);
+
+$csvUpload = $mj->uploadCSVContactslistData($uploadParams);
+
+if ($mj->getResponseCode() == 200)
+    echo "success - uploaded CSV file ";
+else
+    echo "error - ".$mj->getResponseCode();
+```
+
+##### Second step: Manage the contacts subscription to the contactslist
+
+Now, you need to tell the API that this uploaded data has to be assign to the given `contactslist` resource.
+
+Please note that *method* and *Method* are not the same field.  
+*Method* describes how the contacts import will behave. Possible values are **addforce**, **addnoforce**, **remove** and **unsub**.
+
+* **addforce** will add the contacts and re-subscribe them to the list if need be.
+* **addnoforce** will add the contacts but won't change their subscription status.
+* **remove** will remove the contacts from the list.
+* **unsub** will unsubscribe the contacts from the list.
+
+```php
+$assignParams = array(
+    "method" => "POST",
+    "ContactsListID" => $listID,
+    "DataID" => $csvUpload->ID,
+    "Method" => "addnoforce"
+);
+
+$csvAssign = $mj->csvimport($assignParams);
+
+if ($mj->getResponseCode() == 201)
+    echo "success - CSV data ".$csvUpload->ID." assigned to contactslist ".$listID;
+else
+    echo "error - ".$mj->getResponseCode();
+```
+
+##### Third step: Monitor the process
+
+What is left to do is to make sure the task completed successfully, which might require multiple checks as a huge amount of data may take some time to be processed (several hours are not uncommon).
+
+```php
+$monitorParmas = array (
+    "method" => "VIEW",
+    "ID" => $csvAssign->Data[0]->ID
+);
+
+$res = $mj->batchjob($monitorParmas);
+
+if ($mj->getResponseCode() == 200)
+    echo "job ".$res->Data[0]->Status."\n";
+else
+    echo "error - ".$mj->getResponseCode()."\n";
+```
+
 ### Newsletters
 
 You can use the `DetailContent` action to manage the content of a newsletter, in Text and Html.
@@ -809,6 +896,41 @@ function duplicateNewsletter($newsletter_id)
 
     return $result;
 }
+```
+## Filtering
+
+The API allows for filtering of resources on `GET` and `POST` requests.  
+However, there is a difference in how you need to specify the filters you want to use in your payload hod, depending on the method you want to use:
+
+##### For `GET` requests:  
+This is easy. Simply append the filter to your parameters array, like you would for an extra parameter.
+
+Need to show more than the first 10 `contacts` in a `contactslist` the API response contains? Use the `limit` filter:
+
+```php
+$params = array (
+    "COntactsList"  =>  $contactslistID,
+    "Limit" =>  "100"
+);
+
+$res = $mj->contacts($params);
+```
+
+##### For `POST` requests:  
+For filters using that method, the wrapper needs to be able to differentiate between a parameter and a filter.  
+How? Simply append a "_" (underscore character) at the beginning of the filter's name.
+
+Want to duplicate a newsletter? Do:  
+
+```php
+$params = array(
+        "method" => "POST",
+        "EditMode" => "html",
+        "Status" => 0,
+        "_DuplicateFrom" => $newsletter_id
+    );
+
+$result = $mj->newsletter($params);
 ```
 
 ## Reporting issues
