@@ -110,29 +110,26 @@ class Client
 
         $body = array();
         $crlf = "\r\n";
-        $fields = array();
 
         foreach ($postfields as $key => $value) {
-            if (is_array($value)) {
-                foreach ($value as $v) {
-                    $fields[] = array($key, $v);
-                }
-            }
-            else
-                $fields[] = array($key, $value);
-        }
-
-        foreach ($fields as $field) {
-            list($key, $value) = $field;
             // attachment
-            if (strpos($value, '@') === 0) {
-                preg_match('/^@(.*?)$/', $value, $matches);
-                list($dummy, $filename) = $matches;
-                $body[] = '--' . $boundary;
-                $body[] = 'Content-Disposition: form-data; name="' . $key . '"; filename="' . basename($filename) . '"';
-                $body[] = 'Content-Type: application/octet-stream';
-                $body[] = '';
-                $body[] = file_get_contents($filename);
+            if (is_array($value)) {
+                foreach ($value as $filename => $path) {
+                    if (strpos($path, '@') === 0) {
+                        preg_match('/^@(.*?)$/', $path, $matches);
+                        list($dummy, $path) = $matches;
+
+                        if (is_int($filename)) {
+                            $filename = basename($path);
+                        }
+
+                        $body[] = '--' . $boundary;
+                        $body[] = 'Content-Disposition: form-data; name="' . $key . '"; filename="' . $filename . '"';
+                        $body[] = 'Content-Type: application/octet-stream';
+                        $body[] = '';
+                        $body[] = file_get_contents($path);
+                    }
+                }
             }
             else {
                 $body[] = '--' . $boundary;
@@ -276,7 +273,7 @@ class Client
             $this->call_url = $this->apiUrl . '/REST/' . $resource;
         }
 
-        if ($request == "GET") {
+        if ($request == "GET" || $request == "POST") {
             if (count($params) > 0)
             {
                 $this->call_url .= '?';
@@ -284,10 +281,20 @@ class Client
                 foreach ($params as $key => $value) {
                     // In a GET request, put an underscore char in front of params to avoid it being treated as a filter
                     $firstChar = substr($key, 0, -(strlen($key) - 1));
-                    if (($firstChar != "_") && ($key != "ID"))
+
+                    if ($request == "GET") {
+                        $okFirstChar = ($firstChar != "_");
+                        $queryStringKey = $key;
+                    }
+                    else {
+                        $okFirstChar = ($firstChar == "_");
+                        $queryStringKey = substr($key, 1);
+                    }
+
+                    if ($okFirstChar && ($key != "ID"))
                     {
-                        $query_string[$key] = $key . '=' . $value;
-                        $this->call_url .= $query_string[$key] . '&';
+                        $query_string[$queryStringKey] = $queryStringKey . '=' . $value;
+                        $this->call_url .= $query_string[$queryStringKey] . '&';
                     }
                 }
 
@@ -335,6 +342,12 @@ class Client
         if (($request == 'POST') || ($request == 'PUT'))
         {
             curl_setopt($curl_handle, CURLOPT_POST, 1);
+
+            // Exclude filters from payload. See http://stackoverflow.com/questions/4260086/php-how-to-use-array-filter-to-filter-array-keys
+            $paramsFiltered = array_filter(array_keys($params), function($k) {
+                return substr($k, 0, 1) != '_';
+            });
+            $params = array_intersect_key($params, array_flip($paramsFiltered));
 
             if ($this->debug == 2) {
                 var_dump($params);
