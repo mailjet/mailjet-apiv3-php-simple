@@ -142,6 +142,62 @@ $mj->contact($params);
     }
 ```
 
+- A function to send an email with a custom ID:  
+As described [here](http://dev.mailjet.com/guides/send-api-guide/#customid).
+
+```php
+function sendEmailWithCustomID()
+{
+    $mj = new Mailjet();
+
+    $params = array(
+        "method" => "POST",
+        "from" => "ms.mailjet@example.com",
+        "to" => "mr.mailjet@example.com",
+        "subject" => "Hello World!",
+        "text" => "Greetings from Mailjet.",
+        "mj-customid" => "helloworld"
+    );
+
+    $result = $mj->sendEmail($params);
+
+    if ($mj->_response_code == 200)
+       echo "success - email sent";
+    else
+       echo "error - ".$mj->_response_code;
+
+    return $result;
+}
+```
+
+- A function to send an email with a event payload:  
+As described [here](http://dev.mailjet.com/guides/send-api-guide/#payload).
+
+```php
+function sendEmailWithEventPayload()
+{
+    $mj = new Mailjet();
+
+    $params = array(
+        "method" => "POST",
+        "from" => "ms.mailjet@example.com",
+        "to" => "mr.mailjet@example.com",
+        "subject" => "Hello World!",
+        "text" => "Greetings from Mailjet.",
+        "mj-eventpayload" => '{"message": "helloworld"}'
+    );
+
+    $result = $mj->sendEmail($params);
+
+    if ($mj->_response_code == 200)
+       echo "success - email sent";
+    else
+       echo "error - ".$mj->_response_code;
+
+    return $result;
+}
+```
+
 ### Account Settings
 
 - A function to get your profile information :
