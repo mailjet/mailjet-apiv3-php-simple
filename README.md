@@ -14,8 +14,8 @@
     - [A function to send an email](#a-function-to-send-an-email)
     - [A function to send an email with some attachments](#a-function-to-send-an-email-with-some-attachments-absolute-paths-on-your-computer)
     - [A function to send an email with some inline attachments](#a-function-to-send-an-email-with-some-in-line-attachments-absolute-paths-on-your-computer)
-    - [A function to send an email with a custom ID](#a-function-to-send-an-email-with-a-custom-id-as-described-here)
-    - [A function to send an email with a event payload](#a-function-to-send-an-email-with-a-event-payload-as-described-here)
+    - [A function to send an email with a custom ID](#a-function-to-send-an-email-with-a-custom-id)
+    - [A function to send an email with a event payload](#a-function-to-send-an-email-with-a-event-payload)
   - [Account Settings](#account-settings)
     - [A function to get your profile information](#a-function-to-get-your-profile-information)
     - [A function to update the field AddressCity of your profile](#a-function-to-update-the-field-addresscity-of-your-profile)
@@ -221,7 +221,7 @@ function sendEmailWithInlineAttachments()
 }
 ```
 
-##### A function to send an email with a custom ID:  
+##### A function to send an email with a custom ID:
 As described [here](http://dev.mailjet.com/guides/send-api-guide/#customid).
 
 ```php
@@ -249,7 +249,7 @@ function sendEmailWithCustomID()
 }
 ```
 
-##### A function to send an email with a event payload:  
+##### A function to send an email with a event payload:
 As described [here](http://dev.mailjet.com/guides/send-api-guide/#payload).
 
 ```php
