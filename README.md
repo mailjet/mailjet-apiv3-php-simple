@@ -11,9 +11,9 @@
 - [Usage](#usage)
 - [Examples](#examples)
   - [SendAPI](#sendapi)
-    - [A function to send an email:](#a-function-to-send-an-email)
+    - [A function to send an email](#a-function-to-send-an-email)
     - [A function to send an email with some attachments](#a-function-to-send-an-email-with-some-attachments-absolute-paths-on-your-computer)
-    - [A function to send an email with some inline attachments](#a-function-to-send-an-email-with-some-inline-attachments-absolute-paths-on-your-computer)
+    - [A function to send an email with some inline attachments](#a-function-to-send-an-email-with-some-in-line-attachments-absolute-paths-on-your-computer)
     - [A function to send an email with a custom ID](#a-function-to-send-an-email-with-a-custom-id-as-described-here)
     - [A function to send an email with a event payload](#a-function-to-send-an-email-with-a-event-payload-as-described-here)
   - [Account Settings](#account-settings)
@@ -221,6 +221,62 @@ function sendEmailWithInlineAttachments()
 }
 ```
 
+##### A function to send an email with a custom ID:  
+As described [here](http://dev.mailjet.com/guides/send-api-guide/#customid).
+
+```php
+function sendEmailWithCustomID()
+{
+    $mj = new Mailjet();
+
+    $params = [
+        "method" => "POST",
+        "from" => "ms.mailjet@example.com",
+        "to" => "mr.mailjet@example.com",
+        "subject" => "Hello World!",
+        "text" => "Greetings from Mailjet.",
+        "mj-customid" => "helloworld"
+    ];
+
+    $result = $mj->sendEmail($params);
+
+    if ($mj->_response_code == 200)
+       echo "success - email sent";
+    else
+       echo "error - ".$mj->_response_code;
+
+    return $result;
+}
+```
+
+##### A function to send an email with a event payload:  
+As described [here](http://dev.mailjet.com/guides/send-api-guide/#payload).
+
+```php
+function sendEmailWithEventPayload()
+{
+    $mj = new Mailjet();
+
+    $params = [
+        "method" => "POST",
+        "from" => "ms.mailjet@example.com",
+        "to" => "mr.mailjet@example.com",
+        "subject" => "Hello World!",
+        "text" => "Greetings from Mailjet.",
+        "mj-eventpayload" => '{"message": "helloworld"}'
+    ];
+
+    $result = $mj->sendEmail($params);
+
+    if ($mj->_response_code == 200)
+       echo "success - email sent";
+    else
+       echo "error - ".$mj->_response_code;
+
+    return $result;
+}
+```
+
 ### Account Settings
 
 ##### A function to get your profile information:
@@ -264,6 +320,8 @@ function updateProfileInfo()
 
 [Reference page](http://dev.mailjet.com/email-api/v3/contact/).
 
+#### Principle functionalities
+
 ##### A function to print the list of your contacts:
 
 ```php
@@ -281,7 +339,7 @@ function listContacts()
 }
 ```
 
-##### A function to update your contactData resource _via_  ID `$id`, using arrays:
+##### A function to update your contactData resource with ID `$id`, using arrays:
 
 ```php
 function updateContactData($id)
@@ -959,7 +1017,7 @@ function testNewsletter($newsletter_id)
 }
 ```
 
-##### Duplicating a newsletter
+##### Duplicating an existing newsletter
 
 To duplicate an existing Newsletter, use the `DuplicateFrom` filter, with the Newsletter ID to duplicate. `EditMode` is `html` if the Newsletter was built using the API or advanced mode. If you used our WYSIWYG tool, set it to `tool`:
 
