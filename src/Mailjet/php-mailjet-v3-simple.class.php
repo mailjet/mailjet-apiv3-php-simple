@@ -295,7 +295,7 @@ class Mailjet
 
                     if ($okFirstChar && ($key != "ID"))
                     {
-                        $query_string[$queryStringKey] = $queryStringKey . '=' . $value;
+                        $query_string[$queryStringKey] = $queryStringKey . '=' . urlencode($value);
                         $this->call_url .= $query_string[$queryStringKey] . '&';
                     }
                 }
