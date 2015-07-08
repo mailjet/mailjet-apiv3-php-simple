@@ -499,6 +499,7 @@ class Mailjet
         echo '<tr><th>Protocole</th><td>' . $call_url['scheme'] . '</td></tr>';
         echo '<tr><th>Host</th><td>' . $call_url['host'] . '</td></tr>';
         echo '<tr><th>Version</th><td>' . $this->version . '</td></tr>';
+        echo '<tr><th>Wrapper Version</th><td>' . $this->readWrapperVersion() . '</td></tr>';
         echo '</table>';
 
         echo '<table>';
