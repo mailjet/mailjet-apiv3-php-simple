@@ -162,6 +162,27 @@ function sendEmail()
     return $result;
 }
 ```
+  * N.B.:
+    * You can send emails as carbon copies (`"cc" => "email"`) and/or as blind carbon copies (`"bcc" => "email`).
+    * You can send emails to multiple `"to"`, `"cc"` and/or `"bcc"` by using arrays in the above `$params` array:
+
+      ```php
+      "to" => [
+          "1foo@bar.foobar",
+          "2foo@bar.foobar",
+          ...
+      ],
+      "cc" => [
+          "3foo@bar.foobar",
+          "4foo@bar.foobar",
+          ...
+      ],
+      "bcc" => [
+          "5foo@bar.foobar",
+          "6foo@bar.foobar",
+          ...
+      ]
+      ```
 
 ##### A function to send an email with some attachments (absolute paths on your computer):
 
