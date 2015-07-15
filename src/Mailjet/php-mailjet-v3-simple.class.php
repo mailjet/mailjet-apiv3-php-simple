@@ -107,9 +107,9 @@ class Mailjet
         $crlf = "\r\n";
 
         foreach ($postfields as $key => $value) {
-            // attachment
             if (is_array($value)) {
                 foreach ($value as $filename => $path) {
+                    // attachment
                     if (strpos($path, '@') === 0) {
                         preg_match('/^@(.*?)$/', $path, $matches);
                         list($dummy, $path) = $matches;
@@ -123,6 +123,13 @@ class Mailjet
                         $body[] = 'Content-Type: application/octet-stream';
                         $body[] = '';
                         $body[] = file_get_contents($path);
+                    } 
+                    // Array of recipients
+                    else if ('to' == $key || 'cc' == $key || 'bcc' == $key) {
+                        $body[] = '--' . $boundary;
+                        $body[] = 'Content-Disposition: form-data; name="' . $key . '"';
+                        $body[] = '';
+                        $body[] = trim($path);
                     }
                 }
             }
@@ -334,7 +341,7 @@ class Mailjet
         # Set up and execute the curl process
         $curl_handle = curl_init();
         curl_setopt($curl_handle, CURLOPT_URL, $url);
-        curl_setopt($curl_handle, CURLOPT_USERAGENT, 'mailjet-api-v3-php-simple/' . $this->wrapperVersion);
+        curl_setopt($curl_handle, CURLOPT_USERAGENT, 'mailjet-api-v3-php-simple/' . $this->wrapperVersion . '; PHP v. ' . phpversion());
         curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl_handle, CURLOPT_SSL_VERIFYPEER, FALSE);
         curl_setopt($curl_handle, CURLOPT_SSL_VERIFYHOST, 2);
