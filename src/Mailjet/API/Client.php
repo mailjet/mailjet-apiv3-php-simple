@@ -112,9 +112,9 @@ class Client
         $crlf = "\r\n";
 
         foreach ($postfields as $key => $value) {
-            // attachment
             if (is_array($value)) {
                 foreach ($value as $filename => $path) {
+                    // attachment
                     if (strpos($path, '@') === 0) {
                         preg_match('/^@(.*?)$/', $path, $matches);
                         list($dummy, $path) = $matches;
@@ -128,6 +128,13 @@ class Client
                         $body[] = 'Content-Type: application/octet-stream';
                         $body[] = '';
                         $body[] = file_get_contents($path);
+                    }
+                    // Array of recipients
+                    else if ('to' == $key || 'cc' == $key || 'bcc' == $key) {
+                        $body[] = '--' . $boundary;
+                        $body[] = 'Content-Disposition: form-data; name="' . $key . '"';
+                        $body[] = '';
+                        $body[] = trim($path);
                     }
                 }
             }
