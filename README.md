@@ -7,7 +7,7 @@
 - [Usage](#usage)
 - [Examples](#examples)
   - [SendAPI](#sendapi)
-    - [A function to send an email:](#a-function-to-send-an-email)
+    - [A function to send an email](#a-function-to-send-an-email)
     - [A function to send an email with some attachments](#a-function-to-send-an-email-with-some-attachments-absolute-paths-on-your-computer)
     - [A function to send an email with some inline attachments](#a-function-to-send-an-email-with-some-inline-attachments-absolute-paths-on-your-computer)
     - [A function to send an email with a custom ID](#a-function-to-send-an-email-with-a-custom-id-as-described-here)
@@ -128,6 +128,27 @@ function sendEmail()
     return $result;
 }
 ```
+  * N.B.:
+    * You can send emails as carbon copies (`"cc" => "email"`) and/or as blind carbon copies (`"bcc" => "email`).
+    * You can send emails to multiple `"to"`, `"cc"` and/or `"bcc"` by using arrays in the above `$params` array:
+
+      ```php
+      "to" => array(
+          "1foo@bar.foobar",
+          "2foo@bar.foobar",
+          ...
+      ),
+      "cc" => array(
+          "3foo@bar.foobar",
+          "4foo@bar.foobar",
+          ...
+      ),
+      "bcc" => array(
+          "5foo@bar.foobar",
+          "6foo@bar.foobar",
+          ...
+      )
+      ```
 
 ##### A function to send an email with some attachments (absolute paths on your computer):
 
