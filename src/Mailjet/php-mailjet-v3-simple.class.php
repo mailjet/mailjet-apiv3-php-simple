@@ -237,6 +237,9 @@ class Mailjet
         if ($resource == "sendEmail") {
             $this->call_url = $this->apiUrl."/send/message";
         }
+	else if ($resource == "send") { 
+            $this->call_url = $this->apiUrl."/send";  	//json support for SendAPI
+        }
         else if ($resource == "uploadCSVContactslistData") {
           if (!empty($params['_contactslist_id'])) {
             $contactslist_id = $params['_contactslist_id'];
