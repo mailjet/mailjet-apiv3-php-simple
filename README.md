@@ -1,4 +1,4 @@
-# [API v3] Mailjet PHP Wrapper v1.0.8-dev
+# [API v3] Mailjet PHP Wrapper v1.0.8
 
 **Table of Contents**
 
