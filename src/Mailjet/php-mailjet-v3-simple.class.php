@@ -107,9 +107,9 @@ class Mailjet
         $crlf = "\r\n";
 
         foreach ($postfields as $key => $value) {
-            // attachment
             if (is_array($value)) {
                 foreach ($value as $filename => $path) {
+                    // attachment
                     if (strpos($path, '@') === 0) {
                         preg_match('/^@(.*?)$/', $path, $matches);
                         list($dummy, $path) = $matches;
@@ -123,6 +123,13 @@ class Mailjet
                         $body[] = 'Content-Type: application/octet-stream';
                         $body[] = '';
                         $body[] = file_get_contents($path);
+                    } 
+                    // Array of recipients
+                    else if ('to' == $key || 'cc' == $key || 'bcc' == $key) {
+                        $body[] = '--' . $boundary;
+                        $body[] = 'Content-Disposition: form-data; name="' . $key . '"';
+                        $body[] = '';
+                        $body[] = trim($path);
                     }
                 }
             }
@@ -295,7 +302,7 @@ class Mailjet
 
                     if ($okFirstChar && ($key != "ID"))
                     {
-                        $query_string[$queryStringKey] = $queryStringKey . '=' . $value;
+                        $query_string[$queryStringKey] = $queryStringKey . '=' . urlencode($value);
                         $this->call_url .= $query_string[$queryStringKey] . '&';
                     }
                 }
@@ -499,6 +506,7 @@ class Mailjet
         echo '<tr><th>Protocole</th><td>' . $call_url['scheme'] . '</td></tr>';
         echo '<tr><th>Host</th><td>' . $call_url['host'] . '</td></tr>';
         echo '<tr><th>Version</th><td>' . $this->version . '</td></tr>';
+        echo '<tr><th>Wrapper Version</th><td>' . $this->readWrapperVersion() . '</td></tr>';
         echo '</table>';
 
         echo '<table>';
