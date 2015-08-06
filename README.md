@@ -528,7 +528,7 @@ function addContactToLists ($contactID, $lists) {
     $params = array(
         "method"        =>  "POST",
         "ID"            =>  $contactID,
-        "ContactLists"  =>  $lists
+        "ContactsLists"  =>  $lists
     );
     $result = $mj->contactManageContactsLists($params);
     if ($mj->_response_code == 204)
@@ -1020,7 +1020,7 @@ Need to show more than the first 10 `contacts` in a `contactslist` the API respo
 
 ```php
 $params = array (
-    "COntactsList"  =>  $contactslistID,
+    "ContactsList"  =>  $contactslistID,
     "Limit" =>  "100"
 );
 
