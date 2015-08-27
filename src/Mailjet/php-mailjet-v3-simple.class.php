@@ -253,7 +253,8 @@ class Mailjet
           }
           $this->call_url = $this->makeUrl('DATA', 'Contactslist', $contactslist_id, 'CSVData/text:plain');     // Was $this->call_url = $this->apiUrl."/DATA/contactslist/". $contactslist_id ."/CSVData/text:plain";
         }
-        else if (($resource == "addHTMLbody") || ($resource == "getHTMLbody")) {
+        else if (($resource == "addHTMLbody") || ($resource == "getHTMLbody"))
+        {
             if (!empty($params['_newsletter_id'])) {
                 $newsletter_id = $params['_newsletter_id'];
             }
@@ -274,6 +275,25 @@ class Mailjet
         {
             $this->call_url = $this->apiUrl."/REST/contact/managemanycontacts";
         }
+        else if ($resource == "downloadListeContacts") 
+        { 
+            $this->call_url = "https://api.mailjet.com/v3/DATA/BatchJob/".$params['jobID']."/CSVData/text:csv"; 
+        }
+        else if ($resource == "downloadErrorImport")
+        {
+            $this->call_url = "https://api.mailjet.com/v3/DATA/BatchJob/".$params['jobID']."/CSVError/text:csv"; 
+        }
+        else if($resource == "BatchJob")
+        { 
+            if(isset($params['Format']))
+            { 
+                $this->call_url = "https://api.mailjet.com/v3/DATA/BatchJob/".$params['jobID']."/ExportOptions/application:json";
+            }
+            else
+            { 
+                $this->call_url = "https://api.mailjet.com/v3/DATA/BatchJob/".$params['ID']."/CSVData/text:csv"; 
+            } 
+        } 
         else if (in_array($resource, self::$_contactslistResources))
         {
             $this->call_url = $this->makeUrlFromFilter('REST', 'contactslist', $params['ID'], $resource);       // Was $this->call_url = $this->apiUrl."/REST/contactslist/". $contactslist_id . "/".strtolower($action);
