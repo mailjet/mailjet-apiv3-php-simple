@@ -123,7 +123,7 @@ class Mailjet
                         $body[] = 'Content-Type: application/octet-stream';
                         $body[] = '';
                         $body[] = file_get_contents($path);
-                    } 
+                    }
                     // Array of recipients
                     else if ('to' == $key || 'cc' == $key || 'bcc' == $key) {
                         $body[] = '--' . $boundary;
@@ -275,25 +275,26 @@ class Mailjet
         {
             $this->call_url = $this->apiUrl."/REST/contact/managemanycontacts";
         }
-        else if ($resource == "downloadListeContacts") 
-        { 
-            $this->call_url = "https://api.mailjet.com/v3/DATA/BatchJob/".$params['jobID']."/CSVData/text:csv"; 
-        }
-        else if ($resource == "downloadErrorImport")
+		// DATABRANCH
+        else if ($resource == "csvData")
         {
-            $this->call_url = "https://api.mailjet.com/v3/DATA/BatchJob/".$params['jobID']."/CSVError/text:csv"; 
+            $this->call_url = "https://api.mailjet.com/v3/DATA/BatchJob/".$params['jobID']."/CSVData/text:csv";
+        }
+        else if ($resource == "csvError")
+        {
+            $this->call_url = "https://api.mailjet.com/v3/DATA/BatchJob/".$params['jobID']."/CSVError/text:csv";
         }
         else if($resource == "BatchJob")
-        { 
+        {
             if(isset($params['Format']))
-            { 
+            {
                 $this->call_url = "https://api.mailjet.com/v3/DATA/BatchJob/".$params['jobID']."/ExportOptions/application:json";
             }
             else
-            { 
-                $this->call_url = "https://api.mailjet.com/v3/DATA/BatchJob/".$params['ID']."/CSVData/text:csv"; 
-            } 
-        } 
+            {
+                $this->call_url = "https://api.mailjet.com/v3/DATA/BatchJob/".$params['ID']."/CSVData/text:csv";
+            }
+        }
         else if (in_array($resource, self::$_contactslistResources))
         {
             $this->call_url = $this->makeUrlFromFilter('REST', 'contactslist', $params['ID'], $resource);       // Was $this->call_url = $this->apiUrl."/REST/contactslist/". $contactslist_id . "/".strtolower($action);
@@ -372,7 +373,7 @@ class Mailjet
         if (($request == 'POST') || ($request == 'PUT')):
             curl_setopt($curl_handle, CURLOPT_POST, 1);
 
-            // Exclude filters from payload. See http://stackoverflow.com/questions/4260086/php-how-to-use-array-filter-to-filter-array-keys 
+            // Exclude filters from payload. See http://stackoverflow.com/questions/4260086/php-how-to-use-array-filter-to-filter-array-keys
             $paramsFiltered = array_filter(array_keys($params), function($k) {
                 return substr($k, 0, 1) != '_';
             });
@@ -412,7 +413,7 @@ class Mailjet
                     unset($params['ID']);
                 }
 
-                curl_setopt($curl_handle, CURLOPT_POSTFIELDS, json_encode($params));
+                curl_setopt($curl_handle, CURLOPT_POSTFIELDS, json_encode($params, JSON_UNESCAPED_SLASHES));
                 curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
                     'Content-Type: application/json'
                 ));
