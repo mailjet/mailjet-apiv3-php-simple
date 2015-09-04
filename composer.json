@@ -6,10 +6,9 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Charles Collas",
-            "email": "ccollas@mailjet.com",
-            "homepage": "http://charlescollas.fr/",
-            "role": "Developer Evangelist"
+            "name": "Mailjet",
+            "email": "dev@mailjet.com",
+            "homepage": "https://dev.mailjet.com"
         }
     ],
     "require": {
