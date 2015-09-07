@@ -128,51 +128,26 @@ function sendEmail()
     return $result;
 }
 ```
-By default, `$result` contains a boolean (sucess: `true`, error: `false`). If you want it to contain the raw API response, you can set the `boolean_response` to `false`.
+By default, `$result` contains a boolean in case of error. If you want it to contain the raw API response, you can set the `boolean_response` to `false`.
 
 ``` php
 
 $mj->boolean_response = false;
-$result = $mj->user();
+
+// Invalid call
+$result = $mj->sender(array(
+  "method" => "PUT"
+));
 var_dump($result);
-/*
-object(stdClass)#2 (3) {
-  ["Count"]=>
-  int(1)
-  ["Data"]=>
-  array(1) {
-    [0]=>
-    object(stdClass)#3 (12) {
-      ["ACL"]=>
-      string(0) ""
-      ["CreatedAt"]=>
-      string(20) "2015-07-18T11:24:29Z"
-      ["Email"]=>
-      string(19) "user@mailjet.com"
-      ["FirstIp"]=>
-      string(15) "xxx.xxx.xxx.xxx"
-      ["ID"]=>
-      int(282430)
-      ["LastIp"]=>
-      string(15) "xxx.xxx.xxx.xxx"
-      ["LastLoginAt"]=>
-      string(20) "2015-07-21T12:37:36Z"
-      ["Locale"]=>
-      string(5) "fr_FR"
-      ["MaxAllowedAPIKeys"]=>
-      int(5)
-      ["Timezone"]=>
-      string(12) "Europe/Paris"
-      ["Username"]=>
-      string(14) "John Doe"
-      ["WarnedRatelimitAt"]=>
-      string(0) ""
-    }
-  }
-  ["Total"]=>
-  int(1)
-}
-*/
+
+// object(stdClass)#2 (3) {
+//   ["ErrorInfo"]=>
+//   string(0) ""
+//   ["ErrorMessage"]=>
+//   string(16) "Object not found"
+//   ["StatusCode"]=>
+//   int(404)
+// }
 ```
 
   * N.B.:

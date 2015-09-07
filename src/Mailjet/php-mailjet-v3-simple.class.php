@@ -75,7 +75,7 @@ class Mailjet
         if ($secretKey) {
             $this->secretKey = $secretKey;
         }
-        $this->error_boolean = true;
+        $this->boolean_response = true;
         $this->apiUrl = $this->getApiUrl($preprod);
         $this->wrapperVersion = $this->readWrapperVersion();
     }
@@ -207,7 +207,7 @@ class Mailjet
         }
 
         # Return result
-        if ($this->error_boolean == true) {
+        if ($this->boolean_response == true) {
             $return = ($result === true) ? $this->_response : false;
             if ($this->debug == 2 || ($this->debug == 1 && $return == false)) {
                 $this->debug();
@@ -418,7 +418,7 @@ class Mailjet
                 ));
                 }
                 else {
-                  // curl_setopt($curl_handle, CURLOPT_POSTFIELDS, NULL);
+                  curl_setopt($curl_handle, CURLOPT_POSTFIELDS, NULL);
                   curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
                       'Content-Type: application/json'
                   ));
@@ -466,7 +466,7 @@ class Mailjet
             }
         }
 
-        if ($this->error_boolean) {
+        if ($this->boolean_response) {
             if ($request == 'POST') {
                 return ($this->_response_code == 201 || $this->_response_code == 200) ? true : false;
             }
