@@ -59,6 +59,17 @@ class Mailjet
         "contactslistManageManyContacts"
     );
 
+    /*
+     *  Template resources
+     */
+    private static $_templateResources = array (
+        "templateDetailContent",
+        "templateDetailPreviews",
+        "templateDetailThumbnail",
+        "templateDisplayPreview",
+        "templateDisplayThumbnail",
+    );
+
     # Constructor function
     public function __construct($apiKey = false, $secretKey = false, $preprod = false)
     {
@@ -262,6 +273,10 @@ class Mailjet
         {
             $this->call_url = $this->makeUrlFromFilter('REST', 'newsletter', $params['ID'], $resource);         // Was $this->call_url = $this->apiUrl."/REST/newsletter/". $newsletter_id ."/".strtolower($action);
         }
+        else if (in_array($resource, self::$_templateResources))
+        {
+            $this->call_url = $this->makeUrlFromFilter('REST', 'template', $params['ID'], $resource);         
+        }
         else if (in_array($resource, self::$_contactResources))
         {
             $this->call_url = $this->makeUrlFromFilter('REST', 'contact', $params['ID'], $resource);            // Was $this->call_url = $this->apiUrl."/REST/contact/". $contact_id . "/".strtolower($action);
@@ -383,7 +398,8 @@ class Mailjet
                 if ((in_array($resource, self::$_newsletterResources)) ||
                     ($resource == "contactManageContactsLists") ||
                     ($resource == "contactManageManyContacts") ||
-                    (in_array($resource, self::$_contactslistResources)))
+                    (in_array($resource, self::$_contactslistResources)) ||
+                    (in_array($resource, self::$_templateResources)))
                 {
                     unset($params['ID']);
                 }
