@@ -75,6 +75,7 @@ class Mailjet
         if ($secretKey) {
             $this->secretKey = $secretKey;
         }
+        $this->error_boolean = true;
         $this->apiUrl = $this->getApiUrl($preprod);
         $this->wrapperVersion = $this->readWrapperVersion();
     }
@@ -206,9 +207,13 @@ class Mailjet
         }
 
         # Return result
-        $return = ($result === true) ? $this->_response : false;
-        if ($this->debug == 2 || ($this->debug == 1 && $return == false)) {
-            $this->debug();
+        if ($this->error_boolean == true) {
+            $return = ($result === true) ? $this->_response : false;
+            if ($this->debug == 2 || ($this->debug == 1 && $return == false)) {
+                $this->debug();
+            }
+        } else {
+          $return = $this->_response;
         }
 
         return $return;
@@ -251,7 +256,7 @@ class Mailjet
         if ($resource == "sendEmail") {
             $this->call_url = $this->apiUrl."/send/message";
         }
-	else if ($resource == "send") { 
+	else if ($resource == "send") {
             $this->call_url = $this->apiUrl."/send";  	//json support for SendAPI
         }
         else if ($resource == "uploadCSVContactslistData") {
@@ -278,7 +283,7 @@ class Mailjet
         }
         else if (in_array($resource, self::$_templateResources))
         {
-            $this->call_url = $this->makeUrlFromFilter('REST', 'template', $params['ID'], $resource);         
+            $this->call_url = $this->makeUrlFromFilter('REST', 'template', $params['ID'], $resource);
         }
         else if (in_array($resource, self::$_contactResources))
         {
@@ -356,7 +361,7 @@ class Mailjet
         $curl_handle = curl_init();
         curl_setopt($curl_handle, CURLOPT_URL, $url);
         curl_setopt($curl_handle, CURLOPT_USERAGENT, 'mailjet-api-v3-php-simple/' . $this->wrapperVersion . '; PHP v. ' . phpversion());
-        curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl_handle, CURLOPT_SSL_VERIFYPEER, FALSE);
         curl_setopt($curl_handle, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($curl_handle, CURLOPT_USERPWD, $this->apiKey . ':' . $this->secretKey);
@@ -406,11 +411,18 @@ class Mailjet
                 {
                     unset($params['ID']);
                 }
-
+                if (count($params)) {
                 curl_setopt($curl_handle, CURLOPT_POSTFIELDS, json_encode($params, JSON_UNESCAPED_SLASHES));
                 curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
                     'Content-Type: application/json'
                 ));
+                }
+                else {
+                  // curl_setopt($curl_handle, CURLOPT_POSTFIELDS, NULL);
+                  curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
+                      'Content-Type: application/json'
+                  ));
+                }
             }
             $this->_request_post = $params;
         endif;
@@ -454,13 +466,17 @@ class Mailjet
             }
         }
 
-        if ($request == 'POST') {
-            return ($this->_response_code == 201 || $this->_response_code == 200) ? true : false;
+        if ($this->error_boolean) {
+            if ($request == 'POST') {
+                return ($this->_response_code == 201 || $this->_response_code == 200) ? true : false;
+            }
+            if ($request == 'DELETE') {
+                return ($this->_response_code == 204) ? true : false;
+            }
+            return ($this->_response_code == 200) ? true : false;
+        } else {
+          return $this->_response;
         }
-        if ($request == 'DELETE') {
-            return ($this->_response_code == 204) ? true : false;
-        }
-        return ($this->_response_code == 200) ? true : false;
     }
 
     public function debug()
