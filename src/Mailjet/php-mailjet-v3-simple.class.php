@@ -63,11 +63,7 @@ class Mailjet
      *  Template resources
      */
     private static $_templateResources = array (
-        "templateDetailContent",
-        "templateDetailPreviews",
-        "templateDetailThumbnail",
-        "templateDisplayPreview",
-        "templateDisplayThumbnail",
+        "templateDetailContent"
     );
 
     # Constructor function
