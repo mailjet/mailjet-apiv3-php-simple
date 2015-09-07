@@ -59,6 +59,13 @@ class Mailjet
         "contactslistManageManyContacts"
     );
 
+    /*
+     *  Template resources
+     */
+    private static $_templateResources = array (
+        "templateDetailContent"
+    );
+
     # Constructor function
     public function __construct($apiKey = false, $secretKey = false, $preprod = false)
     {
@@ -244,6 +251,9 @@ class Mailjet
         if ($resource == "sendEmail") {
             $this->call_url = $this->apiUrl."/send/message";
         }
+	else if ($resource == "send") { 
+            $this->call_url = $this->apiUrl."/send";  	//json support for SendAPI
+        }
         else if ($resource == "uploadCSVContactslistData") {
           if (!empty($params['_contactslist_id'])) {
             $contactslist_id = $params['_contactslist_id'];
@@ -265,6 +275,10 @@ class Mailjet
         else if (in_array($resource, self::$_newsletterResources))
         {
             $this->call_url = $this->makeUrlFromFilter('REST', 'newsletter', $params['ID'], $resource);         // Was $this->call_url = $this->apiUrl."/REST/newsletter/". $newsletter_id ."/".strtolower($action);
+        }
+        else if (in_array($resource, self::$_templateResources))
+        {
+            $this->call_url = $this->makeUrlFromFilter('REST', 'template', $params['ID'], $resource);         
         }
         else if (in_array($resource, self::$_contactResources))
         {
@@ -387,7 +401,8 @@ class Mailjet
                 if ((in_array($resource, self::$_newsletterResources)) ||
                     ($resource == "contactManageContactsLists") ||
                     ($resource == "contactManageManyContacts") ||
-                    (in_array($resource, self::$_contactslistResources)))
+                    (in_array($resource, self::$_contactslistResources)) ||
+                    (in_array($resource, self::$_templateResources)))
                 {
                     unset($params['ID']);
                 }
