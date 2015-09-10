@@ -256,7 +256,7 @@ class Mailjet
         if ($resource == "sendEmail") {
             $this->call_url = $this->apiUrl."/send/message";
         }
-	else if ($resource == "send") {
+	      else if ($resource == "send") {
             $this->call_url = $this->apiUrl."/send";  	//json support for SendAPI
         }
         else if ($resource == "uploadCSVContactslistData") {
@@ -412,7 +412,14 @@ class Mailjet
                     unset($params['ID']);
                 }
                 if (count($params)) {
-                curl_setopt($curl_handle, CURLOPT_POSTFIELDS, json_encode($params, JSON_UNESCAPED_SLASHES));
+                $j_e = null;
+                $j_e = null;
+                if (version_compare(phpversion(), '5.4.0', '<')) {
+                    $j_e = str_replace('\\/', '/', json_encode($params));
+                } else {
+                    $j_e = json_encode($params, JSON_UNESCAPED_SLASHES);
+                }
+                curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $j_e);
                 curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
                     'Content-Type: application/json'
                 ));
