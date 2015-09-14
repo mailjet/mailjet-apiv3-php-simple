@@ -12,7 +12,7 @@
 class Mailjet
 {
     # Wrapper version, changed for each release
-    const WRAPPER_VERSION = '1.0.7';
+    const WRAPPER_VERSION = '2.0.0';
 
     # Mailjet API version
     private $version = 'v3';
@@ -287,7 +287,7 @@ class Mailjet
                     unset($params['ID']);
                 }
 
-                curl_setopt($curl_handle, CURLOPT_POSTFIELDS, json_encode($params));
+                curl_setopt($curl_handle, CURLOPT_POSTFIELDS, json_encode($params, JSON_UNESCAPED_SLASHES));
                 curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
                     'Content-Type: application/json'
                 ));
