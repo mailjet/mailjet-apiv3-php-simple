@@ -102,6 +102,16 @@ $mj->contact($params);
 
 ## Examples
 
+## Method
+
+There are several ways to request a Mailjet resource.
+With `contact` for example, you can:
+ - `LIST`: get all of them
+ - `VIEW`: get one of them with an ID
+ - `POST`: create a new one
+ - `DELETE`: remove the contact with an ID
+ - `UPDATE`: update the contact info with an ID
+
 ### SendAPI
 
 ##### A function to send an email:
