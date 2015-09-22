@@ -449,7 +449,9 @@ class Mailjet
             curl_setopt($curl_handle, CURLOPT_CUSTOMREQUEST, "PUT");
         }
 
-        $buffer = curl_exec($curl_handle);
+//        $buffer = curl_exec($curl_handle);
+        $buffer = '';
+		echo($this->call_url."\n");
 
         if ($this->debug == 2) {
             var_dump($buffer);
