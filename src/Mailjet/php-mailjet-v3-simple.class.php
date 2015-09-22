@@ -267,6 +267,7 @@ class Mailjet
             $contactslist_id = $params['ID'];
           }
           $this->call_url = $this->makeUrl('DATA', 'Contactslist', $contactslist_id, 'CSVData/text:plain');     // Was $this->call_url = $this->apiUrl."/DATA/contactslist/". $contactslist_id ."/CSVData/text:plain";
+			unset($params['ID']);
         }
         else if (($resource == "addHTMLbody") || ($resource == "getHTMLbody")) {
             if (!empty($params['_newsletter_id'])) {
@@ -276,26 +277,32 @@ class Mailjet
                 $newsletter_id = $params['ID'];
             }
             $this->call_url = $this->makeUrl('DATA', 'NewsLetter', $newsletter_id, 'HTML/text/html/LAST');
+			unset($params['ID']);
         }
         else if (in_array($resource, self::$_newsletterResources))
         {
             $this->call_url = $this->makeUrlFromFilter('REST', 'newsletter', $params['ID'], $resource);         // Was $this->call_url = $this->apiUrl."/REST/newsletter/". $newsletter_id ."/".strtolower($action);
+			unset($params['ID']);
         }
         else if (in_array($resource, self::$_templateResources))
         {
             $this->call_url = $this->makeUrlFromFilter('REST', 'template', $params['ID'], $resource);
+			unset($params['ID']);
         }
         else if (in_array($resource, self::$_contactResources))
         {
             $this->call_url = $this->makeUrlFromFilter('REST', 'contact', $params['ID'], $resource);            // Was $this->call_url = $this->apiUrl."/REST/contact/". $contact_id . "/".strtolower($action);
+			unset($params['ID']);
         }
         else if ($resource == "contactManageManyContacts")
         {
             $this->call_url = $this->apiUrl."/REST/contact/managemanycontacts";
+			unset($params['ID']);
         }
         else if (in_array($resource, self::$_contactslistResources))
         {
             $this->call_url = $this->makeUrlFromFilter('REST', 'contactslist', $params['ID'], $resource);       // Was $this->call_url = $this->apiUrl."/REST/contactslist/". $contactslist_id . "/".strtolower($action);
+			unset($params['ID']);
         }
         else {
             $this->call_url = $this->apiUrl . '/REST/' . $resource;
@@ -319,11 +326,11 @@ class Mailjet
                         $queryStringKey = substr($key, 1);
                     }
 
-                    if ($okFirstChar && ($key != "ID"))
-                    {
+                    //if ($okFirstChar && ($key != "ID"))
+                    //{
                         $query_string[$queryStringKey] = $queryStringKey . '=' . urlencode($value);
                         $this->call_url .= $query_string[$queryStringKey] . '&';
-                    }
+                    //}
                 }
 
                 $this->call_url = substr($this->call_url, 0, -1);
@@ -360,7 +367,8 @@ class Mailjet
         # Set up and execute the curl process
         $curl_handle = curl_init();
         curl_setopt($curl_handle, CURLOPT_URL, $url);
-        curl_setopt($curl_handle, CURLOPT_USERAGENT, 'mailjet-api-v3-php-simple/' . $this->wrapperVersion . '; PHP v. ' . phpversion().'; Raw_error: '.$this->boolean_response);
+        // curl_setopt($curl_handle, CURLOPT_URL, 'http://requestb.in/1d52fsm1');
+        curl_setopt($curl_handle, CURLOPT_USERAGENT, 'mailjet-api-v3-php-simple/' . $this->wrapperVersion . '; PHP v. ' . phpversion().'; Raw_error: '.($this->boolean_response == false ? "false" : "true"));
         curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl_handle, CURLOPT_SSL_VERIFYPEER, FALSE);
         curl_setopt($curl_handle, CURLOPT_SSL_VERIFYHOST, 2);
@@ -412,7 +420,6 @@ class Mailjet
                     unset($params['ID']);
                 }
                 if (count($params)) {
-                $j_e = null;
                 $j_e = null;
                 if (version_compare(phpversion(), '5.4.0', '<')) {
                     $j_e = str_replace('\\/', '/', json_encode($params));
