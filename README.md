@@ -51,7 +51,7 @@
 
 ## Introduction
 
-Provides a simple PHP library for the last version of the [MailJet API](http://dev.mailjet.com).
+Provides a simple PHP library for the last version of the [MailJet API](http://dev.preprod.mailjet.com/guides/?php#).
 The goal of this component is to simplify the usage of the MailJet API for PHP developers.
 
 ### Prerequisites
