@@ -8,6 +8,7 @@
     public function __construct()
     {
       $this->mj = new Mailjet(getenv('MJ_APIKEY_PUBLIC'), getenv('MJ_APIKEY_PRIVATE'));
+      $this->LISTID = 34;
     }
 
     public function getCallUrl()
@@ -51,6 +52,18 @@
       // TODO: lowercase id doesnt work
       $this->mj->contact(array("method" => "VIEW", "ID" => 2));
       $this->assertEquals("https://api.mailjet.com/v3/REST/contact/2", $this->getCallUrl());
+    }
+
+    public function testDataCSV()
+    {
+      $params = array(
+        "method" => "POST",
+        "ID" => $this->LISTID,
+        "csv_content" => "gbadi@mailjet.com,guillaume"
+      );
+
+      $this->mj->uploadCSVContactslistData($params);
+      $this->assertEquals(strtolower($this->getCallUrl()), "https://api.mailjet.com/v3/data/contactslist/".$this->LISTID."/csvdata/text:plain");
     }
   }
 ?>
