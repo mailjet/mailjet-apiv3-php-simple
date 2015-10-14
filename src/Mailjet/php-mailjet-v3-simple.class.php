@@ -407,7 +407,8 @@ class Mailjet
                     unset($params['ID']);
                 }
 
-                curl_setopt($curl_handle, CURLOPT_POSTFIELDS, json_encode($params, JSON_UNESCAPED_SLASHES));
+		// 64 => unescaped_slashes
+                curl_setopt($curl_handle, CURLOPT_POSTFIELDS, json_encode($params, 64));
                 curl_setopt($curl_handle, CURLOPT_HTTPHEADER, array(
                     'Content-Type: application/json'
                 ));
