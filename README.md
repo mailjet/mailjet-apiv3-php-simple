@@ -1,5 +1,7 @@
 # [API v3] Mailjet PHP Wrapper v1.0.8
 
+[![Build Status](https://travis-ci.org/mailjet/mailjet-apiv3-php-simple.svg?branch=master)](https://travis-ci.org/mailjet/mailjet-apiv3-php-simple)
+
 **Table of Contents**
 
 - [Introduction](#introduction)
