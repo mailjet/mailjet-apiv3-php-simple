@@ -411,7 +411,8 @@ class Mailjet
                 if (version_compare(phpversion(), '5.4.0', '<')) {
                     $j_e = str_replace('\\/', '/', json_encode($params));
                 } else {
-                    $j_e = json_encode($params, JSON_UNESCAPED_SLASHES);
+					// 64 => unescaped_slashes
+                    $j_e = json_encode($params, 64);
                 }
 
                 curl_setopt($curl_handle, CURLOPT_POSTFIELDS, $j_e);

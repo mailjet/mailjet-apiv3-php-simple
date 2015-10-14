@@ -1,5 +1,7 @@
 # [API v3] Mailjet PHP Wrapper v1.0.8
 
+[![Build Status](https://travis-ci.org/mailjet/mailjet-apiv3-php-simple.svg?branch=master)](https://travis-ci.org/mailjet/mailjet-apiv3-php-simple)
+
 **Table of Contents**
 
 - [Introduction](#introduction)
@@ -51,7 +53,7 @@
 
 ## Introduction
 
-Provides a simple PHP library for the last version of the [MailJet API](http://dev.mailjet.com).
+Provides a simple PHP library for the last version of the [MailJet API](http://dev.mailjet.com/guides/?php#).
 The goal of this component is to simplify the usage of the MailJet API for PHP developers.
 
 ### Prerequisites
@@ -485,31 +487,32 @@ function addContactToList($contactID, $listID)
  *  @param  int     $listID     The ID of the list.
  *
  */
-function addDetailedContactToList ($contact, $listID)
-{
-    $mj = new Mailjet();
-    $params = array(
-        "method" => "POST"
-    );
-    $params = array_merge($params, $contact);
-    $result = $mj->contactslistManageContact($params);
-    if ($mj->_response_code == 201)
-       echo "success - detailed contact ".$contactID." added to the list ".$listID;
-    else
-       echo "error - ".$mj->_response_code;
-    return $result;
-}
-// $contact array example
-/*  $contact = array(
- *      "Email"         =>  "foo@bar.com",   // Mandatory field!
- *      "Name"          =>  "FooBar",
- *      "Action"        =>  "addnoforce",
- *      "Properties"    =>  array(
- *          "Prop1" =>  "value1",
- *          ...
- *      )
- *  );
- */
+ function addDetailedContactToList ($contact, $listID)
+ {
+     $mj = new Mailjet(getenv('MJ_APIKEY_PUBLIC'), getenv('MJ_APIKEY_PRIVATE'));
+     $params = array(
+         "method" => "POST",
+         "ID" => $listID
+     );
+     $params = array_merge($params, $contact);
+     $result = $mj->contactslistManageContact($params);
+     if ($mj->_response_code == 201)
+        echo "success - detailed contact ".$contactID." added to the list ".$listID;
+     else
+        echo "error - ".$mj->_response_code;
+     return $result;
+ }
+ // $contact array example
+ /*  $contact = array(
+  *      "Email"         =>  "foo@bar.com",   // Mandatory field!
+  *      "Name"          =>  "FooBar",
+  *      "Action"        =>  "addnoforce",
+  *      "Properties"    =>  array(
+  *          "Prop1" =>  "value1",
+  *          ...
+  *      )
+  *  );
+  */
 ```
 Note:  
 `action` can be **addforce**, **addnoforce**, **remove** or **unsub**.
@@ -894,7 +897,7 @@ function getNewsletterDetailcontent($newsletter_id)
         echo "success - got content for the newsletter ". $newsletter_id;
     else
         echo "error - ".$mj->_response_code;
-    
+
     return $result;
 }
 ```
@@ -922,7 +925,7 @@ function scheduleNewsletter($newsletter_id)
         echo "success - schedule done for the newsletter ". $newsletter_id;
     else
         echo "error - ".$mj->_response_code;
-    
+
     return $result;
 }
 ```
@@ -949,7 +952,7 @@ function sendNewsletter($newsletter_id)
         echo "success - newsletter ". $newsletter_id . " has been sent";
     else
         echo "error - ".$mj->_response_code;
-    
+
     return $result;
 }
 ```
@@ -976,7 +979,7 @@ function testNewsletter($newsletter_id)
         echo "success - newsletter ". $newsletter_id . " has been sent";
     else
         echo "error - ".$mj->_response_code;
-    
+
     return $result;
 }
 ```
