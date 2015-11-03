@@ -66,6 +66,13 @@ class Mailjet
         "templateDetailContent"
     );
 
+    /*
+     *  dns resources
+     */
+    private static $_dnsResources = array (
+        "dnsCheck"
+    );
+
     # Constructor function
     public function __construct($apiKey = false, $secretKey = false, $preprod = false)
     {
@@ -280,6 +287,10 @@ class Mailjet
         {
             $this->call_url = $this->makeUrlFromFilter('REST', 'template', $params['ID'], $resource);
         }
+	else if (in_array($resource, self::$_dnsResources))
+        {
+            $this->call_url = $this->makeUrlFromFilter('REST', 'dns', $params['ID'], $resource);
+        }
         else if (in_array($resource, self::$_contactResources))
         {
             $this->call_url = $this->makeUrlFromFilter('REST', 'contact', $params['ID'], $resource);            // Was $this->call_url = $this->apiUrl."/REST/contact/". $contact_id . "/".strtolower($action);
@@ -402,7 +413,8 @@ class Mailjet
                     ($resource == "contactManageContactsLists") ||
                     ($resource == "contactManageManyContacts") ||
                     (in_array($resource, self::$_contactslistResources)) ||
-                    (in_array($resource, self::$_templateResources)))
+                    (in_array($resource, self::$_templateResources)) ||
+                    (in_array($resource, self::$_dnsResources)))
                 {
                     unset($params['ID']);
                 }
