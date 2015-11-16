@@ -1,14 +1,17 @@
-# [API v3] Mailjet PHP Wrapper v1.1.0
 
 [doc]: http://dev.mailjet.com/guides/?php#
 [api_doc_repo]: https://github.com/mailjet/api-documentation
+[new]: https://github.com/mailjet/mailjet-apiv3-php
+
+
+|  READ THIS FIRST!!  |
+| :---------: |
+| _**This repository is now considered deprecated and won't undergo further development. Please refer to the [new one][new].**_ |
+
+
+# [API v3] Mailjet PHP Wrapper v1.1.0
 
 [![Build Status](https://travis-ci.org/mailjet/mailjet-apiv3-php-simple.svg?branch=master)](https://travis-ci.org/mailjet/mailjet-apiv3-php-simple)
-
-Every code examples can be find on the [Mailjet Documentation][doc]
-
-(Please refer to the [Mailjet Documentation Repository][api_doc_repo] to contribute to the documentation examples)
-
 
 **Table of Contents**
 
