@@ -1,7 +1,7 @@
 
 [new]: https://github.com/mailjet/mailjet-apiv3-php
 
-Warning: this repository is unmaintained. Please refer to [the new one][new]
+# Warning: this repository is unmaintained. Please refer to [the new one][new]
 
 Here are all the code examples used in the previous documentation
 
