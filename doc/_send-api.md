@@ -580,7 +580,7 @@ curl -s \
 		"Text-part":"Dear passenger, welcome to Mailjet! May the delivery force be with you!",
 		"Html-part":"<h3>Dear passenger, welcome to Mailjet!</h3><br />May the delivery force be with you!",
 		"Recipients":[{"Email":"passenger@mailjet.com"}],
-		"Headers" => {"Reply-To":"copilot@mailjet.com"}
+		"Headers": {"Reply-To":"copilot@mailjet.com"}
 	}'
 ```
 
