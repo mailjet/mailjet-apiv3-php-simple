@@ -363,6 +363,9 @@ class Mailjet
         # Build request URL
         $url = $this->requestUrlBuilder($resource, $params, $request, $id);
 
+        // fix bug for sort (ID+DESC), replace %2B in url by +
+        $url = preg_replace('#Sort=(.+)%2B(DESC|ASC|)?#sUi', 'Sort=$1+$2', $url);
+
         # Set up and execute the curl process
         $curl_handle = curl_init();
         curl_setopt($curl_handle, CURLOPT_URL, $url);
